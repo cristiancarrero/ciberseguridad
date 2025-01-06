@@ -19,19 +19,50 @@
 </head>
 <body>
     <nav class="navbar">
-        <a href="#inicio" class="logo">AWS Services</a>
-        <div class="menu-toggle">
-            <i class="fas fa-bars"></i>
+        <div class="nav-brand">
+            <a href="index.html" class="logo">AWS Services</a>
         </div>
         <div class="nav-links">
-            <a href="#inicio">Inicio</a>
-            <a href="#servicios">Servicios</a>
-            <a href="#beneficios">Beneficios</a>
-            <a href="pricing.html">Planes</a>
-            <a href="#contacto">Contacto</a>
-            <a href="auth.html" class="login-btn">
-                <i class="fas fa-user"></i> Iniciar Sesión
-            </a>
+            <!-- Enlaces principales -->
+            <a href="#features">Características</a>
+            <a href="pricing.html">Precios</a>
+            <a href="#contact">Contacto</a>
+            
+            <!-- Enlaces para usuarios no autenticados -->
+            <div id="guest-links">
+                <a href="auth.html" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                </a>
+            </div>
+
+            <!-- Enlaces para usuarios autenticados -->
+            <div id="user-links" style="display: none;">
+                <div class="user-dropdown">
+                    <button class="user-dropdown-btn">
+                        <i class="fas fa-user-circle"></i>
+                        <span id="username">Usuario</span>
+                    </button>
+                    <div class="user-dropdown-content">
+                        <a href="dashboard.html">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                        <a href="dashboard.html#config">
+                            <i class="fas fa-cog"></i> Configuración
+                        </a>
+                        <div class="theme-switch">
+                            <i class="fas fa-sun"></i>
+                            <label class="switch">
+                                <input type="checkbox" id="themeToggle">
+                                <span class="slider round"></span>
+                            </label>
+                            <i class="fas fa-moon"></i>
+                        </div>
+                        <a href="#" onclick="authManager.logout()">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -444,5 +475,15 @@
         });
     </script>
     <script src="script.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        // Actualizar la navegación cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.authManager) {
+                window.authManager.updateNavigation();
+            }
+        });
+    </script>
+    <script src="theme.js"></script>
 </body>
 </html> 

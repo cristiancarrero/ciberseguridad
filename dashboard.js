@@ -1,10 +1,19 @@
 class DashboardManager {
     constructor() {
+        if (!this.checkAuth()) {
+            window.location.href = 'login.html';
+            return;
+        }
+
         this.map = null;
         this.chart = null;
         this.currentView = localStorage.getItem('currentView') || 'general';
         this.initializeEventListeners();
         this.loadView(this.currentView);
+    }
+
+    checkAuth() {
+        return localStorage.getItem('isAuthenticated') === 'true';
     }
 
     initializeEventListeners() {
