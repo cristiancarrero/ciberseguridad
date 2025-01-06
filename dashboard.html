@@ -24,7 +24,6 @@
         </div>
         <div class="nav-links">
             <a href="index.html">Inicio</a>
-            <a href="#" class="active">Dashboard</a>
             <a href="#" class="logout-btn" onclick="authManager.logout()">
                 <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
             </a>
@@ -34,17 +33,18 @@
     <div class="dashboard-layout">
         <aside class="sidebar">
             <div class="user-profile">
-                <div class="user-avatar">
-                    <i class="fas fa-user-circle"></i>
-                </div>
-                <div class="user-info">
-                    <h3 id="user-name">Panel de Control</h3>
-                    <p id="user-email"></p>
-                </div>
+                <a href="#" class="control-panel-btn">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="user-info">
+                        <h3>Panel de Control</h3>
+                    </div>
+                </a>
             </div>
             
             <nav class="sidebar-nav">
-                <a href="#" class="active" data-view="general">
+                <a href="#" data-view="general">
                     <i class="fas fa-chart-line"></i>
                     <span>Vista General</span>
                 </a>

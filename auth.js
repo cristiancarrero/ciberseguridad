@@ -1,32 +1,25 @@
 // Clase para manejar la autenticación
 class AuthManager {
     constructor() {
-        this.users = JSON.parse(localStorage.getItem('users') || '[]');
+        this.isAuthenticated = this.checkAuthStatus();
     }
 
-    async register(userData) {
-        if (this.users.some(user => user.email === userData.email)) {
-            throw new Error('Este email ya está registrado');
-        }
+    checkAuthStatus() {
+        return localStorage.getItem('isAuthenticated') === 'true';
+    }
 
-        const newUser = {
-            id: Date.now(),
-            ...userData,
-            createdAt: new Date().toISOString()
-        };
-
-        this.users.push(newUser);
-        localStorage.setItem('users', JSON.stringify(this.users));
+    logout() {
+        // Limpiar el estado de autenticación
+        localStorage.removeItem('isAuthenticated');
+        localStorage.removeItem('user');
         
-        const token = Math.random().toString(36).substring(2);
-        localStorage.setItem('authToken', token);
-        
-        return newUser;
+        // Redirigir al index
+        window.location.href = 'index.html';
     }
 }
 
-// Instanciar el manejador de autenticación
-const authManager = new AuthManager();
+// Crear una instancia global
+window.authManager = new AuthManager();
 
 // Event Listeners
 document.addEventListener('DOMContentLoaded', () => {
