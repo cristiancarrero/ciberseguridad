@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Services</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="#inicio" class="logo">AWS Services</a>
+        <div class="menu-toggle">
+            <i class="fas fa-bars"></i>
+        </div>
+        <div class="nav-links">
+            <a href="#inicio">Inicio</a>
+            <a href="#servicios">Servicios</a>
+            <a href="#beneficios">Beneficios</a>
+            <a href="pricing.html">Planes</a>
+            <a href="#contacto">Contacto</a>
+            <a href="auth.html" class="login-btn">
+                <i class="fas fa-user"></i> Iniciar Sesión
+            </a>
+        </div>
+    </nav>
+
+    <div class="hero" id="inicio">
+        <div class="hero-content" data-aos="fade-up">
+            <h1>Ciberseguridad Avanzada en AWS</h1>
+            <p class="subtitle">Fortalecimiento y protección integral de infraestructuras cloud</p>
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Monitoreo SOC</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">Disponibilidad</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">100+</div>
+                    <div class="stat-label">Amenazas Detectadas</div>
+                </div>
+            </div>
+            <div class="cta-buttons">
+                <a href="#servicios" class="btn-primary">Explorar Soluciones</a>
+                <a href="pricing.html" class="btn-primary">Ver Planes de Seguridad</a>
+            </div>
+        </div>
+    </div>
+
+    <section class="features" id="servicios" data-aos="fade-up">
+        <h2 class="section-title">Soluciones de Seguridad</h2>
+        <div class="feature-container">
+            <div class="feature-card">
+                <div class="icon">
+                    <i class="fas fa-bug"></i>
+                </div>
+                <h3>Pentesting AWS</h3>
+                <p>Evaluación de vulnerabilidades y pruebas de penetración</p>
+                <button class="learn-more" onclick="toggleInfo('pentest-info')">
+                    Más información <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="service-info" id="pentest-info">
+                    <ul>
+                        <li>Análisis de configuraciones de seguridad</li>
+                        <li>Pruebas de penetración en infraestructura</li>
+                        <li>Evaluación de IAM y permisos</li>
+                        <li>Auditoría de seguridad en S3</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3>Análisis Forense</h3>
+                <p>Investigación y respuesta a incidentes</p>
+                <button class="learn-more" onclick="toggleInfo('forensics-info')">
+                    Más información <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="service-info" id="forensics-info">
+                    <ul>
+                        <li>Análisis de logs y eventos</li>
+                        <li>Investigación de incidentes</li>
+                        <li>Recuperación de datos</li>
+                        <li>Documentación forense</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h3>Monitoreo SOC</h3>
+                <p>Centro de Operaciones de Seguridad 24/7</p>
+                <button class="learn-more" onclick="toggleInfo('soc-info')">
+                    Más información <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="service-info" id="soc-info">
+                    <ul>
+                        <li>Detección de amenazas en tiempo real</li>
+                        <li>Análisis de comportamiento</li>
+                        <li>Respuesta a incidentes</li>
+                        <li>Reportes de seguridad</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="benefits" id="beneficios" data-aos="fade-up">
+        <h2 class="section-title">Protección Integral</h2>
+        <div class="benefits-container">
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-shield-virus"></i>
+                </div>
+                <h3>Prevención Proactiva</h3>
+                <p>Detección temprana de vulnerabilidades y amenazas antes de que sean explotadas</p>
+            </div>
+
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-lock-alt"></i>
+                </div>
+                <h3>Cumplimiento Normativo</h3>
+                <p>Alineación con estándares de seguridad (ISO 27001, GDPR, HIPAA)</p>
+            </div>
+
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-network-wired"></i>
+                </div>
+                <h3>Seguridad en Red</h3>
+                <p>Protección de infraestructura y datos en la nube de AWS</p>
+            </div>
+        </div>
+
+        <div class="security-stats">
+            <h2 class="section-title">Estadísticas de Seguridad</h2>
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-number">100+</div>
+                    <div class="stat-label">Amenazas Detectadas</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">Tiempo de Actividad</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Monitoreo Activo</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contacto" data-aos="fade-up">
+        <h2 class="section-title">Contacto</h2>
+        <div class="contact-container">
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-avatar">
+                        <i class="fas fa-user-circle"></i>
+                    </div>
+                    <div class="member-info">
+                        <h3>Cristian Carrero Rodríguez</h3>
+                        <p>Especialista en Seguridad AWS</p>
+                        <a href="slack://user?team=T05TQKR2F4J&id=U05U9PZRWG0" class="slack-link">
+                            <i class="fab fa-slack"></i> Contactar en Slack
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="documentation" data-aos="fade-up">
+        <div class="doc-container">
+            <h2 class="section-title">Documentación</h2>
+            <p class="doc-description">Descubre cómo desarrollamos este proyecto paso a paso</p>
+            <a href="https://docs.google.com/document/d/1_pKJSIFTYMKALQ_DAWldRfKdMKigW51VZIsGSVbYX1s/edit?usp=sharing" 
+               target="_blank" 
+               class="cta-button docs">
+                <i class="fas fa-book"></i> Ver Documentación
+            </a>
+        </div>
+    </section>
+
+    <section class="threat-map" id="threatMap" data-aos="fade-up">
+        <h2 class="section-title">Mapa de Amenazas en Tiempo Real</h2>
+        <div class="map-container">
+            <div id="worldMap" style="height: 500px; width: 100%; background: #1a1a1a;"></div>
+            <div class="map-stats">
+                <div class="map-stat">
+                    <h4>Ataques Detectados</h4>
+                    <span class="stat-number" id="attackCount">0</span>
+                    <span class="stat-type">Total</span>
+                </div>
+                <div class="map-stat">
+                    <h4>Países de Origen</h4>
+                    <span class="stat-number" id="countryCount">0</span>
+                    <span class="stat-type">Países</span>
+                </div>
+                <div class="map-stat">
+                    <h4>Tipo más Común</h4>
+                    <span class="stat-number" id="commonAttack">-</span>
+                    <span class="stat-type">Ataque</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="security-dashboard" id="dashboard" data-aos="fade-up">
+        <h2 class="section-title">Centro de Control de Seguridad</h2>
+        <div class="dashboard-container">
+            <div class="metrics-panel">
+                <h3>Métricas de Seguridad</h3>
+                <div class="metric-card" id="cpu-usage">
+                    <h4>Amenazas Detectadas</h4>
+                    <div class="metric-value">
+                        <div class="metric-detail">
+                            <span class="metric-number">147</span>
+                            <span class="metric-label">Amenazas Bloqueadas Hoy</span>
+                        </div>
+                    </div>
+                    <canvas class="metric-chart"></canvas>
+                </div>
+
+                <div class="metric-card" id="network-traffic">
+                    <h4>Tráfico de Red</h4>
+                    <div class="metric-value">
+                        <div class="metric-detail">
+                            <span class="metric-number">12.5 GB</span>
+                            <span class="metric-label">Tráfico Analizado</span>
+                        </div>
+                    </div>
+                    <canvas class="metric-chart"></canvas>
+                </div>
+            </div>
+
+            <div class="alerts-panel">
+                <h3>Alertas Recientes</h3>
+                <div class="alerts-list" id="security-alerts">
+                </div>
+            </div>
+
+            <div class="aws-services-panel">
+                <h3>Servicios AWS Monitorizados</h3>
+                <div class="services-grid">
+                    <div class="service-card" id="ec2-status">
+                        <i class="fas fa-server"></i>
+                        <h4>EC2</h4>
+                        <div class="service-status">Verificando...</div>
+                    </div>
+                    <div class="service-card" id="s3-status">
+                        <i class="fas fa-database"></i>
+                        <h4>S3</h4>
+                        <div class="service-status">Verificando...</div>
+                    </div>
+                    <div class="service-card" id="cloudwatch-status">
+                        <i class="fas fa-chart-line"></i>
+                        <h4>CloudWatch</h4>
+                        <div class="service-status">Verificando...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="vulnerability-panel" id="vulnerabilities" data-aos="fade-up">
+        <h2 class="section-title">Panel de Vulnerabilidades</h2>
+        <div class="vulnerability-container">
+            <div class="vulnerability-summary">
+                <div class="vuln-stats">
+                    <div class="vuln-stat critical">
+                        <span class="stat-number">3</span>
+                        <span class="stat-label">Críticas</span>
+                    </div>
+                    <div class="vuln-stat high">
+                        <span class="stat-number">7</span>
+                        <span class="stat-label">Altas</span>
+                    </div>
+                    <div class="vuln-stat medium">
+                        <span class="stat-number">12</span>
+                        <span class="stat-label">Medias</span>
+                    </div>
+                    <div class="vuln-stat low">
+                        <span class="stat-number">15</span>
+                        <span class="stat-label">Bajas</span>
+                    </div>
+                </div>
+                <div class="vuln-chart">
+                    <canvas id="vulnerabilitiesChart"></canvas>
+                </div>
+            </div>
+            <div class="vulnerability-list" id="vulnList">
+                <!-- Se llenará dinámicamente -->
+            </div>
+        </div>
+    </section>
+
+    <section class="documentation-center" id="docs" data-aos="fade-up">
+        <h2 class="section-title">Centro de Documentación</h2>
+        <div class="docs-container">
+            <div class="docs-navigation">
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar en la documentación...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="docs-categories">
+                    <div class="doc-category active">
+                        <i class="fas fa-book"></i>
+                        <span>Guías Básicas</span>
+                    </div>
+                    <div class="doc-category">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Mejores Prácticas</span>
+                    </div>
+                    <div class="doc-category">
+                        <i class="fas fa-code"></i>
+                        <span>Tutoriales</span>
+                    </div>
+                    <div class="doc-category">
+                        <i class="fas fa-question-circle"></i>
+                        <span>FAQ</span>
+                    </div>
+                </div>
+            </div>
+            <div class="docs-content">
+                <!-- Se llenará dinámicamente -->
+            </div>
+        </div>
+    </section>
+
+    <section class="security-reports" id="reports" data-aos="fade-up">
+        <h2 class="section-title">Informes de Seguridad</h2>
+        <div class="reports-container">
+            <div class="report-filters">
+                <select id="reportType">
+                    <option value="daily">Informe Diario</option>
+                    <option value="weekly">Informe Semanal</option>
+                    <option value="monthly">Informe Mensual</option>
+                </select>
+                <div class="date-range">
+                    <input type="date" id="startDate">
+                    <input type="date" id="endDate">
+                </div>
+                <button class="generate-report">
+                    <i class="fas fa-file-pdf"></i> Generar Informe
+                </button>
+            </div>
+            <div class="report-preview">
+                <!-- Se llenará dinámicamente -->
+            </div>
+        </div>
+    </section>
+
+    <section class="attack-simulator" id="simulator" data-aos="fade-up">
+        <h2 class="section-title">Simulador de Ataques</h2>
+        <div class="simulator-container">
+            <div class="attack-types">
+                <button class="attack-btn active" data-attack="bruteforce">
+                    <i class="fas fa-key"></i>
+                    Fuerza Bruta
+                </button>
+                <button class="attack-btn" data-attack="ddos">
+                    <i class="fas fa-network-wired"></i>
+                    DDoS
+                </button>
+                <button class="attack-btn" data-attack="injection">
+                    <i class="fas fa-code"></i>
+                    SQL Injection
+                </button>
+                <button class="attack-btn" data-attack="phishing">
+                    <i class="fas fa-envelope"></i>
+                    Phishing
+                </button>
+            </div>
+            <div class="simulation-view">
+                <div class="simulation-screen">
+                    <!-- Aquí se mostrará la simulación -->
+                </div>
+                <div class="simulation-controls">
+                    <button class="control-btn" id="startSimulation">
+                        <i class="fas fa-play"></i> Iniciar
+                    </button>
+                    <button class="control-btn" id="pauseSimulation">
+                        <i class="fas fa-pause"></i> Pausar
+                    </button>
+                    <button class="control-btn" id="resetSimulation">
+                        <i class="fas fa-redo"></i> Reiniciar
+                    </button>
+                </div>
+            </div>
+            <div class="simulation-info">
+                <!-- Información detallada de la simulación -->
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Síguenos</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 MiWeb. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+    </script>
+    <script src="script.js"></script>
+</body>
+</html> 
