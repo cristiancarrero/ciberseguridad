@@ -4,7 +4,14 @@ let countryCount = 0;
 const attackTypes = {};
 
 // Inicialización cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+    // Verificar autenticación
+    const token = localStorage.getItem('authToken');
+    if (!token && !window.location.pathname.includes('auth.html')) {
+        window.location.href = 'auth.html';
+        return;
+    }
+
     console.log('DOM cargado, inicializando componentes...');
     
     // Inicializar el mapa

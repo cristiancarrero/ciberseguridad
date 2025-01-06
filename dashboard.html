@@ -3,131 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard de Seguridad - AWS Services</title>
+    <title>Dashboard - AWS Services</title>
+    
+    <!-- Fuentes e iconos -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-          crossorigin=""/>
+    
+    <!-- Leaflet CSS y JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Estilos propios -->
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
     <nav class="navbar">
-        <a href="index.html" class="logo">AWS Services</a>
+        <div class="nav-brand">
+            <a href="index.html" class="logo">AWS Services</a>
+        </div>
         <div class="nav-links">
             <a href="index.html">Inicio</a>
             <a href="#" class="active">Dashboard</a>
-            <a href="#" onclick="logout()">
+            <a href="#" class="logout-btn" onclick="authManager.logout()">
                 <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
             </a>
         </div>
     </nav>
 
-    <div class="dashboard-container">
-        <div class="sidebar">
-            <div class="user-info">
+    <div class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="user-profile">
                 <div class="user-avatar">
                     <i class="fas fa-user-circle"></i>
                 </div>
-                <div class="user-details">
-                    <h3 id="user-name">Usuario</h3>
-                    <p>Administrador</p>
+                <div class="user-info">
+                    <h3 id="user-name">Panel de Control</h3>
+                    <p id="user-email"></p>
                 </div>
             </div>
-            <div class="dashboard-nav">
-                <a href="#overview" class="active">
-                    <i class="fas fa-home"></i> Vista General
+            
+            <nav class="sidebar-nav">
+                <a href="#" class="active" data-view="general">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Vista General</span>
                 </a>
-                <a href="#threats">
-                    <i class="fas fa-shield-alt"></i> Amenazas
+                <a href="#" data-view="amenazas">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Amenazas</span>
                 </a>
-                <a href="#vulnerabilities">
-                    <i class="fas fa-bug"></i> Vulnerabilidades
+                <a href="#" data-view="vulnerabilidades">
+                    <i class="fas fa-bug"></i>
+                    <span>Vulnerabilidades</span>
                 </a>
-                <a href="#reports">
-                    <i class="fas fa-chart-bar"></i> Informes
+                <a href="#" data-view="informes">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Informes</span>
                 </a>
-                <a href="#settings">
-                    <i class="fas fa-cog"></i> Configuración
+                <a href="#" data-view="configuracion">
+                    <i class="fas fa-cog"></i>
+                    <span>Configuración</span>
                 </a>
-            </div>
-        </div>
+            </nav>
+        </aside>
 
         <div class="main-content">
-            <section class="threat-map">
-                <h2>Mapa de Amenazas en Tiempo Real</h2>
-                <div class="map-container">
-                    <div id="worldMap"></div>
-                    <div class="map-stats">
-                        <div class="map-stat">
-                            <h4>Ataques Detectados</h4>
-                            <span class="stat-number" id="attackCount">0</span>
-                            <span class="stat-type">Total</span>
-                        </div>
-                        <div class="map-stat">
-                            <h4>Países de Origen</h4>
-                            <span class="stat-number" id="countryCount">0</span>
-                            <span class="stat-type">Países</span>
-                        </div>
-                        <div class="map-stat">
-                            <h4>Tipo más Común</h4>
-                            <span class="stat-number" id="commonAttack">-</span>
-                            <span class="stat-type">Ataque</span>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-shield-alt"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>Amenazas Bloqueadas</h3>
-                        <p>147</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-bug"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>Vulnerabilidades</h3>
-                        <p>23</p>
-                    </div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-server"></i>
-                    </div>
-                    <div class="stat-info">
-                        <h3>Servicios Monitoreados</h3>
-                        <p>12</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="charts-container">
-                <div class="chart-card">
-                    <h3>Actividad de Amenazas</h3>
-                    <canvas id="threatActivityChart"></canvas>
-                </div>
-                <div class="chart-card">
-                    <h3>Tipos de Ataques</h3>
-                    <canvas id="attackTypesChart"></canvas>
-                </div>
+            <div id="view-container">
+                <!-- El contenido se cargará aquí dinámicamente -->
             </div>
         </div>
     </div>
 
     <!-- Scripts -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-            crossorigin=""></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="auth.js"></script>
+    <script src="aws-integration.js"></script>
     <script src="dashboard.js"></script>
 
     <script>

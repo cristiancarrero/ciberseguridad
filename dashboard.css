@@ -1,0 +1,637 @@
+/* Reset del layout */
+.dashboard-layout {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+    position: relative;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: rgba(26, 26, 26, 0.95);
+    padding: 2rem;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    position: sticky;
+    height: calc(100vh - 60px);
+    top: 60px;
+    z-index: 1000;
+}
+
+.user-profile {
+    display: flex;
+    align-items: center;
+    padding-bottom: 2rem;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.user-avatar {
+    font-size: 2.5rem;
+    margin-right: 1rem;
+    color: #4ecdc4;
+}
+
+.user-info h3 {
+    margin: 0;
+    font-size: 1.2rem;
+    color: #4ecdc4;
+    font-weight: 600;
+}
+
+.user-info p {
+    margin: 5px 0 0 0;
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+/* Navegación lateral mejorada */
+.sidebar-nav {
+    margin-top: 1rem;
+}
+
+.sidebar-nav a {
+    display: flex;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1001; /* Z-index más alto */
+    pointer-events: all !important;
+}
+
+.sidebar-nav a i {
+    margin-right: 1rem;
+    width: 20px;
+    text-align: center;
+    font-size: 1.1rem;
+}
+
+.sidebar-nav a:hover {
+    background: rgba(78, 205, 196, 0.1);
+    color: #4ecdc4;
+}
+
+.sidebar-nav a.active {
+    background: rgba(78, 205, 196, 0.15);
+    color: #4ecdc4;
+    border-left: 4px solid #4ecdc4;
+}
+
+/* Asegurarse de que el icono también cambie de color */
+.sidebar-nav a.active i {
+    color: #4ecdc4;
+}
+
+/* Ajustar el contenido principal */
+.main-content {
+    flex: 1;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 80px;
+        padding: 1rem;
+    }
+
+    .user-info,
+    .sidebar-nav a span {
+        display: none;
+    }
+
+    .sidebar-nav a i {
+        margin-right: 0;
+        font-size: 1.2rem;
+    }
+
+    .main-content {
+        margin-left: 80px;
+    }
+} 
+
+/* Estilos para la sección de amenazas */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.threats-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.threats-list {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 1.5rem;
+}
+
+.threat-item {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid;
+}
+
+.threat-item.high {
+    border-color: #ff4757;
+}
+
+.threat-item.medium {
+    border-color: #ffa502;
+}
+
+.threat-item.low {
+    border-color: #2ed573;
+}
+
+.threat-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.threat-severity {
+    padding: 0.2rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.threat-item.high .threat-severity {
+    background: rgba(255, 71, 87, 0.2);
+    color: #ff4757;
+}
+
+.threat-item.medium .threat-severity {
+    background: rgba(255, 165, 2, 0.2);
+    color: #ffa502;
+}
+
+.threat-details {
+    margin: 1rem 0;
+}
+
+.threat-details p {
+    margin: 0.5rem 0;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.threat-details i {
+    margin-right: 0.5rem;
+    width: 16px;
+}
+
+.threat-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.btn-block {
+    background: #ff4757;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-details {
+    background: transparent;
+    color: #4ecdc4;
+    border: 1px solid #4ecdc4;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-block:hover {
+    background: #ff6b81;
+}
+
+.btn-details:hover {
+    background: rgba(78, 205, 196, 0.1);
+}
+
+.threat-map {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 1.5rem;
+}
+
+#threatMap {
+    height: 400px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.2);
+} 
+
+/* Estilos para Vista General */
+.stats-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 1.2rem; /* Reducir el padding */
+    display: flex;
+    align-items: center;
+}
+
+.stat-status {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.stat-status.secure {
+    color: #2ed573;
+}
+
+.trend {
+    font-size: 0.9rem;
+    margin-left: 0.5rem;
+}
+
+.trend.up {
+    color: #2ed573;
+}
+
+.trend.down {
+    color: #ff4757;
+}
+
+.status-badge {
+    font-size: 0.8rem;
+    padding: 0.2rem 0.8rem;
+    border-radius: 20px;
+    background: rgba(46, 213, 115, 0.2);
+    color: #2ed573;
+}
+
+/* Gráficos principales */
+.main-charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.chart-container {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 1.5rem;
+}
+
+/* Mapa de actividad */
+.activity-map-container {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    min-height: 500px;
+}
+
+.map-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.map-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.map-filter {
+    background: transparent;
+    border: 1px solid #4ecdc4;
+    color: #4ecdc4;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.map-filter.active {
+    background: #4ecdc4;
+    color: #1a1a1a;
+}
+
+/* Actividad Reciente */
+.activity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.activity-item {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    padding: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.activity-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.activity-icon.warning {
+    background: rgba(255, 165, 2, 0.2);
+    color: #ffa502;
+}
+
+.activity-icon.success {
+    background: rgba(46, 213, 115, 0.2);
+    color: #2ed573;
+}
+
+.activity-icon.info {
+    background: rgba(78, 205, 196, 0.2);
+    color: #4ecdc4;
+}
+
+.activity-details {
+    flex: 1;
+}
+
+.activity-details h4 {
+    margin: 0;
+    color: white;
+}
+
+.activity-details p {
+    margin: 0.2rem 0 0 0;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+}
+
+.status {
+    padding: 0.2rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+}
+
+.status.blocked {
+    background: rgba(255, 71, 87, 0.2);
+    color: #ff4757;
+}
+
+.status.success {
+    background: rgba(46, 213, 115, 0.2);
+    color: #2ed573;
+}
+
+.status.running {
+    background: rgba(78, 205, 196, 0.2);
+    color: #4ecdc4;
+} 
+
+/* Estilos para el mapa SVG */
+.world-map-svg {
+    width: 100%;
+    height: 500px;
+    background: #1a1a1a;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.continent {
+    fill: rgba(78, 205, 196, 0.15);
+    stroke: rgba(78, 205, 196, 0.3);
+    stroke-width: 1;
+    transition: all 0.3s ease;
+}
+
+.continent:hover {
+    fill: rgba(78, 205, 196, 0.25);
+    stroke: rgba(78, 205, 196, 0.4);
+}
+
+.point {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.point.attack {
+    background: #ff4757;
+    box-shadow: 0 0 20px rgba(255, 71, 87, 0.8);
+}
+
+.point.threat {
+    background: #ffa502;
+    box-shadow: 0 0 20px rgba(255, 165, 2, 0.8);
+}
+
+.point .pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    70% {
+        transform: scale(3);
+        opacity: 0.2;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Mantener los estilos de los controles */
+.map-controls {
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.map-filter {
+    background: rgba(78, 205, 196, 0.1);
+    border: 1px solid #4ecdc4;
+    color: #4ecdc4;
+    padding: 0.5rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.map-filter.active {
+    background: #4ecdc4;
+    color: #1a1a1a;
+}
+
+.map-filter:hover:not(.active) {
+    background: rgba(78, 205, 196, 0.2);
+} 
+
+.map-container {
+    width: 100%;
+    height: 500px;
+    position: relative;
+    background: #1a1a1a;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-top: 1rem;
+}
+
+.region {
+    position: absolute;
+    background: rgba(78, 205, 196, 0.1);
+    border: 1px solid rgba(78, 205, 196, 0.3);
+    transform: translate(-50%, -50%);
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+    transition: all 0.3s ease;
+}
+
+.region:hover {
+    background: rgba(78, 205, 196, 0.2);
+    border-color: rgba(78, 205, 196, 0.4);
+}
+
+.point {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+}
+
+.point.attack {
+    background: #ff4757;
+    box-shadow: 0 0 20px rgba(255, 71, 87, 0.8);
+}
+
+.point.threat {
+    background: #ffa502;
+    box-shadow: 0 0 20px rgba(255, 165, 2, 0.8);
+}
+
+.point .pulse {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: inherit;
+    border-radius: 50%;
+    opacity: 0.8;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 0.8;
+    }
+    70% {
+        transform: scale(3);
+        opacity: 0.2;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Mantener los estilos de los controles */
+.map-controls {
+    margin-bottom: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.map-filter {
+    background: rgba(78, 205, 196, 0.1);
+    border: 1px solid #4ecdc4;
+    color: #4ecdc4;
+    padding: 0.5rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.map-filter.active {
+    background: #4ecdc4;
+    color: #1a1a1a;
+}
+
+.map-filter:hover:not(.active) {
+    background: rgba(78, 205, 196, 0.2);
+} 
+
+/* Ajustar el layout principal */
+.dashboard-layout {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* Contenedor de vista */
+#view-container {
+    width: 100%;
+    height: 100%;
+}
+
+/* Estilos para las vistas individuales */
+.stats-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.main-charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+/* Eliminar los estilos duplicados o innecesarios */
+.stats-grid {
+    display: none; /* Eliminar la grid duplicada */
+}
+
+.charts-container {
+    display: none; /* Eliminar el contenedor duplicado */
+} 

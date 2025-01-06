@@ -102,4 +102,33 @@
 
 .auth-button:hover {
     transform: scale(1.05);
+}
+
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 5px;
+    color: white;
+    font-size: 1rem;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.3s ease;
+    z-index: 1000;
+}
+
+.notification.success {
+    background: linear-gradient(45deg, #4ecdc4, #2ecc71);
+    box-shadow: 0 4px 15px rgba(46, 204, 113, 0.2);
+}
+
+.notification.error {
+    background: linear-gradient(45deg, #ff6b6b, #e74c3c);
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.2);
+}
+
+.notification.show {
+    opacity: 1;
+    transform: translateY(0);
 } 

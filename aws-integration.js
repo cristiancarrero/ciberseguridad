@@ -1,55 +1,145 @@
-// Configuración de AWS SDK
-AWS.config.region = 'us-east-1'; // Región por defecto
-AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-    IdentityPoolId: 'TU_IDENTITY_POOL_ID'
-});
-
-// Clase para manejar las métricas de CloudWatch
-class AWSMetricsManager {
+// Simulador de métricas y eventos de seguridad
+class SecurityMetricsManager {
     constructor() {
-        this.cloudWatch = new AWS.CloudWatch();
-        this.updateInterval = 5000; // Actualizar cada 5 segundos
+        this.updateInterval = 5000;
+        this.map = null;
+        this.threatChart = null;
+        this.attackTypesChart = null;
+        this.checkAuth();
+        this.initializeMap();
+        this.initializeCharts();
     }
 
-    // Obtener métricas de CPU
-    async getCPUMetrics() {
-        const params = {
-            MetricName: 'CPUUtilization',
-            Namespace: 'AWS/EC2',
-            Period: 300,
-            Statistics: ['Average'],
-            StartTime: new Date(new Date().getTime() - 3600000),
-            EndTime: new Date()
-        };
+    // Verificar autenticación
+    checkAuth() {
+        const token = localStorage.getItem('authToken');
+        if (!token) {
+            window.location.href = 'auth.html';
+            return false;
+        }
+        return true;
+    }
 
-        try {
-            const data = await this.cloudWatch.getMetricStatistics(params).promise();
-            return this.processMetricData(data);
-        } catch (error) {
-            console.error('Error al obtener métricas de CPU:', error);
-            return null;
+    // Inicializar el mapa
+    initializeMap() {
+        if (!document.getElementById('worldMap')) return;
+
+        this.map = L.map('worldMap').setView([20, 0], 2);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(this.map);
+
+        // Estilo oscuro para el mapa
+        document.querySelector('.leaflet-container').style.background = '#1a1a1a';
+    }
+
+    // Inicializar gráficos
+    initializeCharts() {
+        // Gráfico de actividad de amenazas
+        const threatCtx = document.getElementById('threatActivityChart')?.getContext('2d');
+        if (threatCtx) {
+            this.threatChart = new Chart(threatCtx, {
+                type: 'line',
+                data: {
+                    labels: Array(24).fill('').map((_, i) => `${i}:00`),
+                    datasets: [{
+                        label: 'Amenazas Detectadas',
+                        data: Array(24).fill(0).map(() => Math.floor(Math.random() * 100)),
+                        borderColor: '#4ecdc4',
+                        tension: 0.4,
+                        fill: true,
+                        backgroundColor: 'rgba(78, 205, 196, 0.1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#fff'
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#fff'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                color: 'rgba(255, 255, 255, 0.1)'
+                            },
+                            ticks: {
+                                color: '#fff'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Gráfico de tipos de ataques
+        const attackTypesCtx = document.getElementById('attackTypesChart')?.getContext('2d');
+        if (attackTypesCtx) {
+            this.attackTypesChart = new Chart(attackTypesCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['DDoS', 'SQL Injection', 'XSS', 'Otros'],
+                    datasets: [{
+                        data: [40, 25, 20, 15],
+                        backgroundColor: [
+                            '#4ecdc4',
+                            '#ff6b6b',
+                            '#ffe66d',
+                            '#45b7d1'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#fff'
+                            }
+                        }
+                    }
+                }
+            });
         }
     }
 
-    // Obtener eventos de seguridad
-    async getSecurityEvents() {
-        // Implementar lógica para obtener eventos de GuardDuty o SecurityHub
+    // Actualizar estadísticas
+    updateStats() {
+        const attacksCount = document.getElementById('attacks-count');
+        const countriesCount = document.getElementById('countries-count');
+
+        if (attacksCount) attacksCount.textContent = Math.floor(Math.random() * 1000);
+        if (countriesCount) countriesCount.textContent = Math.floor(Math.random() * 50);
     }
 
-    // Actualizar el dashboard
+    // Actualizar dashboard
     updateDashboard() {
-        this.getCPUMetrics().then(data => {
-            if (data) {
-                this.updateMetricChart('cpu-usage', data);
-            }
-        });
-
-        this.getSecurityEvents().then(events => {
-            this.updateSecurityAlerts(events);
-        });
+        this.updateStats();
+        // Simular nuevos ataques en el mapa
+        if (this.map) {
+            const lat = Math.random() * 180 - 90;
+            const lng = Math.random() * 360 - 180;
+            L.circle([lat, lng], {
+                color: '#ff6b6b',
+                fillColor: '#ff6b6b',
+                fillOpacity: 0.5,
+                radius: 50000
+            }).addTo(this.map);
+        }
     }
 }
 
-// Inicializar el dashboard
-const metricsManager = new AWSMetricsManager();
+// Inicializar el gestor de métricas
+const metricsManager = new SecurityMetricsManager();
 setInterval(() => metricsManager.updateDashboard(), metricsManager.updateInterval); 

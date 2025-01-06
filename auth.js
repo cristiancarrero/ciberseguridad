@@ -1,8 +1,79 @@
-// Simulación de base de datos de usuarios
-const users = JSON.parse(localStorage.getItem('users')) || [];
+// Clase para manejar la autenticación
+class AuthManager {
+    constructor() {
+        this.users = JSON.parse(localStorage.getItem('users') || '[]');
+    }
+
+    async register(userData) {
+        if (this.users.some(user => user.email === userData.email)) {
+            throw new Error('Este email ya está registrado');
+        }
+
+        const newUser = {
+            id: Date.now(),
+            ...userData,
+            createdAt: new Date().toISOString()
+        };
+
+        this.users.push(newUser);
+        localStorage.setItem('users', JSON.stringify(this.users));
+        
+        const token = Math.random().toString(36).substring(2);
+        localStorage.setItem('authToken', token);
+        
+        return newUser;
+    }
+}
+
+// Instanciar el manejador de autenticación
+const authManager = new AuthManager();
+
+// Event Listeners
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM cargado');
+
+    const registerForm = document.getElementById('register-form');
+    console.log('Formulario encontrado:', registerForm);
+
+    if (registerForm) {
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            console.log('Formulario enviado');
+
+            const userData = {
+                fullName: e.target.querySelector('input[type="text"]').value,
+                email: e.target.querySelector('input[type="email"]').value,
+                password: e.target.querySelectorAll('input[type="password"]')[0].value,
+                confirmPassword: e.target.querySelectorAll('input[type="password"]')[1].value
+            };
+
+            console.log('Datos del usuario:', userData);
+
+            try {
+                if (userData.password !== userData.confirmPassword) {
+                    alert('Las contraseñas no coinciden');
+                    return;
+                }
+
+                await authManager.register({
+                    fullName: userData.fullName,
+                    email: userData.email,
+                    password: userData.password
+                });
+
+                alert('¡Registro exitoso!');
+                window.location.href = 'dashboard.html';
+            } catch (error) {
+                console.error('Error en el registro:', error);
+                alert(error.message || 'Error al registrar usuario');
+            }
+        });
+    }
+});
 
 // Función para cambiar entre pestañas
 function switchTab(tab) {
+    console.log('Cambiando a pestaña:', tab);
     const loginForm = document.getElementById('login-form');
     const registerForm = document.getElementById('register-form');
     const loginTab = document.querySelector('.tab-btn:nth-child(1)');
@@ -27,7 +98,7 @@ document.getElementById('login-form').addEventListener('submit', (e) => {
     const email = e.target.querySelector('input[type="email"]').value;
     const password = e.target.querySelector('input[type="password"]').value;
 
-    const user = users.find(u => u.email === email && u.password === password);
+    const user = authManager.users.find(u => u.email === email && u.password === password);
     
     if (user) {
         localStorage.setItem('currentUser', JSON.stringify(user));
@@ -37,39 +108,34 @@ document.getElementById('login-form').addEventListener('submit', (e) => {
     }
 });
 
-// Manejar el registro
-document.getElementById('register-form').addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = e.target.querySelector('input[type="email"]').value;
-    const password = e.target.querySelector('input[type="password"]').value;
-    const confirmPassword = e.target.querySelectorAll('input[type="password"]')[1].value;
-    const fullName = e.target.querySelector('input[type="text"]').value;
-
-    if (password !== confirmPassword) {
-        alert('Las contraseñas no coinciden');
-        return;
-    }
-
-    if (users.some(u => u.email === email)) {
-        alert('Este email ya está registrado');
-        return;
-    }
-
-    const newUser = {
-        id: Date.now(),
-        email,
-        password,
-        fullName
-    };
-
-    users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users));
-    localStorage.setItem('currentUser', JSON.stringify(newUser));
-    window.location.href = 'dashboard.html';
-});
-
 // Manejar "Olvidé mi contraseña"
 document.querySelector('.forgot-password').addEventListener('click', (e) => {
     e.preventDefault();
     alert('Por favor, contacta al administrador para restablecer tu contraseña');
-}); 
+});
+
+// Función para mostrar notificaciones
+function showNotification(message, type = 'success') {
+    // Eliminar notificación anterior si existe
+    const existingNotification = document.querySelector('.notification');
+    if (existingNotification) {
+        existingNotification.remove();
+    }
+
+    // Crear nueva notificación
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+
+    // Añadir al DOM
+    document.body.appendChild(notification);
+
+    // Mostrar con animación
+    setTimeout(() => notification.classList.add('show'), 100);
+
+    // Ocultar después de 3 segundos
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+} 
