@@ -1,0 +1,153 @@
+/* Centro de Documentación */
+.docs-container {
+    background: rgba(26, 26, 26, 0.95);
+    border-radius: 20px;
+    padding: 3rem;
+    margin: 2rem auto;
+    max-width: 1400px;
+    display: flex;
+    gap: 3rem;
+}
+
+/* Navegación lateral */
+.docs-navigation {
+    width: 300px;
+    flex-shrink: 0;
+}
+
+.search-box {
+    position: relative;
+    margin-bottom: 2rem;
+}
+
+.search-box input {
+    width: 100%;
+    padding: 1rem 1rem 1rem 3rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: none;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 1rem;
+}
+
+.search-box i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #67d1d3;
+}
+
+/* Categorías */
+.docs-categories {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.doc-category {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.doc-category:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateX(5px);
+}
+
+.doc-category.active {
+    background: linear-gradient(
+        to right,
+        rgba(255, 154, 158, 0.1),
+        rgba(103, 209, 211, 0.1)
+    );
+    border-left: 3px solid #67d1d3;
+}
+
+.doc-category i {
+    color: #67d1d3;
+    font-size: 1.2rem;
+}
+
+.doc-category span {
+    color: #fff;
+    font-size: 1rem;
+}
+
+/* Contenido */
+.docs-content {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+    padding: 2rem;
+    min-height: 500px;
+}
+
+@media (max-width: 992px) {
+    .docs-container {
+        flex-direction: column;
+    }
+
+    .docs-navigation {
+        width: 100%;
+    }
+
+    .docs-categories {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+} 
+
+/* Contenido de las secciones */
+.doc-section {
+    display: none;
+}
+
+.doc-section.active {
+    display: block;
+}
+
+.doc-section h3 {
+    color: #67d1d3;
+    font-size: 1.8rem;
+    margin-bottom: 2rem;
+}
+
+.doc-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.doc-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.doc-item:hover {
+    background: rgba(255, 255, 255, 0.08);
+    transform: translateX(5px);
+}
+
+.doc-item i {
+    color: #67d1d3;
+    font-size: 1.2rem;
+}
+
+.doc-item span {
+    color: #fff;
+    font-size: 1rem;
+} 

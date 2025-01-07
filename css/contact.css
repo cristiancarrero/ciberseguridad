@@ -1,0 +1,58 @@
+.contact {
+    padding: 5rem 0;
+}
+
+.contact-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.team-grid {
+    display: flex;
+    justify-content: center;
+    padding: 2rem;
+}
+
+.member-avatar {
+    font-size: 4rem;
+    color: #4ecdc4;
+    margin-bottom: 1rem;
+}
+
+.member-info h3 {
+    color: #fff;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.member-info p {
+    color: #ddd;
+    margin-bottom: 1rem;
+}
+
+.slack-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1.5rem;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    transition: transform 0.3s ease;
+}
+
+.slack-link:hover {
+    transform: scale(1.05);
+}
+
+.slack-link i {
+    font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+    .team-member {
+        width: 90%;
+    }
+}

@@ -1,0 +1,204 @@
+/* Hero section */
+.hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    background-color: #1a1a1a;
+    padding: 0 20px;
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-content {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    margin-top: 40px;
+    position: relative;
+    z-index: 1;
+}
+
+/* Título y subtítulo */
+.hero h1 {
+    font-size: 3.5rem;
+    line-height: 1.2;
+    background: linear-gradient(
+        to right,
+        #ff9a9e 0%,
+        #ffffff 50%,
+        #67d1d3 100%
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1.5rem;
+}
+
+.subtitle {
+    font-size: 1.5rem;
+    color: #fff;
+    max-width: 800px;
+    margin: 0 auto;
+    line-height: 1.4;
+}
+
+/* Estadísticas */
+.stats-container {
+    display: flex;
+    justify-content: center;
+    gap: 4rem;
+    margin: 2rem 0;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    background: linear-gradient(
+        to right,
+        #ff9a9e,
+        #67d1d3
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1;
+}
+
+.stat-label {
+    font-size: 1.2rem;
+    color: #fff;
+    margin-top: 0.5rem;
+    opacity: 0.9;
+}
+
+/* Botones de acción */
+.cta-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.btn-primary {
+    padding: 1rem 2.5rem;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    text-decoration: none;
+    color: white;
+    background: linear-gradient(
+        to right,
+        #ff9a9e,
+        #67d1d3
+    );
+    transition: all 0.3s ease;
+    border: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    min-width: 200px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    opacity: 0.9;
+    box-shadow: 0 4px 15px rgba(255, 154, 158, 0.2);
+}
+
+@media (max-width: 768px) {
+    .hero {
+        justify-content: flex-start;
+        padding-top: 80px;
+    }
+
+    .hero-content {
+        margin-top: 0;
+        gap: 40px;
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+        padding: 0 1rem;
+    }
+
+    .subtitle {
+        font-size: 1.2rem;
+        padding: 0 1rem;
+    }
+
+    .stats-container {
+        flex-direction: column;
+        gap: 2rem;
+    }
+
+    .stat-number {
+        font-size: 2rem;
+    }
+
+    .stat-label {
+        font-size: 1rem;
+    }
+
+    .cta-buttons {
+        flex-direction: column;
+        padding: 0 2rem;
+        gap: 1rem;
+    }
+
+    .btn-primary {
+        width: 100%;
+    }
+}
+
+/* Animación del fondo del hero */
+.hero::before,
+.hero::after {
+    content: '';
+    position: absolute;
+    width: 500px;
+    height: 500px;
+    border-radius: 50%;
+    opacity: 0.1;
+    filter: blur(100px);
+    z-index: 0;
+    animation: glowMove 20s linear infinite;
+}
+
+.hero::before {
+    background: #ff9a9e;
+    top: -250px;
+    left: -250px;
+}
+
+.hero::after {
+    background: #67d1d3;
+    bottom: -250px;
+    right: -250px;
+    animation-delay: -10s;
+}
+
+@keyframes glowMove {
+    0% {
+        transform: translate(0, 0);
+    }
+    25% {
+        transform: translate(100px, 100px);
+    }
+    50% {
+        transform: translate(0, 150px);
+    }
+    75% {
+        transform: translate(-100px, 100px);
+    }
+    100% {
+        transform: translate(0, 0);
+    }
+} 

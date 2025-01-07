@@ -1,0 +1,113 @@
+/* Estilos para el Mapa de Amenazas */
+.map-container {
+    background: rgba(26, 26, 26, 0.95);
+    border-radius: 20px;
+    padding: 2rem;
+    margin: 2rem auto;
+    max-width: 1400px;
+}
+
+#worldMap {
+    height: 500px;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    margin-bottom: 2rem;
+}
+
+.map-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+}
+
+.map-stat {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 1.5rem;
+    text-align: center;
+}
+
+.map-stat h4 {
+    color: #4ecdc4;
+    margin-bottom: 1rem;
+}
+
+.map-stat .stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 0.5rem 0;
+    display: block;
+}
+
+.map-stat .stat-type {
+    color: #ddd;
+    font-size: 0.9rem;
+    opacity: 0.8;
+}
+
+/* Ajustes para el mapa de Leaflet */
+.leaflet-container {
+    background-color: #1a1a1a !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+.leaflet-tile-pane {
+    opacity: 0.6;
+    filter: grayscale(100%) invert(100%);
+}
+
+.leaflet-control-container {
+    position: absolute;
+    z-index: 1000;
+}
+
+.leaflet-control-zoom {
+    border: none !important;
+    margin: 15px !important;
+}
+
+.leaflet-control-zoom a {
+    background-color: rgba(26, 26, 26, 0.95) !important;
+    color: #fff !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    width: 30px !important;
+    height: 30px !important;
+    line-height: 30px !important;
+    font-size: 15px !important;
+}
+
+.leaflet-popup-content-wrapper {
+    background: rgba(26, 26, 26, 0.95) !important;
+    color: #fff !important;
+    border-radius: 10px !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.leaflet-popup-tip {
+    background: rgba(26, 26, 26, 0.95) !important;
+}
+
+.leaflet-popup-content {
+    margin: 15px !important;
+    text-align: center !important;
+}
+
+/* Animaciones para los marcadores */
+.attack-marker {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(2);
+        opacity: 0;
+    }
+} 

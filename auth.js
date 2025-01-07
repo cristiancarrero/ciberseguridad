@@ -10,8 +10,18 @@ class AuthManager {
                 password: '123456'
             }
         ];
-        this.setupLoginForm();
-        this.setupTabs();
+
+        // Solo configurar el formulario si estamos en la página de autenticación
+        if (window.location.pathname.endsWith('auth.html')) {
+            this.setupLoginForm();
+            this.setupTabs();
+        }
+
+        // Solo redirigir en páginas protegidas
+        if (window.location.pathname.endsWith('dashboard.html') && !this.isAuthenticated) {
+            window.location.href = 'auth.html';
+            return;
+        }
     }
 
     checkAuthStatus() {
@@ -43,7 +53,7 @@ class AuthManager {
                 name: user.name,
                 email: user.email
             }));
-            window.location.href = 'dashboard.html';
+            window.location.href = 'index.html';
         } else {
             this.showNotification('Email o contraseña incorrectos', 'error');
         }

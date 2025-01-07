@@ -8,12 +8,12 @@
 }
 
 .auth-container {
-    background: rgba(255, 255, 255, 0.05);
+    background-color: rgba(37, 37, 37, 0.9);
     padding: 2rem;
     border-radius: 10px;
     width: 100%;
     max-width: 400px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
     min-height: 450px;
     display: flex;
     flex-direction: column;
@@ -37,17 +37,17 @@
 .tab {
     flex: 1;
     padding: 1rem;
-    background: none;
+    background: transparent;
     border: none;
-    color: white;
+    color: var(--text-color);
     cursor: pointer;
     font-size: 1rem;
     transition: all 0.3s ease;
 }
 
 .tab.active {
-    color: #4ecdc4;
-    border-bottom: 2px solid #4ecdc4;
+    color: var(--primary-color);
+    border-bottom-color: var(--primary-color);
 }
 
 .auth-form {

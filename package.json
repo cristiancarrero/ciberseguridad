@@ -1,4 +1,10 @@
 {
+  "name": "aws-services",
+  "version": "1.0.0",
+  "description": "AWS Services Security Dashboard",
+  "scripts": {
+    "start": "python3 -m http.server 8000 --bind localhost --directory ."
+  },
   "dependencies": {
     "leaflet": "^1.9.4"
   }

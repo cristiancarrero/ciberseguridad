@@ -1,0 +1,326 @@
+/* Informes de Seguridad */
+.reports-container {
+    background: rgba(26, 26, 26, 0.95);
+    border-radius: 20px;
+    padding: 3rem;
+    margin: 2rem auto;
+    max-width: 1400px;
+}
+
+/* Filtros de informes */
+.report-filters {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 3rem;
+    align-items: center;
+    background: transparent;
+    padding: 2rem;
+    border-radius: 15px;
+}
+
+/* Selector de tipo de informe */
+.report-filters .select-wrapper {
+    position: relative;
+    width: 250px;
+    height: 42px;
+}
+
+.report-filters .select-wrapper select {
+    width: 100%;
+    padding: 12px 45px 12px 20px;
+    font-size: 1rem;
+    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+.report-filters .select-wrapper select:focus {
+    outline: none;
+}
+
+/* Estilos para las opciones */
+.report-filters .select-wrapper select option {
+    background-color: #2a2a2a !important;
+    color: white;
+    padding: 12px;
+}
+
+/* Forzar el fondo oscuro en todos los estados */
+.report-filters .select-wrapper select option:hover,
+.report-filters .select-wrapper select option:focus,
+.report-filters .select-wrapper select option:active,
+.report-filters .select-wrapper select option:checked {
+    background-color: #2a2a2a !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    appearance: none !important;
+}
+
+/* Estilos específicos para Firefox */
+@-moz-document url-prefix() {
+    .report-filters .select-wrapper select option {
+        background-color: #2a2a2a !important;
+    }
+    .report-filters .select-wrapper select option:hover,
+    .report-filters .select-wrapper select option:checked {
+        background-color: #2a2a2a !important;
+        box-shadow: none !important;
+    }
+}
+
+/* Estilos específicos para Chrome/Safari */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .report-filters .select-wrapper select option {
+        background-color: #2a2a2a !important;
+    }
+    .report-filters .select-wrapper select option:hover {
+        background-color: #2a2a2a !important;
+    }
+}
+
+/* Icono del select */
+.report-filters .select-wrapper::after {
+    content: '\f078';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    font-size: 0.8rem;
+    color: white;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    transition: transform 0.3s ease;
+}
+
+.report-filters .select-wrapper.open::after {
+    color: #67d1d3;
+    transform: translateY(-50%) rotate(180deg);
+}
+
+/* Selector de fechas */
+.date-range {
+    display: flex;
+    gap: 1rem;
+}
+
+.date-range input {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: #fff;
+    padding: 12px;
+    border-radius: 10px;
+    font-size: 1rem;
+    width: 200px;
+    height: 42px;
+    box-sizing: border-box;
+}
+
+.date-range input::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+.date-range input::placeholder {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+/* Estilos para el texto del placeholder */
+.preview-placeholder {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.preview-placeholder i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: block;
+}
+
+.preview-placeholder p {
+    font-size: 1.1rem;
+    line-height: 1.5;
+}
+
+/* Botón de generar informe */
+.generate-report {
+    background: linear-gradient(
+        to right,
+        #ff9a9e,
+        #67d1d3
+    );
+    color: white;
+    border: none;
+    padding: 12px 2rem;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    transition: all 0.3s ease, background 0.3s ease;
+    height: 42px;
+    box-sizing: border-box;
+}
+
+.generate-report:hover {
+    background: linear-gradient(
+        to right,
+        #67d1d3,
+        #ff9a9e
+    );
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 154, 158, 0.3);
+}
+
+.generate-report i {
+    font-size: 1.2rem;
+}
+
+/* Vista previa del informe */
+.report-preview {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 2rem;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+    font-size: 1.1rem;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    .report-filters {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .date-range {
+        flex-direction: column;
+    }
+
+    .generate-report {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* Añadir un contenedor relativo para el select */
+.report-filters .select-wrapper {
+    position: relative;
+    width: 200px;
+}
+
+/* Añadir esta regla para mayor especificidad */
+.security-reports .select-wrapper select option:hover {
+    background-color: #2a2a2a !important;
+    color: #67d1d3 !important;
+}
+
+/* Estilos para el select personalizado */
+.custom-select {
+    position: relative;
+    width: 100%;
+}
+
+.selected-option {
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    padding: 12px 45px 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 1rem;
+    height: 42px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.options-list {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin-top: 5px;
+    background: #2a2a2a;
+    border-radius: 10px;
+    overflow: hidden;
+    z-index: 10;
+    min-width: 100%;
+}
+
+.option {
+    padding: 12px 20px;
+    color: white;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.option.selected {
+    color: #67d1d3;
+}
+
+/* Footer */
+.footer {
+    background: rgba(26, 26, 26, 0.95);
+    padding: 2rem 0;
+    margin-top: 4rem;
+}
+
+.footer-content {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+}
+
+.footer-section {
+    text-align: center;
+}
+
+.footer-section h3 {
+    color: white;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+}
+
+.social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1.5rem;
+}
+
+.social-links a {
+    color: white;
+    font-size: 1.5rem;
+    transition: color 0.3s ease;
+}
+
+.social-links a:hover {
+    color: #67d1d3;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-bottom p {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
+} 

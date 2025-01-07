@@ -1,0 +1,159 @@
+/* Centro de Control de Seguridad */
+.dashboard-container {
+    background: rgba(26, 26, 26, 0.95);
+    border-radius: 20px;
+    padding: 3rem;
+    margin: 2rem auto;
+    max-width: 1400px;
+}
+
+.dashboard-container h3 {
+    font-size: 2rem;
+    color: #fff;
+    margin-bottom: 2rem;
+}
+
+/* Panel de Métricas */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.metric-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    min-height: 200px;
+}
+
+.metric-card h4 {
+    color: #67d1d3;
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+}
+
+.metric-value {
+    font-size: 3.5rem;
+    font-weight: bold;
+    background: linear-gradient(
+        to right,
+        #ff9a9e,
+        #67d1d3
+    );
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+}
+
+.metric-label {
+    color: #aaa;
+    font-size: 1.1rem;
+}
+
+/* Panel de Alertas */
+.alerts-panel {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-top: 2rem;
+}
+
+.alerts-panel h3 {
+    color: #67d1d3;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.alerts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+}
+
+.alert-card {
+    padding: 1.5rem;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.03);
+    border-left: 4px solid;
+}
+
+.alert-card.critical {
+    border-color: #ff4757;
+}
+
+.alert-card.warning {
+    border-color: #ffa502;
+}
+
+.alert-card.info {
+    border-color: #2ed573;
+}
+
+.alert-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.alert-icon {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.alert-card.critical .alert-icon {
+    background: #ff4757;
+}
+
+.alert-card.warning .alert-icon {
+    background: #ffa502;
+}
+
+.alert-card.info .alert-icon {
+    background: #2ed573;
+}
+
+.alert-title {
+    color: #fff;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+.alert-message {
+    color: #aaa;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .metric-card {
+        padding: 1.5rem;
+    }
+    
+    .metric-value {
+        font-size: 2.5rem;
+    }
+    
+    .alerts-grid {
+        grid-template-columns: 1fr;
+    }
+} 
+
+.metric-card canvas {
+    position: absolute;
+    bottom: -30px;
+    right: -30px;
+    width: 180px !important;
+    height: 180px !important;
+    opacity: 0.8;
+    transform: rotate(-15deg);
+} 
