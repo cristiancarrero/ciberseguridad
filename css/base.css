@@ -28,8 +28,8 @@ body {
     z-index: 1000;
     background: linear-gradient(
         to bottom,
-        rgba(26, 26, 26, 0.75),
-        rgba(26, 26, 26, 0.65)
+        rgba(15, 15, 15, 0.95),
+        rgba(12, 12, 12, 0.92)
     );
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);
@@ -40,9 +40,10 @@ body {
     font-weight: 600;
     color: #fff;
     text-decoration: none;
-    background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+    background: linear-gradient(45deg, #ff9a9e, #67d1d3);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    margin-left: -1.5rem;
 }
 
 .nav-brand {
@@ -68,7 +69,7 @@ body {
 }
 
 .nav-links a:hover {
-    color: #4ecdc4;
+    color: #67d1d3;
 }
 
 /* Icono del dashboard */
@@ -447,4 +448,81 @@ main {
 
 .dot.high { background: #ff4d4d; }
 .dot.medium { background: #ffd700; }
-.dot.low { background: #4ecdc4; } 
+.dot.low { background: #4ecdc4; }
+
+/* Soluciones de seguridad */
+.feature-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    margin-top: 3rem;
+}
+
+.feature-card {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.expanded-info {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    opacity: 0;
+}
+
+.expanded-info.active {
+    max-height: 500px;
+    opacity: 1;
+    margin-top: 1.5rem;
+    transition: all 0.5s ease-in;
+}
+
+.expanded-info ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.expanded-info li {
+    color: #aaa;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.expanded-info li:last-child {
+    border-bottom: none;
+}
+
+.more-info {
+    background: none;
+    border: none;
+    color: #67d1d3;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 1rem auto 0;
+    position: relative;
+    padding-right: 1.5rem;
+}
+
+.more-info::after {
+    content: '▼';
+    display: inline-block;
+    transition: transform 0.3s ease;
+    position: absolute;
+    right: 0;
+    transform-origin: center;
+}
+
+.more-info.active::after {
+    transform: rotate(180deg);
+}
+
+.more-info:hover {
+    color: #4ecdc4;
+} 

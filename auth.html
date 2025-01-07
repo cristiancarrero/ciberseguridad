@@ -3,35 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS Services</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <title>Login - AWS Security Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="auth.css">
 </head>
-<body class="auth-page">
-    <div class="auth-container">
-        <div class="auth-header">
-            <h1>AWS<br>Services</h1>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <img src="assets/aws-logo.png" alt="AWS Logo" class="aws-logo">
+            <h1>Login</h1>
+            <form id="loginForm">
+                <div class="form-group">
+                    <input type="email" placeholder="Email" required>
+                </div>
+                <div class="form-group">
+                    <input type="password" placeholder="Password" required>
+                </div>
+                <button type="submit" class="login-btn">Iniciar Sesión</button>
+            </form>
         </div>
-        <div class="auth-tabs">
-            <button class="tab active">Iniciar Sesión</button>
-            <button class="tab">Registrarse</button>
-        </div>
-        <form id="loginForm" class="auth-form">
-            <div class="input-group">
-                <input type="email" id="email" placeholder="Email" required>
-            </div>
-            <div class="input-group">
-                <input type="password" id="password" placeholder="Contraseña" required>
-            </div>
-            <div class="form-options">
-                <label>
-                    <input type="checkbox" id="remember"> Recordarme
-                </label>
-                <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
-            </div>
-            <button type="submit" class="submit-btn">Iniciar Sesión</button>
-        </form>
     </div>
     <script src="auth.js"></script>
 </body>

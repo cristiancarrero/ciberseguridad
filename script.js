@@ -790,6 +790,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initThreatsChart();
     initDocTabs();
     initThreatMap();
+    initSolutionsExpand();
 });
 
 // Modal handling
@@ -869,3 +870,125 @@ window.showRemediation = function(alert) {
         if (e.target === remediationModal) remediationModal.remove();
     };
 };
+
+function initSolutionsExpand() {
+    const moreInfoButtons = document.querySelectorAll('.more-info');
+    
+    moreInfoButtons.forEach(button => {
+        button.addEventListener('click', (e) => {
+            const targetId = button.getAttribute('data-target');
+            const targetInfo = document.getElementById(targetId);
+            
+            // Cerrar todos los demás
+            document.querySelectorAll('.expanded-info.active').forEach(info => {
+                if (info.id !== targetId) {
+                    info.classList.remove('active');
+                    const otherButton = document.querySelector(`[data-target="${info.id}"]`);
+                    otherButton.classList.remove('active');
+                }
+            });
+            
+            // Alternar el actual
+            targetInfo.classList.toggle('active');
+            button.classList.toggle('active');
+        });
+    });
+}
+
+// Función para validar el formulario de registro
+function validateRegistrationForm() {
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    // Validar que todos los campos estén llenos
+    if (!name || !email || !password || !confirmPassword) {
+        showError('Por favor, rellena todos los campos');
+        return false;
+    }
+    
+    // Validar formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        showError('Por favor, introduce un email válido');
+        return false;
+    }
+    
+    // Validar que las contraseñas coincidan
+    if (password !== confirmPassword) {
+        showError('Las contraseñas no coinciden');
+        return false;
+    }
+    
+    // Validar longitud y complejidad de la contraseña
+    if (password.length < 8) {
+        showError('La contraseña debe tener al menos 8 caracteres');
+        return false;
+    }
+    
+    return true;
+}
+
+// Función para manejar el registro
+function handleRegistration(event) {
+    event.preventDefault();
+    
+    if (!validateRegistrationForm()) {
+        return;
+    }
+    
+    const userData = {
+        name: document.getElementById('name').value,
+        email: document.getElementById('email').value,
+        password: document.getElementById('password').value
+    };
+    
+    // Simular registro exitoso
+    localStorage.setItem('user', JSON.stringify(userData));
+    
+    // Mostrar mensaje de éxito
+    showSuccess('Registro exitoso. Redirigiendo...');
+    
+    // Redirigir al dashboard después de 2 segundos
+    setTimeout(() => {
+        window.location.href = 'dashboard.html';
+    }, 2000);
+}
+
+// Función para mostrar mensajes de error
+function showError(message) {
+    const errorDiv = document.querySelector('.error-message');
+    if (errorDiv) {
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        
+        // Ocultar el mensaje después de 3 segundos
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+        }, 3000);
+    }
+}
+
+// Función para mostrar mensajes de éxito
+function showSuccess(message) {
+    const successDiv = document.createElement('div');
+    successDiv.className = 'success-message';
+    successDiv.textContent = message;
+    
+    const form = document.querySelector('form');
+    form.insertBefore(successDiv, form.firstChild);
+    
+    // Ocultar el mensaje después de 3 segundos
+    setTimeout(() => {
+        successDiv.remove();
+    }, 3000);
+}
+
+// Agregar el event listener al formulario de registro
+document.addEventListener('DOMContentLoaded', () => {
+    const registerForm = document.querySelector('form');
+    if (registerForm) {
+        registerForm.addEventListener('submit', handleRegistration);
+    }
+});

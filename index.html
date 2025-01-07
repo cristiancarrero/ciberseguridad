@@ -79,10 +79,11 @@
                 </div>
                 <h3>Pentesting AWS</h3>
                 <p>Evaluación de vulnerabilidades y pruebas de penetración</p>
-                <button class="learn-more" onclick="toggleInfo('pentesting-info')" aria-expanded="false">
-                    Más información <i class="fas fa-chevron-down"></i>
+                <button class="more-info" data-target="pentesting-info">
+                    <span>Más información</span>
+                    <i class="fas fa-chevron-down"></i>
                 </button>
-                <div id="pentesting-info" class="service-info">
+                <div class="expanded-info" id="pentesting-info">
                     <ul>
                         <li>Análisis de configuraciones</li>
                         <li>Pruebas de penetración</li>
@@ -98,10 +99,8 @@
                 </div>
                 <h3>Análisis Forense</h3>
                 <p>Investigación y respuesta a incidentes</p>
-                <button class="learn-more" onclick="toggleInfo('forensic-info')" aria-expanded="false">
-                    Más información <i class="fas fa-chevron-down"></i>
-                </button>
-                <div id="forensic-info" class="service-info">
+                <button class="more-info" data-target="forensic-info">Más información ˅</button>
+                <div class="expanded-info" id="forensic-info">
                     <ul>
                         <li>Investigación de incidentes</li>
                         <li>Análisis de malware</li>
@@ -117,10 +116,8 @@
                 </div>
                 <h3>Monitoreo SOC</h3>
                 <p>Centro de Operaciones de Seguridad 24/7</p>
-                <button class="learn-more" onclick="toggleInfo('soc-info')" aria-expanded="false">
-                    Más información <i class="fas fa-chevron-down"></i>
-                </button>
-                <div id="soc-info" class="service-info">
+                <button class="more-info" data-target="soc-info">Más información ˅</button>
+                <div class="expanded-info" id="soc-info">
                     <ul>
                         <li>Monitoreo continuo</li>
                         <li>Detección de amenazas</li>
