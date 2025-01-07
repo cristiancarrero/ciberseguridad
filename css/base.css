@@ -369,4 +369,82 @@ main {
 .modal-login-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(103, 209, 211, 0.3);
-} 
+}
+
+/* Security Control Section */
+.security-control {
+    padding: 4rem 2rem;
+}
+
+.security-metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.metric-card {
+    background: rgba(26, 26, 26, 0.95);
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-5px);
+}
+
+.metric-value {
+    font-size: 3rem;
+    font-weight: bold;
+    background: linear-gradient(45deg, #ff9a9e, #67d1d3);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 1rem 0;
+}
+
+.threat-map-container {
+    position: relative;
+    height: 500px;
+    background: rgba(26, 26, 26, 0.95);
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+#threatMap {
+    width: 100%;
+    height: 100%;
+}
+
+.threat-overlay {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 1rem;
+    border-radius: 10px;
+}
+
+.threat-legend {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: white;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+}
+
+.dot.high { background: #ff4d4d; }
+.dot.medium { background: #ffd700; }
+.dot.low { background: #4ecdc4; } 

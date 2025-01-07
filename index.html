@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="css/theme.css">
     <link rel="stylesheet" href="css/base.css">
     <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/security-control.css">
     <link rel="stylesheet" href="css/home.css">
     <link rel="stylesheet" href="css/pricing.css">
     <link rel="stylesheet" href="css/security-dashboard.css">
@@ -131,7 +132,7 @@
         </div>
     </section>
 
-    <section class="benefits" id="beneficios" data-aos="fade-up">
+    <section class="protection" id="protection" data-aos="fade-up">
         <h2 class="section-title">Protección Integral</h2>
         <div class="benefits-container">
             <div class="benefit-card">
@@ -158,67 +159,87 @@
                 <p>Protección de infraestructura y datos en la nube de AWS</p>
             </div>
         </div>
+    </section>
 
-        <div class="security-stats">
-            <h2 class="section-title">Estadísticas de Seguridad</h2>
-            <div class="stats-container">
-                <div class="stat-item">
-                    <div class="stat-number">100+</div>
-                    <div class="stat-label">Amenazas Detectadas</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">99.9%</div>
-                    <div class="stat-label">Tiempo de Actividad</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">24/7</div>
-                    <div class="stat-label">Monitoreo Activo</div>
-                </div>
+    <section class="statistics" id="statistics" data-aos="fade-up">
+        <h2 class="section-title">Estadísticas de Seguridad</h2>
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">Amenazas Detectadas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">99.9%</div>
+                <div class="stat-label">Tiempo de Actividad</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Monitoreo Activo</div>
             </div>
         </div>
     </section>
 
-    <section class="security-dashboard" id="dashboard" data-aos="fade-up">
+    <section class="security-control" id="security-control" data-aos="fade-up">
         <h2 class="section-title">Centro de Control de Seguridad</h2>
-        <div class="dashboard-container">
-            <h3>Métricas de Seguridad</h3>
-            <div class="metrics-grid">
-                <div class="metric-card">
-                    <h4>Amenazas Detectadas</h4>
-                    <div class="metric-value">147</div>
-                    <div class="metric-label">Amenazas Bloqueadas Hoy</div>
+        <h3 class="subsection-title">Métricas de Seguridad</h3>
+        
+        <div class="security-metrics">
+            <div class="metric-card">
+                <h3 class="metric-title">Amenazas Detectadas</h3>
+                <div class="metric-value">147</div>
+                <div class="metric-label">Amenazas Bloqueadas Hoy</div>
+            </div>
+            <div class="metric-card">
+                <h3 class="metric-title">Tráfico de Red</h3>
+                <div class="metric-value">12.5 GB</div>
+                <div class="metric-label">Tráfico Analizado</div>
+            </div>
+        </div>
+
+        <h3 class="subsection-title">Mapa de Amenazas en Tiempo Real</h3>
+        <div class="threat-map-container">
+            <div id="threatMap"></div>
+        </div>
+        <div class="threat-legend-container">
+            <div class="threat-legend">
+                <div class="legend-item">
+                    <span class="dot high"></span>
+                    <span>Amenaza Alta</span>
                 </div>
-                <div class="metric-card">
-                    <h4>Tráfico de Red</h4>
-                    <div class="metric-value">12.5 GB</div>
-                    <div class="metric-label">Tráfico Analizado</div>
+                <div class="legend-item">
+                    <span class="dot medium"></span>
+                    <span>Amenaza Media</span>
+                </div>
+                <div class="legend-item">
+                    <span class="dot low"></span>
+                    <span>Amenaza Baja</span>
                 </div>
             </div>
+        </div>
 
-            <div class="alerts-panel">
-                <h3>Alertas Recientes</h3>
-                <div class="alerts-grid">
-                    <div class="alert-card critical">
-                        <div class="alert-header">
-                            <span class="alert-icon"></span>
-                            <span class="alert-title">Intento de Fuerza Bruta</span>
-                        </div>
-                        <div class="alert-message">Múltiples intentos de acceso detectados</div>
+        <div class="alerts-section">
+            <h3 class="subsection-title">Alertas Recientes</h3>
+            <div class="alerts-container">
+                <div class="alert-card red">
+                    <div class="alert-header">
+                        <span class="alert-dot"></span>
+                        <h4>Intento de Fuerza Bruta</h4>
                     </div>
-                    <div class="alert-card warning">
-                        <div class="alert-header">
-                            <span class="alert-icon"></span>
-                            <span class="alert-title">Tráfico Inusual</span>
-                        </div>
-                        <div class="alert-message">Incremento del 150% en el tráfico</div>
+                    <p>Múltiples intentos de acceso detectados</p>
+                </div>
+                <div class="alert-card yellow">
+                    <div class="alert-header">
+                        <span class="alert-dot"></span>
+                        <h4>Tráfico Inusual</h4>
                     </div>
-                    <div class="alert-card info">
-                        <div class="alert-header">
-                            <span class="alert-icon"></span>
-                            <span class="alert-title">Actualización Completada</span>
-                        </div>
-                        <div class="alert-message">Parches de seguridad aplicados</div>
+                    <p>Incremento del 150% en el tráfico</p>
+                </div>
+                <div class="alert-card green">
+                    <div class="alert-header">
+                        <span class="alert-dot"></span>
+                        <h4>Actualización Completada</h4>
                     </div>
+                    <p>Parches de seguridad aplicados</p>
                 </div>
             </div>
         </div>
@@ -375,15 +396,16 @@
                     <input type="date" id="startDate" placeholder="Fecha inicio">
                     <input type="date" id="endDate" placeholder="Fecha fin">
                 </div>
-                <button class="generate-report">
+                <button class="generate-report" onclick="generateSecurityReport()">
                     <i class="fas fa-file-pdf"></i>
                     Generar Informe
                 </button>
             </div>
             <div class="report-preview">
-                <div class="preview-placeholder">
-                    <i class="fas fa-file-alt"></i>
-                    <p>Seleccione un rango de fechas y tipo de informe para generar la vista previa</p>
+                <div class="reports-list">
+                    <div class="report-items">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
                 </div>
             </div>
         </div>
@@ -452,5 +474,8 @@
     </script>
     <script src="select.js"></script>
     <script src="script.js"></script>
+    <!-- Añadir jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 </body>
 </html> 

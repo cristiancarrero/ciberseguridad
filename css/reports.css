@@ -2,7 +2,7 @@
 .reports-container {
     background: rgba(26, 26, 26, 0.95);
     border-radius: 20px;
-    padding: 3rem;
+    padding: 2rem;
     margin: 2rem auto;
     max-width: 1400px;
 }
@@ -11,10 +11,10 @@
 .report-filters {
     display: flex;
     gap: 2rem;
-    margin-bottom: 3rem;
+    margin-bottom: 1rem;
     align-items: center;
     background: transparent;
-    padding: 2rem;
+    padding: 0.5rem;
     border-radius: 15px;
 }
 
@@ -184,15 +184,15 @@
 
 /* Vista previa del informe */
 .report-preview {
-    background: rgba(255, 255, 255, 0.05);
     border-radius: 15px;
-    padding: 2rem;
-    min-height: 400px;
+    padding: 0.5rem;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    background: rgba(26, 26, 26, 0.95);
     color: #aaa;
     font-size: 1.1rem;
+    overflow-x: auto;
+    min-height: 200px;
+    margin-top: 0.5rem;
 }
 
 /* Responsive */
@@ -323,4 +323,161 @@
 .footer-bottom p {
     color: rgba(255, 255, 255, 0.5);
     font-size: 0.9rem;
+}
+
+.reports-list {
+    border-radius: 15px;
+    padding: 0;
+    width: 100%;
+}
+
+.reports-list h3 {
+    color: #fff;
+    margin-bottom: 1.5rem;
+    font-size: 1.2rem;
+}
+
+.report-items {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0;
+    min-height: 100px;
+    max-width: 100%;
+    margin: 0;
+}
+
+.report-item {
+    display: flex;
+    width: 100%;
+    max-width: 1200px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+}
+
+.report-item:hover {
+    border-color: rgba(103, 209, 211, 0.3);
+    transform: translateY(-1px);
+}
+
+.report-item-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.report-item-info i {
+    color: #ff9a9e;
+    font-size: 1.2rem;
+}
+
+.report-details {
+    flex: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.report-details h4 {
+    color: #fff;
+    margin: 0;
+    font-size: 1rem;
+}
+
+.report-date {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-right: 1rem;
+}
+
+.report-date i {
+    opacity: 0.7;
+}
+
+.report-actions {
+    display: flex;
+    gap: 0.8rem;
+    padding-left: 1rem;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.view-report,
+.download-report {
+    background: none;
+    border: 1px solid rgba(103, 209, 211, 0.3);
+    color: #67d1d3;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.view-report:hover,
+.download-report:hover {
+    background: rgba(103, 209, 211, 0.1);
+    transform: translateY(-1px);
+}
+
+/* Mensaje cuando no hay informes */
+.report-items:empty::after {
+    content: 'Los informes aparecerán aquí cuando se generen alertas';
+    color: rgba(255, 255, 255, 0.5);
+    text-align: center;
+    width: 100%;
+    font-style: italic;
+}
+
+.report-item.selected {
+    background: rgba(103, 209, 211, 0.1);
+    border-color: #67d1d3;
+}
+
+.report-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: transparent;
+    transition: all 0.3s ease;
+}
+
+.report-item.selected::before {
+    background: #67d1d3;
+}
+
+.bulk-download-btn {
+    background: linear-gradient(to right, #ff9a9e, #67d1d3);
+    color: white;
+    border: none;
+    padding: 12px 2rem;
+    border-radius: 10px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    margin-left: auto;
+}
+
+.bulk-download-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(255, 154, 158, 0.3);
 } 
