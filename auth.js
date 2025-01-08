@@ -42,4 +42,39 @@ class AuthManager {
 // Inicializar el auth manager
 document.addEventListener('DOMContentLoaded', () => {
     window.authManager = new AuthManager();
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+    const tabBtns = document.querySelectorAll('.tab-btn');
+    const tabContents = document.querySelectorAll('.tab-content');
+
+    tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            // Remove active class from all buttons and contents
+            tabBtns.forEach(b => b.classList.remove('active'));
+            tabContents.forEach(c => c.classList.remove('active'));
+
+            // Add active class to clicked button and corresponding content
+            btn.classList.add('active');
+            const tabId = btn.dataset.tab;
+            document.querySelector(`#${tabId}Form`).classList.add('active');
+        });
+    });
+});
+
+document.querySelectorAll('.toggle-password').forEach(button => {
+    button.addEventListener('click', function() {
+        const input = this.parentElement.querySelector('input');
+        const passwordField = this.parentElement;
+        
+        if (input.type === 'password') {
+            input.type = 'text';
+            this.classList.add('active');
+            passwordField.classList.add('showing');
+        } else {
+            input.type = 'password';
+            this.classList.remove('active');
+            passwordField.classList.remove('showing');
+        }
+    });
 }); 

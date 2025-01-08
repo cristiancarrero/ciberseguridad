@@ -20,153 +20,15 @@ body {
     color: #fff;
 }
 
-/* Navbar */
-.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    padding: 1rem 2rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    z-index: 1000;
-    background: linear-gradient(
-        to bottom,
-        rgba(20, 20, 20, 0.82),
-        rgba(18, 18, 18, 0.80)
-    );
-    backdrop-filter: blur(10px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-/* Logo */
-.logo {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #fff;
-    text-decoration: none;
-    background: linear-gradient(45deg, #ff9a9e, #67d1d3);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-left: -1.5rem;
-}
-
-.nav-brand {
-    display: flex;
-    align-items: center;
-}
-
-/* Eliminar los estilos que estábamos usando antes */
-.logo h1,
-.logo .aws,
-.logo .services {
-    all: unset;
-}
-
-/* Ajustar el texto del logo */
-.logo h1 {
-    display: inline;
-    font-size: 1.5rem;
-    font-weight: 600;
-}
-
-.nav-links {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-}
-
-.nav-links a {
-    color: rgba(255, 255, 255, 0.9);
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    transition: color 0.3s ease;
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.nav-links a:hover {
-    color: #67d1d3;
-}
-
-/* User Menu */
-.user-menu {
-    position: relative;
-}
-
-.user-info {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    cursor: pointer;
-    padding: 0.5rem;
-    border-radius: 8px;
-    transition: background-color 0.3s ease;
-}
-
-.user-info:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.user-info i {
-    font-size: 1.2rem;
-    color: var(--primary);
-}
-
-.user-dropdown {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background: var(--dark);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
-    padding: 0.5rem;
-    min-width: 200px;
-    display: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.user-menu:hover .user-dropdown {
-    display: block;
-}
-
-.user-dropdown a,
-.user-dropdown button {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.8rem 1rem;
-    width: 100%;
-    color: rgba(255, 255, 255, 0.7);
-    text-decoration: none;
-    background: none;
-    border: none;
-    cursor: pointer;
-    font-size: 0.9rem;
-    transition: all 0.3s ease;
-}
-
-.user-dropdown a:hover,
-.user-dropdown button:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: var(--primary);
-}
-
-/* Ajustar el contenedor principal para el nuevo navbar */
+/* Ajustar el contenedor principal */
 .dashboard-container {
-    padding-top: 60px;
+    padding-top: 60px;  /* Este valor corresponde al navbar (1rem * 2 + contenido) */
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
 }
 
-/* Ajustar la altura del sidebar */
-.sidebar {
-    height: calc(100vh - 60px);
-    top: 60px;
-}
-
-/* Sidebar */
+/* Ajustar la altura y posición del sidebar */
 .sidebar {
     width: var(--sidebar-width);
     background: rgba(26, 26, 26, 0.95);
@@ -174,9 +36,28 @@ body {
     padding: 2rem;
     height: calc(100vh - 60px);
     position: fixed;
+    top: 60px;
+    left: 0;
     overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
+/* Estilizar la barra de desplazamiento para Chrome/Safari */
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 3px;
+}
+
+/* Estilos del menú lateral */
 .menu-section {
     margin-bottom: 2rem;
 }
@@ -219,11 +100,13 @@ body {
     border-left: 4px solid var(--primary);
 }
 
-/* Main Content */
+/* Ajustar el contenido principal */
 .main-content {
-    flex: 1;
     margin-left: var(--sidebar-width);
     padding: 2rem;
+    width: calc(100% - var(--sidebar-width));
+    height: calc(100vh - 60px);
+    overflow-y: auto;
 }
 
 .section-header {
@@ -870,4 +753,282 @@ input:checked + .slider:before {
 .search-result-item .result-description {
     font-size: 0.9rem;
     color: rgba(255, 255, 255, 0.7);
+} 
+
+/* Ajustar el contenedor de acciones */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* Estilos para el enlace de Pentesting */
+.pentest-link {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    background: rgba(78, 205, 196, 0.1);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.pentest-link:hover {
+    background: rgba(78, 205, 196, 0.2);
+    color: var(--primary);
+}
+
+.pentest-link i {
+    font-size: 1.1rem;
+    color: var(--primary);
+} 
+
+/* User Menu */
+.user-menu {
+    position: relative;
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: background-color 0.3s ease;
+}
+
+/* Completar los estilos del User Menu */
+.user-info:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.user-info i {
+    font-size: 1.2rem;
+    color: var(--primary);
+}
+
+.user-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--dark);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 0.5rem;
+    min-width: 200px;
+    display: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-top: 0.5rem;
+}
+
+/* Área invisible para evitar que el menú desaparezca */
+.user-menu::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: 20px;
+}
+
+.user-menu:hover .user-dropdown {
+    display: block;
+}
+
+.user-dropdown a,
+.user-dropdown button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem 1rem;
+    width: 100%;
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    text-align: left;
+}
+
+.user-dropdown a:hover,
+.user-dropdown button:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--primary);
+} 
+
+/* Alertas en Tiempo Real */
+.alerts-container {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.alert-filters {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.severity-filter {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.severity-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    border: 1px solid transparent;
+}
+
+.severity-badge.critical {
+    background: rgba(255, 107, 107, 0.1);
+    color: #ff6b6b;
+    border-color: rgba(255, 107, 107, 0.3);
+}
+
+.severity-badge.high {
+    background: rgba(255, 217, 61, 0.1);
+    color: #ffd93d;
+    border-color: rgba(255, 217, 61, 0.3);
+}
+
+.severity-badge.medium {
+    background: rgba(79, 157, 166, 0.1);
+    color: #4f9da6;
+    border-color: rgba(79, 157, 166, 0.3);
+}
+
+.severity-badge.low {
+    background: rgba(107, 203, 119, 0.1);
+    color: #6bcb77;
+    border-color: rgba(107, 203, 119, 0.3);
+}
+
+.severity-badge.active {
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+}
+
+.alert-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    padding: 1.5rem;
+    border-left: 4px solid;
+    animation: slideIn 0.3s ease-out;
+}
+
+.alert-card.critical { border-color: #ff6b6b; }
+.alert-card.high { border-color: #ffd93d; }
+.alert-card.medium { border-color: #4f9da6; }
+.alert-card.low { border-color: #6bcb77; }
+
+.alert-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1rem;
+}
+
+.alert-title {
+    font-size: 1.1rem;
+    color: #fff;
+    margin-bottom: 0.5rem;
+}
+
+.alert-timestamp {
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
+}
+
+.alert-content {
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 1rem;
+}
+
+.alert-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.alert-source {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: rgba(255, 255, 255, 0.5);
+    font-size: 0.9rem;
+}
+
+.alert-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.alert-action-btn {
+    background: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.alert-action-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Estilos para el contador de alertas */
+.alerts-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.alert-counter {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+}
+
+.counter-value {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.counter-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
 } 

@@ -32,6 +32,9 @@
 
         <!-- Usuario -->
         <div class="nav-actions">
+            <a href="pentesting.html" class="pentest-link">
+                Pentesting Lab
+            </a>
             <div class="user-menu">
                 <span class="user-info">
                     <i class="fas fa-user-circle"></i>
@@ -42,7 +45,7 @@
                         <i class="fas fa-cog"></i>
                         Ajustes
                     </a>
-                    <button class="logout-btn">
+                    <button class="logout-btn" type="button">
                         <i class="fas fa-sign-out-alt"></i>
                         Cerrar Sesión
                     </button>
@@ -202,11 +205,50 @@
                     </table>
                 </div>
             </div>
+
+            <div class="alerts-container">
+                <div class="alerts-summary">
+                    <div class="alert-counter">
+                        <div class="counter-value critical">5</div>
+                        <div class="counter-label">Alertas Críticas</div>
+                    </div>
+                    <div class="alert-counter">
+                        <div class="counter-value high">12</div>
+                        <div class="counter-label">Alertas Altas</div>
+                    </div>
+                    <div class="alert-counter">
+                        <div class="counter-value medium">24</div>
+                        <div class="counter-label">Alertas Medias</div>
+                    </div>
+                    <div class="alert-counter">
+                        <div class="counter-value low">38</div>
+                        <div class="counter-label">Alertas Bajas</div>
+                    </div>
+                </div>
+
+                <div class="alert-filters">
+                    <div class="filter-group">
+                        <span>Severidad:</span>
+                        <div class="severity-filter">
+                            <span class="severity-badge critical active">Crítica</span>
+                            <span class="severity-badge high active">Alta</span>
+                            <span class="severity-badge medium">Media</span>
+                            <span class="severity-badge low">Baja</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alerts-list">
+                    <!-- Las alertas se generarán dinámicamente aquí -->
+                </div>
+            </div>
         </main>
     </div>
 
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/sessionCheck.js"></script>
+    <script src="js/auth.js"></script>
     <script src="dashboard.js"></script>
 </body>
 </html> 

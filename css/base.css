@@ -28,8 +28,8 @@ body {
     z-index: 1000;
     background: linear-gradient(
         to bottom,
-        rgba(15, 15, 15, 0.95),
-        rgba(12, 12, 12, 0.92)
+        rgba(20, 20, 20, 0.82),
+        rgba(18, 18, 18, 0.80)
     );
     backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.15);

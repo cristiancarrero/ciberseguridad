@@ -1,7 +1,7 @@
 class DashboardManager {
     constructor() {
         // Verificar autenticación al inicio
-        if (!this.checkAuth()) {
+        if (!localStorage.getItem('isLoggedIn')) {
             window.location.replace('auth.html');
             return;
         }
@@ -59,16 +59,66 @@ class DashboardManager {
             activeLink.parentElement.classList.add('active');
         }
 
-        // Cargar el contenido correspondiente
+        // Limpiar el contenido principal
         const mainContent = document.querySelector('.main-content');
+        
         switch(section) {
+            case 'alerts':
+                mainContent.innerHTML = `
+                    <header class="section-header">
+                        <h1>Alertas en Tiempo Real</h1>
+                        <div class="time-filter">
+                            <select>
+                                <option>Últimas 24 horas</option>
+                                <option>Última semana</option>
+                                <option>Último mes</option>
+                            </select>
+                        </div>
+                    </header>
+                    <div class="alerts-container">
+                        <div class="alerts-summary">
+                            <div class="alert-counter">
+                                <div class="counter-value critical">5</div>
+                                <div class="counter-label">Alertas Críticas</div>
+                            </div>
+                            <div class="alert-counter">
+                                <div class="counter-value high">12</div>
+                                <div class="counter-label">Alertas Altas</div>
+                            </div>
+                            <div class="alert-counter">
+                                <div class="counter-value medium">24</div>
+                                <div class="counter-label">Alertas Medias</div>
+                            </div>
+                            <div class="alert-counter">
+                                <div class="counter-value low">38</div>
+                                <div class="counter-label">Alertas Bajas</div>
+                            </div>
+                        </div>
+
+                        <div class="alert-filters">
+                            <div class="filter-group">
+                                <span>Severidad:</span>
+                                <div class="severity-filter">
+                                    <span class="severity-badge critical active">Crítica</span>
+                                    <span class="severity-badge high active">Alta</span>
+                                    <span class="severity-badge medium">Media</span>
+                                    <span class="severity-badge low">Baja</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="alerts-list">
+                            <!-- Las alertas se generarán dinámicamente aquí -->
+                        </div>
+                    </div>`;
+                
+                // Inicializar el gestor de alertas para esta sección
+                new AlertsManager();
+                break;
             case 'overview':
                 mainContent.innerHTML = this.getOverviewContent();
                 this.initializeCharts();
                 this.loadMockData();
-                break;
-            case 'alerts':
-                mainContent.innerHTML = this.getAlertsContent();
                 break;
             case 'logs':
                 mainContent.innerHTML = this.getLogsContent();
@@ -927,6 +977,118 @@ class DashboardManager {
         });
     }
 }
+
+class AlertsManager {
+    constructor() {
+        this.alertsList = document.querySelector('.alerts-list');
+        this.severityFilters = document.querySelectorAll('.severity-badge');
+        this.activeFilters = new Set(['critical', 'high', 'medium', 'low']);
+        
+        this.initializeFilters();
+        this.startRealTimeUpdates();
+        
+        // Generar algunas alertas iniciales
+        for (let i = 0; i < 5; i++) {
+            this.addNewAlert();
+        }
+    }
+
+    initializeFilters() {
+        this.severityFilters.forEach(filter => {
+            filter.addEventListener('click', () => {
+                filter.classList.toggle('active');
+                const severity = filter.classList[1];
+                
+                if (this.activeFilters.has(severity)) {
+                    this.activeFilters.delete(severity);
+                } else {
+                    this.activeFilters.add(severity);
+                }
+                
+                this.updateAlerts();
+            });
+        });
+    }
+
+    createAlertCard(alert) {
+        const card = document.createElement('div');
+        card.className = `alert-card ${alert.severity}`;
+        
+        card.innerHTML = `
+            <div class="alert-header">
+                <div>
+                    <h3 class="alert-title">${alert.title}</h3>
+                    <span class="alert-timestamp">${alert.timestamp}</span>
+                </div>
+            </div>
+            <div class="alert-content">
+                ${alert.description}
+            </div>
+            <div class="alert-footer">
+                <div class="alert-source">
+                    <i class="fas fa-server"></i>
+                    ${alert.source}
+                </div>
+                <div class="alert-actions">
+                    <button class="alert-action-btn">Investigar</button>
+                    <button class="alert-action-btn">Resolver</button>
+                </div>
+            </div>
+        `;
+        
+        return card;
+    }
+
+    startRealTimeUpdates() {
+        // Simular alertas en tiempo real
+        setInterval(() => {
+            if (Math.random() > 0.7) { // 30% de probabilidad de nueva alerta
+                this.addNewAlert();
+            }
+        }, 5000); // Cada 5 segundos
+    }
+
+    addNewAlert() {
+        const severities = ['critical', 'high', 'medium', 'low'];
+        const severity = severities[Math.floor(Math.random() * severities.length)];
+        
+        const alert = {
+            severity,
+            title: `Nueva alerta de seguridad - ${severity.toUpperCase()}`,
+            timestamp: new Date().toLocaleTimeString(),
+            description: 'Se ha detectado una actividad sospechosa en el sistema.',
+            source: 'AWS CloudWatch'
+        };
+
+        if (this.activeFilters.has(severity)) {
+            const alertCard = this.createAlertCard(alert);
+            this.alertsList.insertBefore(alertCard, this.alertsList.firstChild);
+            
+            // Limitar el número de alertas mostradas
+            if (this.alertsList.children.length > 50) {
+                this.alertsList.removeChild(this.alertsList.lastChild);
+            }
+        }
+
+        this.updateCounters();
+    }
+
+    updateCounters() {
+        // Actualizar los contadores de alertas
+        document.querySelectorAll('.alert-counter').forEach(counter => {
+            const value = counter.querySelector('.counter-value');
+            const currentValue = parseInt(value.textContent);
+            if (Math.random() > 0.5) {
+                value.textContent = currentValue + 1;
+            }
+        });
+    }
+}
+
+// Inicializar el gestor de alertas cuando el DOM esté listo
+document.addEventListener('DOMContentLoaded', () => {
+    const alertsManager = new AlertsManager();
+});
 
 // Inicializar el dashboard cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', () => {
