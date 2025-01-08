@@ -146,6 +146,7 @@ class DashboardManager {
                 break;
             case 'integrations':
                 mainContent.innerHTML = this.getIntegrationsContent();
+                this.initializeAWSIntegrations();
                 break;
         }
     }
@@ -767,43 +768,133 @@ class DashboardManager {
             <header class="section-header">
                 <h1>Integraciones AWS</h1>
             </header>
-            <div class="integrations-container">
-                <div class="service-grid">
+
+            <div class="aws-connect-section">
+                <button class="btn-action aws-connect-btn" id="aws-main-connect">
+                    <i class="fas fa-plug"></i>
+                    Conectar con AWS
+                </button>
+                <p class="connect-description">Conecta tu cuenta de AWS para comenzar a monitorear tus servicios</p>
+            </div>
+
+            <div class="aws-services">
+                <h2>Servicios Disponibles</h2>
+                <div class="services-grid">
                     <div class="service-card">
                         <div class="service-header">
-                            <img src="assets/ec2-icon.png" alt="EC2">
+                            <div class="service-icon">
+                                <i class="fas fa-server"></i>
+                            </div>
                             <h3>Amazon EC2</h3>
+                            <p>Monitoreo de instancias y seguridad</p>
                         </div>
-                        <p>Monitoreo de instancias y seguridad</p>
-                        <div class="service-status connected">
-                            <span>Conectado</span>
-                            <button class="btn-action">Configurar</button>
+                        <div class="service-footer">
+                            <div class="status">
+                                <span class="status-dot"></span>
+                                <span class="status-text">No conectado</span>
+                            </div>
                         </div>
                     </div>
+
                     <div class="service-card">
                         <div class="service-header">
-                            <img src="assets/s3-icon.png" alt="S3">
+                            <div class="service-icon">
+                                <i class="fas fa-database"></i>
+                            </div>
                             <h3>Amazon S3</h3>
+                            <p>Seguridad y acceso a buckets</p>
                         </div>
-                        <p>Seguridad y acceso a buckets</p>
-                        <div class="service-status">
-                            <span>No conectado</span>
-                            <button class="btn-primary">Conectar</button>
+                        <div class="service-footer">
+                            <div class="status">
+                                <span class="status-dot"></span>
+                                <span class="status-text">No conectado</span>
+                            </div>
                         </div>
                     </div>
-                    <!-- Más servicios AWS -->
                 </div>
-                <div class="integration-logs">
-                    <h3>Registro de Actividad</h3>
-                    <div class="log-entries">
-                        <div class="log-entry">
-                            <span class="timestamp">10:45:23</span>
-                            <span class="message">Conexión exitosa con EC2</span>
-                        </div>
-                        <!-- Más logs -->
+            </div>
+
+            <!-- Modal para credenciales AWS -->
+            <div id="aws-credentials-modal" class="aws-modal">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Conectar con AWS</h2>
+                        <span class="close-modal">&times;</span>
+                    </div>
+                    <div class="modal-body">
+                        <form id="aws-credentials-form">
+                            <label>Access Key ID</label>
+                            <input type="text" id="aws-access-key" required>
+                            
+                            <label>Secret Access Key</label>
+                            <input type="password" id="aws-secret-key" required>
+                            
+                            <label>Región</label>
+                            <select id="aws-region" required>
+                                <option value="us-east-1">US East (N. Virginia)</option>
+                                <option value="us-west-2">US West (Oregon)</option>
+                                <option value="eu-west-1">EU (Ireland)</option>
+                                <option value="eu-central-1">EU (Frankfurt)</option>
+                            </select>
+                            <button type="submit" class="btn-action">Conectar Servicio</button>
+                        </form>
                     </div>
                 </div>
             </div>`;
+    }
+
+    initializeAWSIntegrations() {
+        const mainConnectBtn = document.getElementById('aws-main-connect');
+        const modal = document.getElementById('aws-credentials-modal');
+        const closeModal = modal?.querySelector('.close-modal');
+        const credentialsForm = document.getElementById('aws-credentials-form');
+
+        if (mainConnectBtn) {
+            mainConnectBtn.addEventListener('click', () => {
+                modal.style.display = 'block';
+            });
+        }
+
+        if (closeModal) {
+            closeModal.addEventListener('click', () => {
+                modal.style.display = 'none';
+            });
+        }
+
+        // Cerrar modal al hacer clic fuera
+        window.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+
+        if (credentialsForm) {
+            credentialsForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const credentials = {
+                    accessKeyId: document.getElementById('aws-access-key').value,
+                    secretAccessKey: document.getElementById('aws-secret-key').value,
+                    region: document.getElementById('aws-region').value
+                };
+                
+                // Aquí iría la lógica de conexión con AWS
+                console.log('Conectando con AWS...', credentials);
+                modal.style.display = 'none';
+
+                // Actualizar el estado de los servicios
+                const ec2Card = document.querySelector('.service-card:first-child .service-footer');
+                if (ec2Card) {
+                    const statusDiv = ec2Card.querySelector('.status');
+                    statusDiv.classList.add('connected');
+                    statusDiv.querySelector('.status-text').textContent = 'Conectado';
+                    
+                    // Añadir botón de configurar
+                    ec2Card.innerHTML += `
+                        <button class="btn-configure">Configurar</button>
+                    `;
+                }
+            });
+        }
     }
 
     initializeNotifications() {
