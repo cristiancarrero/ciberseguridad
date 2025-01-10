@@ -1,0 +1,208 @@
+/* Estilos base para gráficos */
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 200px;
+}
+
+/* Gráfico de barras */
+.bar-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--spacing-sm);
+  height: 200px;
+  padding: var(--spacing-md) 0;
+}
+
+.bar {
+  flex: 1;
+  background-color: var(--primary-color);
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  transition: height var(--transition-speed) var(--transition-timing);
+  position: relative;
+  cursor: pointer;
+}
+
+.bar:hover {
+  opacity: 0.9;
+}
+
+.bar-label {
+  position: absolute;
+  bottom: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.bar-value {
+  position: absolute;
+  top: -25px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Gráfico circular */
+.donut-chart {
+  position: relative;
+  width: 150px;
+  height: 150px;
+}
+
+.donut-chart svg {
+  transform: rotate(-90deg);
+}
+
+.donut-chart circle {
+  fill: none;
+  stroke-width: 10;
+}
+
+.donut-background {
+  stroke: var(--border-color);
+}
+
+.donut-value {
+  stroke: var(--primary-color);
+  transition: stroke-dasharray var(--transition-speed) var(--transition-timing);
+}
+
+.donut-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.donut-percentage {
+  font-size: var(--font-size-xl);
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.donut-text {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+}
+
+/* Gráfico de línea */
+.line-chart {
+  position: relative;
+  height: 200px;
+  padding: var(--spacing-md) 0;
+}
+
+.line-path {
+  fill: none;
+  stroke: var(--primary-color);
+  stroke-width: 2;
+  transition: all var(--transition-speed) var(--transition-timing);
+}
+
+.area-path {
+  fill: var(--primary-color);
+  opacity: 0.1;
+}
+
+.chart-point {
+  fill: var(--widget-bg);
+  stroke: var(--primary-color);
+  stroke-width: 2;
+  transition: all var(--transition-speed) var(--transition-timing);
+  cursor: pointer;
+}
+
+.chart-point:hover {
+  r: 6;
+}
+
+/* Tooltip */
+.chart-tooltip {
+  position: absolute;
+  background-color: var(--widget-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-sm) var(--spacing-md);
+  box-shadow: var(--dropdown-shadow);
+  pointer-events: none;
+  z-index: 1000;
+  transition: opacity var(--transition-speed) var(--transition-timing);
+}
+
+.tooltip-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+  margin-bottom: var(--spacing-xs);
+}
+
+.tooltip-value {
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+/* Leyenda */
+.chart-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-md);
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  cursor: pointer;
+}
+
+.legend-color {
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+}
+
+.legend-label {
+  font-size: var(--font-size-sm);
+  color: var(--text-muted);
+}
+
+/* Estados de los gráficos */
+.chart-loading {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.chart-error {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--widget-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--spacing-md);
+}
+
+.error-message {
+  color: var(--danger-color);
+  font-size: var(--font-size-sm);
+} 

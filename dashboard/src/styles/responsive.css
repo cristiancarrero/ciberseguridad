@@ -1,0 +1,519 @@
+@import './variables.css';
+
+/* Large Screens (1400px and up) */
+@media (min-width: 1400px) {
+  .dashboard-layout {
+    padding: var(--spacing-2xl);
+    padding-top: calc(var(--spacing-2xl) + 60px);
+  }
+
+  .widget {
+    padding: var(--spacing-xl);
+  }
+}
+
+/* Desktop (1200px to 1399px) */
+@media (max-width: 1399px) {
+  .grid-4 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .dashboard-layout {
+    padding: var(--spacing-xl);
+    padding-top: calc(var(--spacing-xl) + 60px);
+  }
+}
+
+/* Small Desktop/Tablet Landscape (992px to 1199px) */
+@media (max-width: 1199px) {
+  .grid-3, .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-main {
+    grid-template-areas:
+      "health costs"
+      "traffic traffic"
+      "logs vulnerabilities";
+  }
+
+  .widget {
+    padding: var(--spacing-lg);
+  }
+
+  .nav-links {
+    gap: var(--spacing-md);
+  }
+}
+
+/* Tablet Portrait (768px to 991px) */
+@media (max-width: 991px) {
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .grid-main {
+    grid-template-areas:
+      "health"
+      "costs"
+      "traffic"
+      "logs"
+      "vulnerabilities";
+  }
+
+  .dashboard-layout {
+    padding: var(--spacing-lg);
+    padding-top: calc(var(--spacing-lg) + 60px);
+  }
+
+  .navbar {
+    padding: var(--spacing-md);
+  }
+
+  .nav-links {
+    display: none;
+  }
+
+  .nav-links.active {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--surface);
+    padding: var(--spacing-md);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .mobile-menu-btn {
+    display: block;
+  }
+}
+
+/* Mobile Landscape (576px to 767px) */
+@media (max-width: 767px) {
+  .grid-2, .grid-3, .grid-4 {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-layout {
+    padding: var(--spacing-md);
+    padding-top: calc(var(--spacing-md) + 60px);
+  }
+
+  .widget {
+    padding: var(--spacing-md);
+  }
+
+  .costs-summary,
+  .vulnerability-summary {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-sm);
+  }
+
+  .health-metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .chart-container {
+    min-height: 150px;
+  }
+
+  .bar-chart,
+  .line-chart {
+    height: 150px;
+  }
+
+  .donut-chart {
+    width: 150px;
+    height: 150px;
+  }
+
+  .chart-legend {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+}
+
+/* Mobile Portrait (575px and down) */
+@media (max-width: 575px) {
+  .widget-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm);
+  }
+
+  .widget-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .health-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .log-entry {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .log-details {
+    flex-direction: column;
+    gap: var(--spacing-xs);
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .search-box input {
+    width: 100%;
+  }
+
+  .user-dropdown {
+    width: calc(100vw - var(--spacing-md) * 2);
+    right: calc(var(--spacing-md) * -1);
+  }
+}
+
+/* Height-based Media Queries */
+@media (max-height: 700px) {
+  .dashboard-layout {
+    padding-top: calc(var(--spacing-md) + 60px);
+  }
+
+  .widget {
+    padding: var(--spacing-md);
+  }
+
+  .chart-container {
+    min-height: 120px;
+  }
+
+  .bar-chart,
+  .line-chart {
+    height: 120px;
+  }
+
+  .donut-chart {
+    width: 120px;
+    height: 120px;
+  }
+}
+
+/* Print Media Query */
+@media print {
+  .navbar,
+  .widget-actions,
+  .chart-tooltip {
+    display: none !important;
+  }
+
+  .dashboard-layout {
+    padding: 0;
+  }
+
+  .widget {
+    break-inside: avoid;
+    page-break-inside: avoid;
+    border: 1px solid #ddd;
+  }
+
+  body {
+    background: white;
+    color: black;
+  }
+
+  * {
+    color: black !important;
+    text-shadow: none !important;
+    box-shadow: none !important;
+  }
+}
+
+/* Dark Mode Media Query */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Override any light mode specific variables if needed */
+  }
+}
+
+/* High Contrast Mode */
+@media (prefers-contrast: high) {
+  :root {
+    --primary: #0066cc;
+    --secondary: #6600cc;
+    --text: #000000;
+    --text-secondary: #333333;
+    --border: #000000;
+  }
+
+  .widget {
+    border: 2px solid var(--border);
+  }
+
+  .chart-grid .grid-line {
+    opacity: 1;
+  }
+}
+
+/* Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* Breakpoints */
+/* xs: 0-575px */
+/* sm: 576px-767px */
+/* md: 768px-991px */
+/* lg: 992px-1199px */
+/* xl: 1200px+ */
+
+/* Estilos para pantallas extra pequeñas (móviles) */
+@media (max-width: 575px) {
+  /* Layout */
+  .dashboard-container {
+    padding: var(--spacing-sm);
+  }
+
+  /* Navbar */
+  .navbar {
+    padding: 0 var(--spacing-sm);
+  }
+
+  .nav-brand .logo span {
+    display: none;
+  }
+
+  .search-box {
+    display: none;
+  }
+
+  .user-btn span {
+    display: none;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: static;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .nav-menu {
+    display: flex;
+    overflow-x: auto;
+    padding: var(--spacing-sm) 0;
+  }
+
+  .nav-item {
+    margin: 0;
+  }
+
+  .nav-link {
+    padding: var(--spacing-sm);
+    white-space: nowrap;
+  }
+
+  .nav-link span {
+    display: none;
+  }
+
+  /* Contenido principal */
+  .main-content {
+    margin-left: 0;
+    padding: var(--spacing-sm);
+  }
+
+  .content-header {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .time-range {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  /* Widgets */
+  .widget {
+    padding: var(--spacing-md);
+  }
+
+  .network-traffic,
+  .system-health,
+  .alerts-widget {
+    grid-column: span 1;
+  }
+
+  .health-metrics {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Estilos para pantallas pequeñas (tablets) */
+@media (min-width: 576px) and (max-width: 767px) {
+  /* Layout */
+  .dashboard-container {
+    padding: var(--spacing-md);
+  }
+
+  /* Navbar */
+  .navbar {
+    padding: 0 var(--spacing-md);
+  }
+
+  .search-box {
+    width: 200px;
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: static;
+    margin-bottom: var(--spacing-md);
+  }
+
+  .nav-menu {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--spacing-sm) 0;
+  }
+
+  /* Contenido principal */
+  .main-content {
+    margin-left: 0;
+    padding: var(--spacing-md);
+  }
+
+  /* Widgets */
+  .network-traffic,
+  .system-health {
+    grid-column: span 2;
+  }
+
+  .alerts-widget {
+    grid-column: span 1;
+  }
+}
+
+/* Estilos para pantallas medianas (tablets grandes) */
+@media (min-width: 768px) and (max-width: 991px) {
+  /* Layout */
+  .dashboard-container {
+    padding: var(--spacing-lg);
+  }
+
+  /* Sidebar */
+  .sidebar {
+    width: var(--sidebar-width);
+  }
+
+  /* Contenido principal */
+  .main-content {
+    margin-left: var(--sidebar-width);
+    padding: var(--spacing-lg);
+  }
+
+  /* Widgets */
+  .network-traffic,
+  .system-health {
+    grid-column: span 2;
+  }
+
+  .alerts-widget {
+    grid-column: span 2;
+  }
+}
+
+/* Estilos para pantallas grandes (desktops) */
+@media (min-width: 992px) and (max-width: 1199px) {
+  /* Layout */
+  .dashboard-container {
+    padding: var(--spacing-lg);
+  }
+
+  /* Contenido principal */
+  .main-content {
+    padding: var(--spacing-lg);
+  }
+
+  /* Widgets */
+  .network-traffic {
+    grid-column: span 2;
+  }
+
+  .system-health {
+    grid-column: span 2;
+  }
+
+  .alerts-widget {
+    grid-column: span 2;
+  }
+}
+
+/* Estilos para pantallas extra grandes */
+@media (min-width: 1200px) {
+  /* Layout */
+  .dashboard-container {
+    padding: var(--spacing-xl);
+  }
+
+  /* Contenido principal */
+  .main-content {
+    padding: var(--spacing-xl);
+  }
+
+  /* Widgets */
+  .network-traffic {
+    grid-column: span 2;
+  }
+
+  .system-health {
+    grid-column: span 2;
+  }
+
+  .alerts-widget {
+    grid-column: span 3;
+  }
+}
+
+/* Utilidades responsivas */
+.d-none { display: none !important; }
+.d-block { display: block !important; }
+.d-flex { display: flex !important; }
+.d-grid { display: grid !important; }
+
+@media (min-width: 576px) {
+  .d-sm-none { display: none !important; }
+  .d-sm-block { display: block !important; }
+  .d-sm-flex { display: flex !important; }
+  .d-sm-grid { display: grid !important; }
+}
+
+@media (min-width: 768px) {
+  .d-md-none { display: none !important; }
+  .d-md-block { display: block !important; }
+  .d-md-flex { display: flex !important; }
+  .d-md-grid { display: grid !important; }
+}
+
+@media (min-width: 992px) {
+  .d-lg-none { display: none !important; }
+  .d-lg-block { display: block !important; }
+  .d-lg-flex { display: flex !important; }
+  .d-lg-grid { display: grid !important; }
+}
+
+@media (min-width: 1200px) {
+  .d-xl-none { display: none !important; }
+  .d-xl-block { display: block !important; }
+  .d-xl-flex { display: flex !important; }
+  .d-xl-grid { display: grid !important; }
+} 

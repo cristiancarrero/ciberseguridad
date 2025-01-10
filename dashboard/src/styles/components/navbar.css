@@ -1,0 +1,142 @@
+/* Navbar */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  background: linear-gradient(
+    to bottom,
+    rgba(20, 20, 20, 0.82),
+    rgba(18, 18, 18, 0.80)
+  );
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.logo {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #fff;
+  text-decoration: none;
+  background: linear-gradient(45deg, #ff9a9e, #67d1d3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-left: -1.5rem;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 4rem;
+}
+
+.nav-links a {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  transition: color 0.3s ease;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-links a:hover {
+  color: #67d1d3;
+}
+
+.nav-links a i,
+.nav-links a svg {
+  font-size: 1.1rem;
+  transition: transform 0.3s ease;
+}
+
+.nav-links a:hover i,
+.nav-links a:hover svg {
+  transform: translateY(-1px);
+}
+
+/* Login button */
+.login-btn {
+  background: linear-gradient(
+    to right,
+    #ff9a9e,
+    #67d1d3
+  );
+  padding: 0.8rem 1.5rem;
+  border-radius: 50px;
+  color: white !important;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.login-btn:hover {
+  background: linear-gradient(
+    to right,
+    #67d1d3,
+    #ff9a9e
+  );
+  transform: scale(1.05);
+}
+
+.login-btn i,
+.login-btn svg {
+  font-size: 0.9rem;
+  color: white;
+}
+
+/* Dashboard link */
+.dashboard-link {
+  background: linear-gradient(
+    to right,
+    rgba(103, 209, 211, 0.1),
+    rgba(255, 154, 158, 0.1)
+  );
+  padding: 0.8rem 1.5rem !important;
+  border-radius: 50px;
+  border: 1px solid rgba(103, 209, 211, 0.3);
+  transition: all 0.3s ease;
+}
+
+.dashboard-link:hover {
+  background: linear-gradient(
+    to right,
+    rgba(103, 209, 211, 0.2),
+    rgba(255, 154, 158, 0.2)
+  );
+  transform: translateY(-1px);
+  border-color: rgba(103, 209, 211, 0.5);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 0 var(--spacing-md);
+  }
+
+  .nav-links {
+    gap: 1rem;
+  }
+
+  .nav-links a span {
+    display: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .nav-links {
+    gap: 0.5rem;
+  }
+} 

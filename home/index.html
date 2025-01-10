@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS Services</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+          crossorigin=""/>
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="css/theme.css">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/security-control.css">
+    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/pricing.css">
+    <link rel="stylesheet" href="css/security-dashboard.css">
+    <link rel="stylesheet" href="css/vulnerability.css">
+    <link rel="stylesheet" href="css/documentation.css">
+    <link rel="stylesheet" href="css/reports.css">
+    <link rel="stylesheet" href="css/contact.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-brand">
+            <a href="index.html" class="logo">AWS Services</a>
+        </div>
+        <div class="nav-links">
+            <a href="#features">Características</a>
+            <a href="../pricing/index.html">Precios</a>
+            <a href="#" class="dashboard-link" onclick="handleDashboardClick(event)">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </a>
+            <a href="#contacto">Contacto</a>
+            <a href="http://localhost:8000/auth/index.html" class="login-btn">
+                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+            </a>
+        </div>
+    </nav>
+
+    <div class="hero" id="inicio">
+        <div class="hero-content" data-aos="fade-up">
+            <h1>Ciberseguridad Avanzada en AWS</h1>
+            <p class="subtitle">Fortalecimiento y protección integral de infraestructuras cloud</p>
+            <div class="stats-container">
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">Monitoreo SOC</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">99.9%</div>
+                    <div class="stat-label">Disponibilidad</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">100+</div>
+                    <div class="stat-label">Amenazas Detectadas</div>
+                </div>
+            </div>
+            <div class="cta-buttons">
+                <a href="#servicios" class="btn-primary">Explorar Soluciones</a>
+                <a href="../pricing/index.html" class="btn-primary">Ver Planes de Seguridad</a>
+            </div>
+        </div>
+    </div>
+
+    <section class="features" id="servicios" data-aos="fade-up">
+        <h2 class="section-title">Soluciones de Seguridad</h2>
+        <div class="feature-container">
+            <div class="feature-card">
+                <div class="icon">
+                    <i class="fas fa-bug"></i>
+                </div>
+                <h3>Pentesting AWS</h3>
+                <p>Evaluación de vulnerabilidades y pruebas de penetración</p>
+                <button class="more-info" data-target="pentesting-info">
+                    <span>Más información</span>
+                    <i class="fas fa-chevron-down"></i>
+                </button>
+                <div class="expanded-info" id="pentesting-info">
+                    <ul>
+                        <li>Análisis de configuraciones</li>
+                        <li>Pruebas de penetración</li>
+                        <li>Evaluación de seguridad</li>
+                        <li>Reporte detallado</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">
+                    <i class="fas fa-search"></i>
+                </div>
+                <h3>Análisis Forense</h3>
+                <p>Investigación y respuesta a incidentes</p>
+                <button class="more-info" data-target="forensic-info">Más información ˅</button>
+                <div class="expanded-info" id="forensic-info">
+                    <ul>
+                        <li>Investigación de incidentes</li>
+                        <li>Análisis de malware</li>
+                        <li>Recuperación de datos</li>
+                        <li>Documentación legal</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="feature-card">
+                <div class="icon">
+                    <i class="fas fa-eye"></i>
+                </div>
+                <h3>Monitoreo SOC</h3>
+                <p>Centro de Operaciones de Seguridad 24/7</p>
+                <button class="more-info" data-target="soc-info">Más información ˅</button>
+                <div class="expanded-info" id="soc-info">
+                    <ul>
+                        <li>Monitoreo continuo</li>
+                        <li>Detección de amenazas</li>
+                        <li>Respuesta a incidentes</li>
+                        <li>Reportes en tiempo real</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="protection" id="protection" data-aos="fade-up">
+        <h2 class="section-title">Protección Integral</h2>
+        <div class="benefits-container">
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-shield-virus"></i>
+                </div>
+                <h3>Prevención Proactiva</h3>
+                <p>Detección temprana de vulnerabilidades y amenazas antes de que sean explotadas</p>
+            </div>
+
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3>Cumplimiento Normativo</h3>
+                <p>Alineación con estándares de seguridad (ISO 27001, GDPR, HIPAA)</p>
+            </div>
+
+            <div class="benefit-card">
+                <div class="benefit-icon">
+                    <i class="fas fa-network-wired"></i>
+                </div>
+                <h3>Seguridad en Red</h3>
+                <p>Protección de infraestructura y datos en la nube de AWS</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="statistics" id="statistics" data-aos="fade-up">
+        <h2 class="section-title">Estadísticas de Seguridad</h2>
+        <div class="stats-container">
+            <div class="stat-item">
+                <div class="stat-number">100+</div>
+                <div class="stat-label">Amenazas Detectadas</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">99.9%</div>
+                <div class="stat-label">Tiempo de Actividad</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Monitoreo Activo</div>
+            </div>
+        </div>
+    </section>
+
+    <section class="security-control" id="security-control" data-aos="fade-up">
+        <h2 class="section-title">Centro de Control de Seguridad</h2>
+        <h3 class="subsection-title">Métricas de Seguridad</h3>
+        
+        <div class="security-metrics">
+            <div class="metric-card">
+                <h3 class="metric-title">Amenazas Detectadas</h3>
+                <div class="metric-value">147</div>
+                <div class="metric-label">Amenazas Bloqueadas Hoy</div>
+            </div>
+            <div class="metric-card">
+                <h3 class="metric-title">Tráfico de Red</h3>
+                <div class="metric-value">12.5 GB</div>
+                <div class="metric-label">Tráfico Analizado</div>
+            </div>
+        </div>
+
+        <h3 class="subsection-title">Mapa de Amenazas en Tiempo Real</h3>
+        <div class="threat-map-container">
+            <div id="threatMap"></div>
+        </div>
+        <div class="threat-legend-container">
+            <div class="threat-legend">
+                <div class="legend-item">
+                    <span class="dot high"></span>
+                    <span>Amenaza Alta</span>
+                </div>
+                <div class="legend-item">
+                    <span class="dot medium"></span>
+                    <span>Amenaza Media</span>
+                </div>
+                <div class="legend-item">
+                    <span class="dot low"></span>
+                    <span>Amenaza Baja</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="alerts-section">
+            <h3 class="subsection-title">Alertas Recientes</h3>
+            <div class="alerts-container">
+                <div class="alert-card red">
+                    <div class="alert-header">
+                        <span class="alert-dot"></span>
+                        <h4>Intento de Fuerza Bruta</h4>
+                    </div>
+                    <p>Múltiples intentos de acceso detectados</p>
+                </div>
+                <div class="alert-card yellow">
+                    <div class="alert-header">
+                        <span class="alert-dot"></span>
+                        <h4>Tráfico Inusual</h4>
+                    </div>
+                    <p>Incremento del 150% en el tráfico</p>
+                </div>
+                <div class="alert-card green">
+                    <div class="alert-header">
+                        <span class="alert-dot"></span>
+                        <h4>Actualización Completada</h4>
+                    </div>
+                    <p>Parches de seguridad aplicados</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="vulnerability-panel" id="vulnerabilities" data-aos="fade-up">
+        <h2 class="section-title">Panel de Vulnerabilidades</h2>
+        <div class="vulnerability-container">
+            <div class="vulnerability-summary">
+                <div class="vuln-stats">
+                    <div class="vuln-stat critical">
+                        <span class="stat-number">3</span>
+                        <span class="stat-label">Críticas</span>
+                    </div>
+                    <div class="vuln-stat high">
+                        <span class="stat-number">7</span>
+                        <span class="stat-label">Altas</span>
+                    </div>
+                    <div class="vuln-stat medium">
+                        <span class="stat-number">12</span>
+                        <span class="stat-label">Medias</span>
+                    </div>
+                    <div class="vuln-stat low">
+                        <span class="stat-number">15</span>
+                        <span class="stat-label">Bajas</span>
+                    </div>
+                </div>
+                <div class="vuln-chart">
+                    <canvas id="threatsPieChart"></canvas>
+                </div>
+            </div>
+            <div class="vulnerability-list" id="vulnList">
+                <!-- Se llenará dinámicamente -->
+            </div>
+        </div>
+    </section>
+
+    <section class="documentation-center" id="docs" data-aos="fade-up">
+        <h2 class="section-title">Centro de Documentación</h2>
+        <div class="docs-container">
+            <div class="docs-navigation">
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar en la documentación...">
+                    <i class="fas fa-search"></i>
+                </div>
+                <div class="docs-categories">
+                    <div class="doc-category active" data-section="guias-basicas">
+                        <i class="fas fa-book"></i>
+                        <span>Guías Básicas</span>
+                    </div>
+                    <div class="doc-category" data-section="mejores-practicas">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Mejores Prácticas</span>
+                    </div>
+                    <div class="doc-category" data-section="tutoriales">
+                        <i class="fas fa-code"></i>
+                        <span>Tutoriales</span>
+                    </div>
+                    <div class="doc-category" data-section="faq">
+                        <i class="fas fa-question-circle"></i>
+                        <span>FAQ</span>
+                    </div>
+                </div>
+            </div>
+            <div class="docs-content">
+                <div class="doc-section active" id="guias-basicas">
+                    <h3>Guías Básicas</h3>
+                    <div class="doc-list">
+                        <div class="doc-item">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Introducción a la Seguridad en AWS</span>
+                        </div>
+                        <div class="doc-item">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Configuración Inicial de Seguridad</span>
+                        </div>
+                        <div class="doc-item">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Primeros Pasos con IAM</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="doc-section" id="mejores-practicas">
+                    <h3>Mejores Prácticas</h3>
+                    <div class="doc-list">
+                        <div class="doc-item">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Hardening de Instancias EC2</span>
+                        </div>
+                        <div class="doc-item">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Seguridad en S3</span>
+                        </div>
+                        <div class="doc-item">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Gestión de Secretos</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="doc-section" id="tutoriales">
+                    <h3>Tutoriales</h3>
+                    <div class="doc-list">
+                        <div class="doc-item">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Configuración de WAF</span>
+                        </div>
+                        <div class="doc-item">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Monitorización con CloudWatch</span>
+                        </div>
+                        <div class="doc-item">
+                            <i class="fas fa-file-alt"></i>
+                            <span>Implementación de GuardDuty</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="doc-section" id="faq">
+                    <h3>FAQ</h3>
+                    <div class="doc-list">
+                        <div class="doc-item">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Preguntas Frecuentes sobre Seguridad</span>
+                        </div>
+                        <div class="doc-item">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Resolución de Problemas Comunes</span>
+                        </div>
+                        <div class="doc-item">
+                            <i class="fas fa-question-circle"></i>
+                            <span>Contacto y Soporte</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="security-reports" id="reports" data-aos="fade-up">
+        <h2 class="section-title">Informes de Seguridad</h2>
+        <div class="reports-container">
+            <div class="report-filters">
+                <div class="select-wrapper">
+                    <select id="reportType" class="reports-dropdown">
+                        <option value="diario">Informe Diario</option>
+                        <option value="semanal">Informe Semanal</option>
+                        <option value="mensual">Informe Mensual</option>
+                        <option value="personalizado">Personalizado</option>
+                    </select>
+                </div>
+                <div class="date-range">
+                    <input type="date" id="startDate" placeholder="Fecha inicio">
+                    <input type="date" id="endDate" placeholder="Fecha fin">
+                </div>
+                <button class="generate-report" onclick="generateSecurityReport()">
+                    <i class="fas fa-file-pdf"></i>
+                    Generar Informe
+                </button>
+            </div>
+            <div class="report-preview">
+                <div class="reports-list">
+                    <div class="report-items">
+                        <!-- Se llenará dinámicamente -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact" id="contacto" data-aos="fade-up">
+        <h2 class="section-title">Contacto</h2>
+        <div class="contact-card">
+            <div class="contact-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <h3>Cristian Carrero Rodríguez</h3>
+            <p>Especialista en Seguridad AWS</p>
+            <a href="#" class="contact-button">
+                <i class="fab fa-slack"></i> Contactar en Slack
+            </a>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Síguenos</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 MiWeb. Todos los derechos reservados.</p>
+        </div>
+    </footer>
+
+    <!-- Modal de autenticación requerida -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Autenticación Requerida</h2>
+                <span class="close-modal">&times;</span>
+            </div>
+            <div class="modal-body">
+                <i class="fas fa-lock modal-icon"></i>
+                <p>Necesitas iniciar sesión para acceder al Dashboard</p>
+                <a href="http://localhost:8000/auth/index.html" class="modal-login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Ir a Iniciar Sesión
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true
+        });
+    </script>
+    <script src="js/select.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/theme.js"></script>
+    <!-- Añadir jsPDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <script>
+        function handleDashboardClick(event) {
+            event.preventDefault();
+            const modal = document.getElementById('authModal');
+            modal.style.display = 'block';
+
+            // Cerrar modal al hacer clic en la X
+            const closeBtn = document.querySelector('.close-modal');
+            closeBtn.onclick = function() {
+                modal.style.display = 'none';
+            }
+
+            // Cerrar modal al hacer clic fuera de él
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        }
+    </script>
+</body>
+</html> 

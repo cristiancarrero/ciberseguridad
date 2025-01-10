@@ -1,0 +1,24 @@
+/* Importar archivos de estilos */
+@import './variables.css';
+@import './base.css';
+@import './layout.css';
+@import './components/navbar.css';
+@import './components/widgets.css';
+@import './components/charts.css';
+@import './responsive.css';
+
+/* Estilos específicos del dashboard que no encajan en otros archivos */
+.dashboard-wrapper {
+  min-height: 100vh;
+  background-color: var(--bg-color);
+}
+
+/* Ajustes específicos para el panel de control */
+.content-section:not(.active) {
+  display: none;
+}
+
+/* Ajustes de espaciado específicos del dashboard */
+.dashboard-overview {
+  padding: var(--spacing-lg);
+} 
