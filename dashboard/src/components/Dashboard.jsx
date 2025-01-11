@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaShieldAlt, FaServer, FaUsers, FaNetworkWired, FaDownload, FaHome, FaChartBar, FaLock, FaAws, FaBell, FaCloud, FaMicrosoft, FaGoogle, FaCloudversify } from 'react-icons/fa';
+import { FaShieldAlt, FaServer, FaUsers, FaNetworkWired, FaDownload, FaHome, FaChartBar, FaLock, FaAws, FaBell, FaCloud, FaMicrosoft, FaGoogle, FaCloudversify, FaDocker, FaCog, FaBolt } from 'react-icons/fa';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 // Importar estilos
@@ -26,16 +26,24 @@ const Dashboard = () => {
     const savedState = localStorage.getItem('expandedMenus');
     return savedState ? JSON.parse(savedState) : { integrations: false };
   });
-  const [isAwsConnected, setIsAwsConnected] = useState(false);
+  const [isAwsConnected, setIsAwsConnected] = useState(() => {
+    return localStorage.getItem('awsConnected') === 'true';
+  });
 
   // Añadir estado para los servicios
-  const [awsServices, setAwsServices] = useState({
-    ec2: false,
-    iam: false,
-    vpc: false,
-    s3: false,
-    cloudwatch: false,
-    guardduty: false
+  const [awsServices, setAwsServices] = useState(() => {
+    const savedServices = localStorage.getItem('awsServices');
+    return savedServices ? JSON.parse(savedServices) : {
+      ec2: false,
+      iam: false,
+      vpc: false,
+      s3: false,
+      cloudwatch: false,
+      guardduty: false,
+      ecs: false,
+      config: false,
+      eventbridge: false
+    };
   });
 
   const handleSectionChange = (section, e) => {
@@ -60,34 +68,39 @@ const Dashboard = () => {
     
     if (success) {
       try {
-        // Verificar qué servicios están disponibles
         const availableServices = await checkAwsServices();
         setAwsServices(availableServices);
         localStorage.setItem('awsServices', JSON.stringify(availableServices));
       } catch (error) {
         console.error('Error checking AWS services:', error);
-        // Si hay un error verificando los servicios, los marcamos todos como no disponibles
-        setAwsServices({
+        const defaultServices = {
           ec2: false,
           iam: false,
           vpc: false,
           s3: false,
           cloudwatch: false,
-          guardduty: false
-        });
-        localStorage.removeItem('awsServices');
+          guardduty: false,
+          ecs: false,
+          config: false,
+          eventbridge: false
+        };
+        setAwsServices(defaultServices);
+        localStorage.setItem('awsServices', JSON.stringify(defaultServices));
       }
     } else {
-      // Si nos desconectamos, todos los servicios se marcan como no disponibles
-      setAwsServices({
+      const defaultServices = {
         ec2: false,
         iam: false,
         vpc: false,
         s3: false,
         cloudwatch: false,
-        guardduty: false
-      });
-      localStorage.removeItem('awsServices');
+        guardduty: false,
+        ecs: false,
+        config: false,
+        eventbridge: false
+      };
+      setAwsServices(defaultServices);
+      localStorage.setItem('awsServices', JSON.stringify(defaultServices));
     }
     
     setIsAwsModalOpen(false);
@@ -435,7 +448,7 @@ const Dashboard = () => {
                 <div className="service-category">
                   <h3>Seguridad y Accesos</h3>
                   <div className="services-grid">
-                    {/* EC2 Security Widget */}
+                    {/* EC2 Widget */}
                     <div className="aws-service-widget">
                       <div className="widget-header">
                         <div className="service-icon">
@@ -445,15 +458,15 @@ const Dashboard = () => {
                           {awsServices.ec2 ? 'Conectado' : 'Desconectado'}
                         </div>
                       </div>
-                      <h3 className="service-title">EC2 Security</h3>
+                      <h3 className="service-title">EC2</h3>
                       <div className="service-stats">
+                        <div className="stat-item">
+                          <span className="stat-label">Instancias Activas</span>
+                          <span className="stat-value">{awsServices.ec2 ? '5' : '-'}</span>
+                        </div>
                         <div className="stat-item">
                           <span className="stat-label">Security Groups</span>
                           <span className="stat-value">{awsServices.ec2 ? '3' : '-'}</span>
-                        </div>
-                        <div className="stat-item">
-                          <span className="stat-label">Instancias Protegidas</span>
-                          <span className="stat-value">{awsServices.ec2 ? '5' : '-'}</span>
                         </div>
                       </div>
                       <button className="service-action-btn" disabled={!awsServices.ec2}>
@@ -569,6 +582,32 @@ const Dashboard = () => {
                         Gestionar
                       </button>
                     </div>
+
+                    {/* Nuevo: ECS Widget */}
+                    <div className="aws-service-widget">
+                      <div className="widget-header">
+                        <div className="service-icon">
+                          <FaDocker />
+                        </div>
+                        <div className={`service-status ${awsServices.ecs ? 'active' : 'inactive'}`}>
+                          {awsServices.ecs ? 'Conectado' : 'Desconectado'}
+                        </div>
+                      </div>
+                      <h3 className="service-title">ECS</h3>
+                      <div className="service-stats">
+                        <div className="stat-item">
+                          <span className="stat-label">Clusters Activos</span>
+                          <span className="stat-value">{awsServices.ecs ? '3' : '-'}</span>
+                        </div>
+                        <div className="stat-item">
+                          <span className="stat-label">Contenedores</span>
+                          <span className="stat-value">{awsServices.ecs ? '12' : '-'}</span>
+                        </div>
+                      </div>
+                      <button className="service-action-btn" disabled={!awsServices.ecs}>
+                        Gestionar
+                      </button>
+                    </div>
                   </div>
                 </div>
 
@@ -597,6 +636,58 @@ const Dashboard = () => {
                         </div>
                       </div>
                       <button className="service-action-btn" disabled={!awsServices.cloudwatch}>
+                        Gestionar
+                      </button>
+                    </div>
+
+                    {/* Nuevo: AWS Config Widget */}
+                    <div className="aws-service-widget">
+                      <div className="widget-header">
+                        <div className="service-icon">
+                          <FaCog />
+                        </div>
+                        <div className={`service-status ${awsServices.config ? 'active' : 'inactive'}`}>
+                          {awsServices.config ? 'Conectado' : 'Desconectado'}
+                        </div>
+                      </div>
+                      <h3 className="service-title">AWS Config</h3>
+                      <div className="service-stats">
+                        <div className="stat-item">
+                          <span className="stat-label">Reglas Activas</span>
+                          <span className="stat-value">{awsServices.config ? '8' : '-'}</span>
+                        </div>
+                        <div className="stat-item">
+                          <span className="stat-label">Evaluaciones</span>
+                          <span className="stat-value">{awsServices.config ? '24' : '-'}</span>
+                        </div>
+                      </div>
+                      <button className="service-action-btn" disabled={!awsServices.config}>
+                        Gestionar
+                      </button>
+                    </div>
+
+                    {/* Nuevo: EventBridge Widget */}
+                    <div className="aws-service-widget">
+                      <div className="widget-header">
+                        <div className="service-icon">
+                          <FaBolt />
+                        </div>
+                        <div className={`service-status ${awsServices.eventbridge ? 'active' : 'inactive'}`}>
+                          {awsServices.eventbridge ? 'Conectado' : 'Desconectado'}
+                        </div>
+                      </div>
+                      <h3 className="service-title">EventBridge</h3>
+                      <div className="service-stats">
+                        <div className="stat-item">
+                          <span className="stat-label">Buses de Eventos</span>
+                          <span className="stat-value">{awsServices.eventbridge ? '4' : '-'}</span>
+                        </div>
+                        <div className="stat-item">
+                          <span className="stat-label">Reglas</span>
+                          <span className="stat-value">{awsServices.eventbridge ? '16' : '-'}</span>
+                        </div>
+                      </div>
+                      <button className="service-action-btn" disabled={!awsServices.eventbridge}>
                         Gestionar
                       </button>
                     </div>
