@@ -1,0 +1,8 @@
+version: '3.8'
+services:
+  dashboard:
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - ./src:/app/src 

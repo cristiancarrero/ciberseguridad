@@ -5,20 +5,96 @@
 @import './components/navbar.css';
 @import './components/widgets.css';
 @import './components/charts.css';
+@import './components/metrics.css';
+@import './components/modal.css';
 @import './responsive.css';
 
-/* Estilos específicos del dashboard que no encajan en otros archivos */
-.dashboard-wrapper {
+/* Estilos específicos del dashboard */
+.dashboard {
   min-height: 100vh;
+  padding-top: 72px;
   background-color: var(--bg-color);
 }
 
-/* Ajustes específicos para el panel de control */
-.content-section:not(.active) {
-  display: none;
+.dashboard-content {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-/* Ajustes de espaciado específicos del dashboard */
-.dashboard-overview {
-  padding: var(--spacing-lg);
+/* Grid de métricas principales */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  background: var(--widget-bg);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Secciones de contenido */
+.content-section {
+  display: none;
+  margin-top: 2rem;
+}
+
+.content-section.active {
+  display: block;
+}
+
+/* Navegación del dashboard */
+.dashboard-nav {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+}
+
+.dashboard-nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius);
+  transition: all 0.3s ease;
+}
+
+.dashboard-nav a:hover {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dashboard-nav a.active {
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-content {
+    padding: 1rem;
+  }
+  
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .aws-services {
+    padding: 1rem;
+  }
 } 
