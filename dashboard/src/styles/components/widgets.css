@@ -458,6 +458,14 @@
 }
 
 /* AWS Services Section */
+.content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
 .connect-aws-btn {
   display: flex;
   align-items: center;
@@ -470,6 +478,9 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.3s ease;
+  white-space: nowrap;
+  margin-left: 20px;
+  z-index: 1;
 }
 
 .connect-aws-btn:hover {
@@ -488,6 +499,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 1rem;
+  width: 100%;
 }
 
 .service-icon {
@@ -503,21 +516,25 @@
 }
 
 .service-status {
-  padding: 6px 12px;
-  border-radius: 20px;
   font-size: 0.85rem;
-  background: rgba(78, 205, 196, 0.1);
-  color: #4ecdc4;
+  padding: 0.35rem 1rem;
+  border-radius: 50px;
+  min-width: 110px;
+  text-align: center;
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
 .service-status.active {
-  background: rgba(78, 205, 196, 0.1);
+  background: linear-gradient(135deg, rgba(78, 205, 196, 0.2), rgba(78, 205, 196, 0.1));
   color: #4ecdc4;
+  box-shadow: 0 2px 8px rgba(78, 205, 196, 0.2);
 }
 
 .service-status.inactive {
-  background: rgba(255, 107, 107, 0.1);
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(255, 107, 107, 0.1));
   color: #ff6b6b;
+  box-shadow: 0 2px 8px rgba(255, 107, 107, 0.2);
 }
 
 .service-title {
@@ -553,17 +570,25 @@
 }
 
 .service-action-btn {
-  padding: 10px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  width: 100%;
+  padding: 8px;
   border-radius: 8px;
-  color: var(--primary-color);
+  border: none;
+  background: linear-gradient(135deg, #4ecdc4, #ff6b6b);
+  color: white;
+  font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
-  margin-top: auto;
 }
 
-.service-action-btn:hover {
-  background: rgba(78, 205, 196, 0.1);
-  border-color: var(--primary-color);
-} 
+.service-action-btn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.service-action-btn:disabled {
+  background: #1f2937;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: not-allowed;
+  opacity: 0.6;
+}

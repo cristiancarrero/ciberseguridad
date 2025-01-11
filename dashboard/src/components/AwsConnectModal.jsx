@@ -1,72 +1,217 @@
-import React from 'react';
-import { FaAws, FaTimes } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { initializeAWS } from '../services/awsService';
+import { FaAws, FaTimes, FaKey, FaLock, FaGlobe } from 'react-icons/fa';
 
-const AwsConnectModal = ({ isOpen, onClose }) => {
+const AwsConnectModal = ({ isOpen, onClose, onConnect, isConnected }) => {
+  const [credentials, setCredentials] = useState({
+    accessKeyId: '',
+    secretAccessKey: '',
+    sessionToken: '',
+    region: ''
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setCredentials(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handlePasteCredentials = (e) => {
+    const text = e.clipboardData.getData('text');
+    try {
+      // Intentar extraer las credenciales del formato de AWS CLI
+      const accessKeyMatch = text.match(/aws_access_key_id=([A-Z0-9]+)/);
+      const secretKeyMatch = text.match(/aws_secret_access_key=([A-Za-z0-9+/=]+)/);
+      const sessionTokenMatch = text.match(/aws_session_token=([A-Za-z0-9+/=]+)/);
+
+      if (accessKeyMatch && secretKeyMatch && sessionTokenMatch) {
+        setCredentials(prev => ({
+          ...prev,
+          accessKeyId: accessKeyMatch[1],
+          secretAccessKey: secretKeyMatch[1],
+          sessionToken: sessionTokenMatch[1]
+        }));
+        e.preventDefault();
+      }
+    } catch (err) {
+      console.error('Error parsing credentials:', err);
+    }
+  };
+
+  const handleConnect = async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      const result = await initializeAWS(credentials);
+      if (result.success) {
+        onConnect(true);
+        setCredentials({
+          accessKeyId: '',
+          secretAccessKey: '',
+          sessionToken: '',
+          region: ''
+        });
+      } else {
+        setError(result.error);
+      }
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleDisconnect = () => {
+    localStorage.removeItem('awsConnected');
+    onConnect(false);
+    onClose();
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content">
+      <div className="modal-content aws-modal">
         <div className="modal-header">
-          <div className="modal-title">
-            <FaAws />
-            <h2>Conectar con AWS</h2>
+          <div className="header-title">
+            <FaAws className="aws-icon" />
+            <h2>{isConnected ? 'Desconectar de AWS Academy' : 'Conectar con AWS Academy'}</h2>
           </div>
-          <button className="modal-close" onClick={onClose}>
+          <button onClick={onClose} className="close-btn">
             <FaTimes />
           </button>
         </div>
-        
-        <div className="modal-body">
-          <div className="form-group">
-            <label htmlFor="accessKey">Access Key ID</label>
-            <input 
-              type="text" 
-              id="accessKey" 
-              placeholder="Introduce tu Access Key ID"
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="secretKey">Secret Access Key</label>
-            <input 
-              type="password" 
-              id="secretKey" 
-              placeholder="Introduce tu Secret Access Key"
-            />
-          </div>
-          
-          <div className="form-group">
-            <label htmlFor="region">Región</label>
-            <select id="region">
-              <option value="">Selecciona una región</option>
-              <option value="us-east-1">US East (N. Virginia)</option>
-              <option value="us-east-2">US East (Ohio)</option>
-              <option value="us-west-1">US West (N. California)</option>
-              <option value="us-west-2">US West (Oregon)</option>
-              <option value="eu-west-1">EU (Ireland)</option>
-              <option value="eu-central-1">EU (Frankfurt)</option>
-              <option value="ap-southeast-1">Asia Pacific (Singapore)</option>
-              <option value="ap-southeast-2">Asia Pacific (Sydney)</option>
-            </select>
-          </div>
 
-          <div className="form-info">
-            <p>
-              <strong>Nota de Seguridad:</strong> Tus credenciales se almacenarán de forma segura y encriptada.
-              Te recomendamos crear un usuario IAM específico con los permisos necesarios.
-            </p>
+        <div className="modal-body">
+          {isConnected ? (
+            <div className="disconnect-content">
+              <div className="credentials-help">
+                <div className="help-icon">⚠️</div>
+                <p>Al desconectarte, perderás acceso a todos los servicios de AWS hasta que vuelvas a conectarte.</p>
+              </div>
+              <div className="modal-actions">
+                <button 
+                  onClick={handleDisconnect}
+                  className="connect-btn warning"
+                >
+                  Desconectar
+                </button>
+                <button onClick={onClose} className="cancel-btn">
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="credentials-help">
+                <div className="help-icon">ℹ️</div>
+                <p>Pega las credenciales de AWS Academy en cualquier campo para autocompletar todos los campos necesarios.</p>
+              </div>
+
+              <div className="form-group">
+                <label>
+                  <FaKey className="input-icon" />
+                  Access Key ID
+                </label>
+                <input
+                  type="text"
+                  name="accessKeyId"
+                  value={credentials.accessKeyId}
+                  onChange={handleInputChange}
+                  onPaste={handlePasteCredentials}
+                  placeholder="ASIA..."
+                  className="aws-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>
+                  <FaLock className="input-icon" />
+                  Secret Access Key
+                </label>
+                <input
+                  type="password"
+                  name="secretAccessKey"
+                  value={credentials.secretAccessKey}
+                  onChange={handleInputChange}
+                  onPaste={handlePasteCredentials}
+                  placeholder="Introduce tu Secret Access Key"
+                  className="aws-input"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>
+                  <FaKey className="input-icon" />
+                  Session Token
+                </label>
+                <textarea
+                  name="sessionToken"
+                  value={credentials.sessionToken}
+                  onChange={handleInputChange}
+                  onPaste={handlePasteCredentials}
+                  placeholder="Pega aquí el Session Token de AWS Academy"
+                  rows="3"
+                  className="aws-textarea"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>
+                  <FaGlobe className="input-icon" />
+                  Región
+                </label>
+                <select
+                  name="region"
+                  value={credentials.region}
+                  onChange={handleInputChange}
+                  className="aws-select"
+                >
+                  <option value="">Selecciona una región</option>
+                  <option value="us-west-2">US West (Oregon)</option>
+                  <option value="us-east-1">US East (N. Virginia)</option>
+                </select>
+              </div>
+
+              {error && (
+                <div className="error-message">
+                  <span className="error-icon">⚠️</span>
+                  {error}
+                </div>
+              )}
+
+              <div className="modal-actions">
+                <button 
+                  onClick={handleConnect} 
+                  disabled={loading || !credentials.accessKeyId || !credentials.secretAccessKey || !credentials.sessionToken || !credentials.region}
+                  className={`connect-btn ${loading ? 'loading' : ''}`}
+                >
+                  {loading ? 'Conectando...' : 'Conectar'}
+                </button>
+                <button onClick={onClose} className="cancel-btn">
+                  Cancelar
+                </button>
+              </div>
+            </>
+          )}
+        </div>
+
+        {!isConnected && (
+          <div className="modal-footer">
+            <div className="security-note">
+              <span className="note-icon">🔒</span>
+              <p>
+                Estas credenciales son temporales y expiran después de cierto tiempo. 
+                Necesitarás actualizarlas cuando caduquen.
+              </p>
+            </div>
           </div>
-        </div>
-        
-        <div className="modal-footer">
-          <button className="modal-btn secondary" onClick={onClose}>
-            Cancelar
-          </button>
-          <button className="modal-btn primary">
-            Conectar
-          </button>
-        </div>
+        )}
       </div>
     </div>
   );

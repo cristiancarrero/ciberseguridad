@@ -26,6 +26,22 @@ const Dashboard = () => {
     const savedState = localStorage.getItem('expandedMenus');
     return savedState ? JSON.parse(savedState) : { integrations: false };
   });
+  const [isAwsConnected, setIsAwsConnected] = useState(() => {
+    return localStorage.getItem('awsConnected') === 'true';
+  });
+
+  // Añadir estado para los servicios
+  const [awsServices, setAwsServices] = useState(() => {
+    const savedServices = localStorage.getItem('awsServices');
+    return savedServices ? JSON.parse(savedServices) : {
+      ec2: false,
+      iam: false,
+      vpc: false,
+      s3: false,
+      cloudwatch: false,
+      guardduty: false
+    };
+  });
 
   const handleSectionChange = (section, e) => {
     e.preventDefault();
@@ -41,6 +57,45 @@ const Dashboard = () => {
     };
     setExpandedMenus(newExpandedMenus);
     localStorage.setItem('expandedMenus', JSON.stringify(newExpandedMenus));
+  };
+
+  const handleAwsConnection = async (success) => {
+    setIsAwsConnected(success);
+    localStorage.setItem('awsConnected', success);
+    
+    if (success) {
+      try {
+        // Verificar qué servicios están disponibles
+        const availableServices = await checkAwsServices();
+        setAwsServices(availableServices);
+        localStorage.setItem('awsServices', JSON.stringify(availableServices));
+      } catch (error) {
+        console.error('Error checking AWS services:', error);
+        // Si hay un error verificando los servicios, los marcamos todos como no disponibles
+        setAwsServices({
+          ec2: false,
+          iam: false,
+          vpc: false,
+          s3: false,
+          cloudwatch: false,
+          guardduty: false
+        });
+        localStorage.removeItem('awsServices');
+      }
+    } else {
+      // Si nos desconectamos, todos los servicios se marcan como no disponibles
+      setAwsServices({
+        ec2: false,
+        iam: false,
+        vpc: false,
+        s3: false,
+        cloudwatch: false,
+        guardduty: false
+      });
+      localStorage.removeItem('awsServices');
+    }
+    
+    setIsAwsModalOpen(false);
   };
 
   const renderContent = () => {
@@ -371,145 +426,174 @@ const Dashboard = () => {
           <div className="aws-section">
             <div className="content-header">
               <h1 className="content-title">Servicios AWS</h1>
-              <button className="connect-aws-btn" onClick={() => setIsAwsModalOpen(true)}>
+              <button 
+                className={`connect-aws-btn ${isAwsConnected ? 'connected' : ''}`} 
+                onClick={() => setIsAwsModalOpen(true)}
+              >
                 <FaAws />
-                Conectar con AWS
+                {isAwsConnected ? 'Desconectar de AWS' : 'Conectar con AWS'}
               </button>
             </div>
             
-            <div className="widgets-grid main-widgets">
-              {/* EC2 Security Groups */}
-              <div className="widget aws-service-widget">
-                <div className="widget-header">
-                  <div className="service-icon">
-                    <FaServer />
+            {isAwsConnected ? (
+              <div className="widgets-grid main-widgets">
+                {/* EC2 Security Groups */}
+                <div className="widget aws-service-widget">
+                  <div className="widget-header">
+                    <div className="service-icon">
+                      <FaServer />
+                    </div>
+                    <div className={`service-status ${awsServices.ec2 ? 'active' : 'inactive'}`}>
+                      {awsServices.ec2 ? 'Conectado' : 'Desconectado'}
+                    </div>
                   </div>
-                  <div className="service-status active">Activo</div>
+                  <h3 className="service-title">EC2 Security</h3>
+                  <div className="service-stats">
+                    <div className="stat-item">
+                      <span className="stat-label">Security Groups</span>
+                      <span className="stat-value">{awsServices.ec2 ? '24' : '-'}</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-label">Instancias Protegidas</span>
+                      <span className="stat-value">{awsServices.ec2 ? '12' : '-'}</span>
+                    </div>
+                  </div>
+                  <button className="service-action-btn" disabled={!awsServices.ec2}>Gestionar</button>
                 </div>
-                <h3 className="service-title">EC2 Security</h3>
-                <div className="service-stats">
-                  <div className="stat-item">
-                    <span className="stat-label">Security Groups</span>
-                    <span className="stat-value">24</span>
-                  </div>
-                  <div className="stat-item">
-                    <span className="stat-label">Instancias Protegidas</span>
-                    <span className="stat-value">12</span>
-                  </div>
-                </div>
-                <button className="service-action-btn">Gestionar</button>
-              </div>
 
-              {/* IAM */}
-              <div className="widget aws-service-widget">
-                <div className="widget-header">
-                  <div className="service-icon">
-                    <FaUsers />
+                {/* IAM */}
+                <div className="widget aws-service-widget">
+                  <div className="widget-header">
+                    <div className="service-icon">
+                      <FaUsers />
+                    </div>
+                    <div className={`service-status ${awsServices.iam ? 'active' : 'inactive'}`}>
+                      {awsServices.iam ? 'Conectado' : 'Desconectado'}
+                    </div>
                   </div>
-                  <div className="service-status active">Activo</div>
+                  <h3 className="service-title">IAM</h3>
+                  <div className="service-stats">
+                    <div className="stat-item">
+                      <span className="stat-label">Usuarios</span>
+                      <span className="stat-value">{awsServices.iam ? '18' : '-'}</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-label">Roles</span>
+                      <span className="stat-value">{awsServices.iam ? '8' : '-'}</span>
+                    </div>
+                  </div>
+                  <button className="service-action-btn" disabled={!awsServices.iam}>Gestionar</button>
                 </div>
-                <h3 className="service-title">IAM</h3>
-                <div className="service-stats">
-                  <div className="stat-item">
-                    <span className="stat-label">Usuarios</span>
-                    <span className="stat-value">18</span>
-                  </div>
-                  <div className="stat-item">
-                    <span className="stat-label">Roles</span>
-                    <span className="stat-value">8</span>
-                  </div>
-                </div>
-                <button className="service-action-btn">Gestionar</button>
-              </div>
 
-              {/* VPC */}
-              <div className="widget aws-service-widget">
-                <div className="widget-header">
-                  <div className="service-icon">
-                    <FaNetworkWired />
+                {/* VPC */}
+                <div className="widget aws-service-widget">
+                  <div className="widget-header">
+                    <div className="service-icon">
+                      <FaNetworkWired />
+                    </div>
+                    <div className={`service-status ${awsServices.vpc ? 'active' : 'inactive'}`}>
+                      {awsServices.vpc ? 'Conectado' : 'Desconectado'}
+                    </div>
                   </div>
-                  <div className="service-status active">Activo</div>
+                  <h3 className="service-title">VPC</h3>
+                  <div className="service-stats">
+                    <div className="stat-item">
+                      <span className="stat-label">ACLs</span>
+                      <span className="stat-value">{awsServices.vpc ? '6' : '-'}</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-label">Subnets Seguras</span>
+                      <span className="stat-value">{awsServices.vpc ? '4' : '-'}</span>
+                    </div>
+                  </div>
+                  <button className="service-action-btn" disabled={!awsServices.vpc}>Gestionar</button>
                 </div>
-                <h3 className="service-title">VPC</h3>
-                <div className="service-stats">
-                  <div className="stat-item">
-                    <span className="stat-label">ACLs</span>
-                    <span className="stat-value">6</span>
-                  </div>
-                  <div className="stat-item">
-                    <span className="stat-label">Subnets Seguras</span>
-                    <span className="stat-value">4</span>
-                  </div>
-                </div>
-                <button className="service-action-btn">Gestionar</button>
-              </div>
 
-              {/* S3 */}
-              <div className="widget aws-service-widget">
-                <div className="widget-header">
-                  <div className="service-icon">
-                    <FaServer />
+                {/* S3 */}
+                <div className="widget aws-service-widget">
+                  <div className="widget-header">
+                    <div className="service-icon">
+                      <FaServer />
+                    </div>
+                    <div className={`service-status ${awsServices.s3 ? 'active' : 'inactive'}`}>
+                      {awsServices.s3 ? 'Conectado' : 'Desconectado'}
+                    </div>
                   </div>
-                  <div className="service-status active">Activo</div>
+                  <h3 className="service-title">S3</h3>
+                  <div className="service-stats">
+                    <div className="stat-item">
+                      <span className="stat-label">Buckets Encriptados</span>
+                      <span className="stat-value">{awsServices.s3 ? '15' : '-'}</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-label">Políticas de Acceso</span>
+                      <span className="stat-value">{awsServices.s3 ? '10' : '-'}</span>
+                    </div>
+                  </div>
+                  <button className="service-action-btn" disabled={!awsServices.s3}>Gestionar</button>
                 </div>
-                <h3 className="service-title">S3</h3>
-                <div className="service-stats">
-                  <div className="stat-item">
-                    <span className="stat-label">Buckets Encriptados</span>
-                    <span className="stat-value">15</span>
-                  </div>
-                  <div className="stat-item">
-                    <span className="stat-label">Políticas de Acceso</span>
-                    <span className="stat-value">10</span>
-                  </div>
-                </div>
-                <button className="service-action-btn">Gestionar</button>
-              </div>
 
-              {/* CloudWatch */}
-              <div className="widget aws-service-widget">
-                <div className="widget-header">
-                  <div className="service-icon">
-                    <FaChartBar />
+                {/* CloudWatch */}
+                <div className="widget aws-service-widget">
+                  <div className="widget-header">
+                    <div className="service-icon">
+                      <FaChartBar />
+                    </div>
+                    <div className={`service-status ${awsServices.cloudwatch ? 'active' : 'inactive'}`}>
+                      {awsServices.cloudwatch ? 'Conectado' : 'Desconectado'}
+                    </div>
                   </div>
-                  <div className="service-status active">Activo</div>
+                  <h3 className="service-title">CloudWatch</h3>
+                  <div className="service-stats">
+                    <div className="stat-item">
+                      <span className="stat-label">Alarmas Activas</span>
+                      <span className="stat-value">{awsServices.cloudwatch ? '8' : '-'}</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-label">Logs Monitorizados</span>
+                      <span className="stat-value">{awsServices.cloudwatch ? '24' : '-'}</span>
+                    </div>
+                  </div>
+                  <button className="service-action-btn" disabled={!awsServices.cloudwatch}>Gestionar</button>
                 </div>
-                <h3 className="service-title">CloudWatch</h3>
-                <div className="service-stats">
-                  <div className="stat-item">
-                    <span className="stat-label">Alarmas Activas</span>
-                    <span className="stat-value">8</span>
-                  </div>
-                  <div className="stat-item">
-                    <span className="stat-label">Logs Monitorizados</span>
-                    <span className="stat-value">24</span>
-                  </div>
-                </div>
-                <button className="service-action-btn">Gestionar</button>
-              </div>
 
-              {/* GuardDuty */}
-              <div className="widget aws-service-widget">
-                <div className="widget-header">
-                  <div className="service-icon">
-                    <FaShieldAlt />
+                {/* GuardDuty */}
+                <div className="widget aws-service-widget">
+                  <div className="widget-header">
+                    <div className="service-icon">
+                      <FaShieldAlt />
+                    </div>
+                    <div className={`service-status ${awsServices.guardduty ? 'active' : 'inactive'}`}>
+                      {awsServices.guardduty ? 'Conectado' : 'Desconectado'}
+                    </div>
                   </div>
-                  <div className="service-status active">Activo</div>
+                  <h3 className="service-title">GuardDuty</h3>
+                  <div className="service-stats">
+                    <div className="stat-item">
+                      <span className="stat-label">Amenazas Detectadas</span>
+                      <span className="stat-value">{awsServices.guardduty ? '3' : '-'}</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-label">Regiones Monitorizadas</span>
+                      <span className="stat-value">{awsServices.guardduty ? '6' : '-'}</span>
+                    </div>
+                  </div>
+                  <button className="service-action-btn" disabled={!awsServices.guardduty}>Gestionar</button>
                 </div>
-                <h3 className="service-title">GuardDuty</h3>
-                <div className="service-stats">
-                  <div className="stat-item">
-                    <span className="stat-label">Amenazas Detectadas</span>
-                    <span className="stat-value">3</span>
-                  </div>
-                  <div className="stat-item">
-                    <span className="stat-label">Regiones Monitorizadas</span>
-                    <span className="stat-value">6</span>
-                  </div>
-                </div>
-                <button className="service-action-btn">Gestionar</button>
               </div>
-            </div>
+            ) : (
+              <div className="aws-not-connected">
+                <FaAws className="aws-big-icon" />
+                <h2>No conectado a AWS</h2>
+                <p>Conecta tu cuenta de AWS para ver y gestionar tus servicios.</p>
+                <button 
+                  className="connect-aws-btn" 
+                  onClick={() => setIsAwsModalOpen(true)}
+                >
+                  Conectar con AWS
+                </button>
+              </div>
+            )}
           </div>
         );
       case 'alerts':
@@ -609,6 +693,8 @@ const Dashboard = () => {
       <AwsConnectModal 
         isOpen={isAwsModalOpen}
         onClose={() => setIsAwsModalOpen(false)}
+        onConnect={handleAwsConnection}
+        isConnected={isAwsConnected}
       />
     </div>
   );
