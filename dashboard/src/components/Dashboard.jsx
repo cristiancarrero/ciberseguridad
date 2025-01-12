@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaShieldAlt, FaServer, FaUsers, FaNetworkWired, FaDownload, FaHome, FaChartBar, FaLock, FaAws, FaBell, FaCloud, FaMicrosoft, FaGoogle, FaCloudversify, FaDocker, FaCog, FaBolt } from 'react-icons/fa';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
@@ -16,6 +16,8 @@ import '../styles/dashboard.css';
 // Importar el modal y sus estilos
 import AwsConnectModal from './AwsConnectModal';
 import '../styles/components/modal.css';
+import EC2Manager from './EC2Manager';
+import { loadAwsConfig } from '../services/awsService';
 
 const Dashboard = () => {
   const [currentSection, setCurrentSection] = useState(() => {
@@ -29,6 +31,7 @@ const Dashboard = () => {
   const [isAwsConnected, setIsAwsConnected] = useState(() => {
     return localStorage.getItem('awsConnected') === 'true';
   });
+  const [isEC2ManagerOpen, setIsEC2ManagerOpen] = useState(false);
 
   // Añadir estado para los servicios
   const [awsServices, setAwsServices] = useState(() => {
@@ -45,6 +48,13 @@ const Dashboard = () => {
       eventbridge: false
     };
   });
+
+  useEffect(() => {
+    // Cargar la configuración de AWS al montar el componente
+    if (isAwsConnected) {
+      loadAwsConfig();
+    }
+  }, [isAwsConnected]);
 
   const handleSectionChange = (section, e) => {
     e.preventDefault();
@@ -63,12 +73,32 @@ const Dashboard = () => {
   };
 
   const handleAwsConnection = async (success) => {
-    setIsAwsConnected(success);
-    localStorage.setItem('awsConnected', success);
+    console.log('AWS Connection Status:', success);
     
-    if (success) {
+    if (!success) {
+      // Limpiar todo cuando nos desconectamos
+      localStorage.removeItem('awsConfig');
+      localStorage.removeItem('awsConnected');
+      localStorage.removeItem('awsServices');
+      setAwsServices({
+        ec2: false,
+        iam: false,
+        vpc: false,
+        s3: false,
+        cloudwatch: false,
+        guardduty: false,
+        ecs: false,
+        config: false,
+        eventbridge: false
+      });
+      setIsAwsConnected(false);
+    } else {
+      setIsAwsConnected(true);
+      localStorage.setItem('awsConnected', 'true');
+      
       try {
         const availableServices = await checkAwsServices();
+        console.log('Available AWS Services:', availableServices);
         setAwsServices(availableServices);
         localStorage.setItem('awsServices', JSON.stringify(availableServices));
       } catch (error) {
@@ -87,23 +117,18 @@ const Dashboard = () => {
         setAwsServices(defaultServices);
         localStorage.setItem('awsServices', JSON.stringify(defaultServices));
       }
-    } else {
-      const defaultServices = {
-        ec2: false,
-        iam: false,
-        vpc: false,
-        s3: false,
-        cloudwatch: false,
-        guardduty: false,
-        ecs: false,
-        config: false,
-        eventbridge: false
-      };
-      setAwsServices(defaultServices);
-      localStorage.setItem('awsServices', JSON.stringify(defaultServices));
     }
     
     setIsAwsModalOpen(false);
+  };
+
+  const testConnection = async () => {
+    try {
+      const result = await testEC2Connection();
+      console.log('EC2 Connection Test Result:', result);
+    } catch (error) {
+      console.error('Test Connection Error:', error);
+    }
   };
 
   const renderContent = () => {
@@ -469,7 +494,15 @@ const Dashboard = () => {
                           <span className="stat-value">{awsServices.ec2 ? '3' : '-'}</span>
                         </div>
                       </div>
-                      <button className="service-action-btn" disabled={!awsServices.ec2}>
+                      <button 
+                        className="service-action-btn" 
+                        disabled={!isAwsConnected}
+                        onClick={() => {
+                          console.log('EC2 Button Clicked');
+                          console.log('AWS Connection Status:', isAwsConnected);
+                          setIsEC2ManagerOpen(true);
+                        }}
+                      >
                         Gestionar
                       </button>
                     </div>
@@ -808,6 +841,12 @@ const Dashboard = () => {
         onClose={() => setIsAwsModalOpen(false)}
         onConnect={handleAwsConnection}
         isConnected={isAwsConnected}
+      />
+
+      {/* EC2 Manager Modal */}
+      <EC2Manager 
+        isOpen={isEC2ManagerOpen}
+        onClose={() => setIsEC2ManagerOpen(false)}
       />
     </div>
   );

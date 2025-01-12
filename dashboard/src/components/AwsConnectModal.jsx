@@ -7,7 +7,7 @@ const AwsConnectModal = ({ isOpen, onClose, onConnect, isConnected }) => {
     accessKeyId: '',
     secretAccessKey: '',
     sessionToken: '',
-    region: ''
+    region: 'us-west-2'
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);

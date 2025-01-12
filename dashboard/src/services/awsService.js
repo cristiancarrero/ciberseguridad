@@ -1,35 +1,62 @@
-import { EC2Client, DescribeSecurityGroupsCommand, DescribeVpcsCommand } from "@aws-sdk/client-ec2";
+import { EC2Client, DescribeSecurityGroupsCommand, DescribeVpcsCommand, DescribeInstancesCommand } from "@aws-sdk/client-ec2";
 import { IAMClient, ListUsersCommand } from "@aws-sdk/client-iam";
 import { S3Client, ListBucketsCommand } from "@aws-sdk/client-s3";
 import { CloudWatchClient, DescribeAlarmsCommand } from "@aws-sdk/client-cloudwatch";
 import { GuardDutyClient, ListDetectorsCommand } from "@aws-sdk/client-guardduty";
+import { initializeEC2Client } from './ec2Service';
 
 let awsConfig = null;
 
 export const initializeAWS = async (credentials) => {
   try {
+    if (!credentials.sessionToken) {
+      throw new Error('Se requiere un token de sesión para AWS Academy');
+    }
+
     awsConfig = {
-      region: credentials.region,
+      region: credentials.region || 'us-west-2',
       credentials: {
         accessKeyId: credentials.accessKeyId,
         secretAccessKey: credentials.secretAccessKey,
         sessionToken: credentials.sessionToken
       }
     };
+
+    console.log('Inicializando AWS con configuración:', {
+      region: awsConfig.region,
+      hasAccessKey: !!awsConfig.credentials.accessKeyId,
+      hasSecretKey: !!awsConfig.credentials.secretAccessKey,
+      hasSessionToken: !!awsConfig.credentials.sessionToken
+    });
+
+    localStorage.setItem('awsConfig', JSON.stringify(awsConfig));
     
-    // Verificar la conexión intentando listar usuarios IAM
-    const iamClient = new IAMClient(awsConfig);
-    await iamClient.send(new ListUsersCommand({}));
+    initializeEC2Client(awsConfig);
+    
+    const ec2Client = new EC2Client(awsConfig);
+    await ec2Client.send(new DescribeInstancesCommand({}));
     
     return { success: true };
   } catch (error) {
     console.error('Error initializing AWS:', error);
     return { 
       success: false, 
-      error: 'Error al conectar con AWS. Verifica tus credenciales.' 
+      error: 'Error al conectar con AWS Academy. Verifica tus credenciales temporales.' 
     };
   }
 };
+
+export const loadAwsConfig = () => {
+  const savedConfig = localStorage.getItem('awsConfig');
+  if (savedConfig) {
+    awsConfig = JSON.parse(savedConfig);
+    initializeEC2Client(awsConfig);
+    return true;
+  }
+  return false;
+};
+
+loadAwsConfig();
 
 export const checkAwsServices = async () => {
   if (!awsConfig) {
@@ -42,16 +69,17 @@ export const checkAwsServices = async () => {
     vpc: false,
     s3: false,
     cloudwatch: false,
-    guardduty: false
+    guardduty: false,
+    ecs: false,
+    config: false,
+    eventbridge: false
   };
 
   try {
-    // Crear el cliente EC2 una sola vez para EC2 y VPC
-    const ec2Client = new EC2Client(awsConfig);
-
     // Verificar EC2
     try {
-      await ec2Client.send(new DescribeSecurityGroupsCommand({}));
+      const ec2Client = new EC2Client(awsConfig);
+      await ec2Client.send(new DescribeInstancesCommand({}));
       services.ec2 = true;
     } catch (error) {
       console.log('EC2 no disponible:', error);
@@ -105,5 +133,24 @@ export const checkAwsServices = async () => {
   } catch (error) {
     console.error('Error checking AWS services:', error);
     throw error;
+  }
+};
+
+const isCredentialValid = (credential) => {
+  return typeof credential === 'string' && credential.length > 0;
+};
+
+export const validateCredentials = (credentials) => {
+  if (!isCredentialValid(credentials.accessKeyId)) {
+    throw new Error('Access Key ID no válido');
+  }
+  if (!isCredentialValid(credentials.secretAccessKey)) {
+    throw new Error('Secret Access Key no válido');
+  }
+  if (!isCredentialValid(credentials.sessionToken)) {
+    throw new Error('Session Token no válido');
+  }
+  if (!isCredentialValid(credentials.region)) {
+    throw new Error('Región no válida');
   }
 }; 
