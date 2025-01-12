@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "AWS Services Security Dashboard",
   "scripts": {
-    "start": "python3 -m http.server 8000"
+    "start": "vite",
+    "server": "node server/index.js",
+    "dev": "concurrently \"npm run start\" \"npm run server\""
   },
   "dependencies": {
     "@aws-sdk/client-cloudwatch": "^3.726.1",
@@ -11,6 +13,9 @@
     "@aws-sdk/client-guardduty": "^3.726.1",
     "@aws-sdk/client-iam": "^3.726.1",
     "@aws-sdk/client-s3": "^3.726.1",
-    "@aws-sdk/credential-provider-node": "^3.726.0"
+    "@aws-sdk/credential-provider-node": "^3.726.0",
+    "@xterm/xterm": "^5.0.0",
+    "@xterm/addon-fit": "^0.9.0",
+    "@xterm/addon-attach": "^0.9.0"
   }
 }

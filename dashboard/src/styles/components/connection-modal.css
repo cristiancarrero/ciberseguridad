@@ -1,0 +1,77 @@
+.connection-ready {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: #1a1f2e;
+}
+
+.key-status {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #4ecdc4;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  background: rgba(78, 205, 196, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(78, 205, 196, 0.2);
+  letter-spacing: 0.5px;
+  width: fit-content;
+}
+
+.connection-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.connect-terminal-btn {
+  background: linear-gradient(135deg, #4ecdc4 0%, #2cbab2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(78, 205, 196, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.connect-terminal-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(78, 205, 196, 0.3);
+  background: linear-gradient(135deg, #45c1b8 0%, #25a49c 100%);
+}
+
+.remove-key-btn {
+  background: transparent;
+  color: #ff6363;
+  border: 2px solid rgba(255, 99, 99, 0.3);
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.remove-key-btn:hover {
+  background: rgba(255, 99, 99, 0.1);
+  border-color: rgba(255, 99, 99, 0.4);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 99, 99, 0.15);
+} 

@@ -1,0 +1,79 @@
+.terminal-fullscreen-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 3000;
+}
+
+.terminal-window {
+  width: 95%;
+  height: 95vh;
+  background: #1a1f2e;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.terminal-header {
+  background: #2a2f3e;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.terminal-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.terminal-actions {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.terminal-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 0.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.terminal-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.terminal-container {
+  flex: 1;
+  padding: 1rem;
+  background: #1a1f2e;
+}
+
+/* Estilos para la terminal xterm.js */
+.xterm {
+  padding: 0.5rem;
+}
+
+.xterm-viewport {
+  background-color: #1a1f2e !important;
+} 

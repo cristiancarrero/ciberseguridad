@@ -1,0 +1,241 @@
+.ssh-key-manager {
+  margin-bottom: 1rem;
+}
+
+.key-upload-container {
+  background: rgba(78, 205, 196, 0.1);
+  border: 1px dashed rgba(78, 205, 196, 0.3);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+}
+
+.key-upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.upload-button {
+  background: rgba(78, 205, 196, 0.2);
+  color: #4ecdc4;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.upload-button:hover {
+  background: rgba(78, 205, 196, 0.3);
+  transform: translateY(-2px);
+}
+
+.key-status {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: #4ecdc4;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0.75rem 1.5rem;
+  background: rgba(78, 205, 196, 0.1);
+  border-radius: 12px;
+  border: 1px solid rgba(78, 205, 196, 0.2);
+  letter-spacing: 0.5px;
+}
+
+.key-icon {
+  color: #4ecdc4;
+  font-size: 1.1rem;
+}
+
+.instance-terminal-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 90%;
+  height: 80vh;
+  background: #1a1f2e;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  z-index: 1300;
+}
+
+.terminal-header {
+  background: #2a2f3e;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.terminal-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #fff;
+}
+
+.terminal-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.terminal-btn {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  padding: 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.terminal-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.terminal-container {
+  flex: 1;
+  padding: 1rem;
+  background: #1a1f2e;
+}
+
+.terminal-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.terminal-modal {
+  width: 90%;
+  height: 90vh;
+  background: #1a1f2e;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+.connection-ready {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.connection-actions {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  max-width: 400px;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.connect-terminal-btn {
+  background: linear-gradient(135deg, #4ecdc4 0%, #2cbab2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(78, 205, 196, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.connect-terminal-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(78, 205, 196, 0.3);
+  background: linear-gradient(135deg, #45c1b8 0%, #25a49c 100%);
+}
+
+.connect-terminal-btn:active {
+  transform: translateY(1px);
+}
+
+.remove-key-btn {
+  background: rgba(255, 99, 99, 0.05);
+  color: #ff6363;
+  border: 2px solid rgba(255, 99, 99, 0.2);
+  padding: 0.75rem 1.5rem;
+  border-radius: 12px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.remove-key-btn:hover {
+  background: rgba(255, 99, 99, 0.1);
+  border-color: rgba(255, 99, 99, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(255, 99, 99, 0.15);
+}
+
+.remove-key-btn:active {
+  transform: translateY(1px);
+}
+
+.connection-instructions-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.connection-instructions-modal .modal-content {
+  background: #1a1f2e;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  color: white;
+}
+
+.connection-instructions-modal .modal-header {
+  background: #2a2f3e;
+  padding: 1rem;
+  border-radius: 12px 12px 0 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.connection-instructions-modal .modal-body {
+  padding: 1.5rem;
+} 

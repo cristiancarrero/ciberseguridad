@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { FaServer, FaPlay, FaStop, FaTrash, FaPlus, FaTimes, FaInfoCircle, FaTerminal, FaCopy } from 'react-icons/fa';
+import { FaServer, FaPlay, FaStop, FaTrash, FaPlus, FaTimes, FaInfoCircle, FaTerminal, FaCopy, FaCheck } from 'react-icons/fa';
 import { listInstances, startInstance, stopInstance, terminateInstance, launchInstance } from '../services/ec2Service';
 import '../styles/components/ec2manager.css';
+import '../styles/components/connection-modal.css';
+import SSHKeyManager from './SSHKeyManager';
+import InstanceTerminal from './InstanceTerminal';
 
 const INSTANCE_PRESETS = {
   basic: {
@@ -48,6 +51,8 @@ const EC2Manager = ({ isOpen, onClose }) => {
   const [createError, setCreateError] = useState(null);
   const [showConnectionModal, setShowConnectionModal] = useState(false);
   const [selectedInstanceForConnection, setSelectedInstanceForConnection] = useState(null);
+  const [showTerminal, setShowTerminal] = useState(false);
+  const [hasSSHKey, setHasSSHKey] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -285,8 +290,17 @@ const EC2Manager = ({ isOpen, onClose }) => {
                       </button>
                       <button
                         className="action-btn connect"
-                        onClick={() => handleShowConnectionInstructions(instance)}
-                        title="Ver instrucciones de conexión"
+                        onClick={() => {
+                          setSelectedInstanceForConnection(instance);
+                          if (!hasSSHKey) {
+                            // Si no hay clave SSH, mostrar el modal para subirla
+                            setShowConnectionModal(true);
+                          } else {
+                            // Si ya hay clave, mostrar el modal con las opciones
+                            setShowConnectionModal(true);
+                          }
+                        }}
+                        title="Conectar a terminal"
                       >
                         <FaTerminal />
                       </button>
@@ -457,60 +471,50 @@ const EC2Manager = ({ isOpen, onClose }) => {
                 </button>
               </div>
               <div className="modal-body">
-                <div className="instance-info-summary">
-                  <p><strong>ID:</strong> {selectedInstanceForConnection.id}</p>
-                  <p><strong>IP Pública:</strong> {selectedInstanceForConnection.publicIp}</p>
-                  <p><strong>Estado:</strong> <span className={`status ${selectedInstanceForConnection.state}`}>{selectedInstanceForConnection.state}</span></p>
-                </div>
-
-                <div className="connection-steps">
-                  <h3>Pasos para conectarse:</h3>
-                  <ol>
-                    <li>
-                      <strong>Descarga la clave privada:</strong>
-                      <ul>
-                        <li>En AWS Details, busca la sección "SSH key"</li>
-                        <li>Haz clic en el botón "Download PEM"</li>
-                        <li>Guarda el archivo vockey.pem en un lugar seguro</li>
-                      </ul>
-                    </li>
-                    <li>
-                      <strong>Configura los permisos de la clave:</strong>
-                      <pre>chmod 400 vockey.pem</pre>
-                      <small>* En Windows, este paso no es necesario si usas PuTTY</small>
-                    </li>
-                    <li>
-                      <strong>Conéctate usando SSH:</strong>
-                      <pre>ssh -i vockey.pem ec2-user@{selectedInstanceForConnection.publicIp}</pre>
+                {!hasSSHKey ? (
+                  <SSHKeyManager 
+                    onKeyUpdate={(hasKey) => {
+                      setHasSSHKey(hasKey);
+                    }} 
+                  />
+                ) : (
+                  <div className="connection-ready">
+                    <div className="key-status">
+                      <FaCheck className="key-icon" />
+                      <span>Clave SSH cargada</span>
+                    </div>
+                    <div className="connection-actions">
                       <button 
-                        className="copy-btn"
-                        onClick={() => navigator.clipboard.writeText(
-                          `ssh -i vockey.pem ec2-user@${selectedInstanceForConnection.publicIp}`
-                        )}
+                        className="connect-terminal-btn"
+                        onClick={() => {
+                          setShowConnectionModal(false);
+                          setShowTerminal(true);
+                        }}
                       >
-                        <FaCopy /> Copiar comando
+                        <FaTerminal /> Abrir Terminal
                       </button>
-                    </li>
-                  </ol>
-                </div>
-
-                <div className="connection-notes">
-                  <h4>Notas importantes:</h4>
-                  <ul>
-                    <li>Asegúrate de estar en el directorio donde guardaste vockey.pem</li>
-                    <li>En Windows:
-                      <ul>
-                        <li>Usa Git Bash o WSL para usar el comando SSH directamente</li>
-                        <li>O usa PuTTY con el archivo PPK (descarga "Download PPK" en ese caso)</li>
-                      </ul>
-                    </li>
-                    <li>La instancia debe estar en estado "running"</li>
-                    <li>Espera 1-2 minutos después de iniciar la instancia antes de conectarte</li>
-                  </ul>
-                </div>
+                      <button 
+                        className="remove-key-btn"
+                        onClick={() => {
+                          sessionStorage.removeItem('ssh_key');
+                          setHasSSHKey(false);
+                        }}
+                      >
+                        <FaTrash /> Eliminar Clave SSH
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
+        )}
+
+        {showTerminal && selectedInstanceForConnection && (
+          <InstanceTerminal
+            instance={selectedInstanceForConnection}
+            onClose={() => setShowTerminal(false)}
+          />
         )}
       </div>
     </div>
