@@ -1,0 +1,12 @@
+.app {
+  display: flex;
+  min-height: 100vh;
+  background: #141824;
+  color: #fff;
+}
+
+.main-content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+} 

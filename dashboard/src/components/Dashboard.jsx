@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaShieldAlt, FaServer, FaUsers, FaNetworkWired, FaDownload, FaHome, FaChartBar, FaLock, FaAws, FaBell, FaCloud, FaMicrosoft, FaGoogle, FaCloudversify, FaDocker, FaCog, FaBolt } from 'react-icons/fa';
+import { FaShieldAlt, FaServer, FaUsers, FaNetworkWired, FaDownload, FaHome, FaChartBar, FaLock, FaAws, FaBell, FaCloud, FaMicrosoft, FaGoogle, FaCloudversify, FaDocker, FaCog, FaBolt, FaChartLine } from 'react-icons/fa';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 // Importar estilos
@@ -18,6 +18,7 @@ import AwsConnectModal from './AwsConnectModal';
 import '../styles/components/modal.css';
 import EC2Manager from './EC2Manager';
 import { loadAwsConfig } from '../services/awsService';
+import CloudWatchManager from './CloudWatchManager';
 
 const Dashboard = () => {
   const [currentSection, setCurrentSection] = useState(() => {
@@ -32,6 +33,7 @@ const Dashboard = () => {
     return localStorage.getItem('awsConnected') === 'true';
   });
   const [isEC2ManagerOpen, setIsEC2ManagerOpen] = useState(false);
+  const [showCloudWatchManager, setShowCloudWatchManager] = useState(false);
 
   // Añadir estado para los servicios
   const [awsServices, setAwsServices] = useState(() => {
@@ -76,47 +78,33 @@ const Dashboard = () => {
     console.log('AWS Connection Status:', success);
     
     if (!success) {
-      // Limpiar todo cuando nos desconectamos
       localStorage.removeItem('awsConfig');
       localStorage.removeItem('awsConnected');
       localStorage.removeItem('awsServices');
       setAwsServices({
         ec2: false,
         iam: false,
-        vpc: false,
-        s3: false,
-        cloudwatch: false,
         guardduty: false,
-        ecs: false,
-        config: false,
-        eventbridge: false
+        cloudwatch: false,
+        // ... otros servicios
       });
       setIsAwsConnected(false);
     } else {
       setIsAwsConnected(true);
       localStorage.setItem('awsConnected', 'true');
       
-      try {
-        const availableServices = await checkAwsServices();
-        console.log('Available AWS Services:', availableServices);
-        setAwsServices(availableServices);
-        localStorage.setItem('awsServices', JSON.stringify(availableServices));
-      } catch (error) {
-        console.error('Error checking AWS services:', error);
-        const defaultServices = {
-          ec2: false,
-          iam: false,
-          vpc: false,
-          s3: false,
-          cloudwatch: false,
-          guardduty: false,
-          ecs: false,
-          config: false,
-          eventbridge: false
-        };
-        setAwsServices(defaultServices);
-        localStorage.setItem('awsServices', JSON.stringify(defaultServices));
-      }
+      // Al conectar, activamos EC2 y CloudWatch
+      const defaultServices = {
+        ec2: true,
+        iam: false,
+        guardduty: false,
+        cloudwatch: true,  // Activamos CloudWatch
+        config: false,
+        eventbridge: false,
+        ecs: false
+      };
+      setAwsServices(defaultServices);
+      localStorage.setItem('awsServices', JSON.stringify(defaultServices));
     }
     
     setIsAwsModalOpen(false);
@@ -651,7 +639,7 @@ const Dashboard = () => {
                     <div className="aws-service-widget">
                       <div className="widget-header">
                         <div className="service-icon">
-                          <FaChartBar />
+                          <FaChartLine />
                         </div>
                         <div className={`service-status ${awsServices.cloudwatch ? 'active' : 'inactive'}`}>
                           {awsServices.cloudwatch ? 'Conectado' : 'Desconectado'}
@@ -661,14 +649,17 @@ const Dashboard = () => {
                       <div className="service-stats">
                         <div className="stat-item">
                           <span className="stat-label">Alarmas Activas</span>
-                          <span className="stat-value">{awsServices.cloudwatch ? '8' : '-'}</span>
+                          <span className="stat-value">{awsServices.cloudwatch ? '0' : '-'}</span>
                         </div>
                         <div className="stat-item">
                           <span className="stat-label">Logs Monitorizados</span>
-                          <span className="stat-value">{awsServices.cloudwatch ? '24' : '-'}</span>
+                          <span className="stat-value">{awsServices.cloudwatch ? '0' : '-'}</span>
                         </div>
                       </div>
-                      <button className="service-action-btn" disabled={!awsServices.cloudwatch}>
+                      <button 
+                        className="service-action-btn" 
+                        onClick={() => setShowCloudWatchManager(true)}
+                      >
                         Gestionar
                       </button>
                     </div>
@@ -848,6 +839,14 @@ const Dashboard = () => {
         isOpen={isEC2ManagerOpen}
         onClose={() => setIsEC2ManagerOpen(false)}
       />
+
+      {/* CloudWatch Manager Modal */}
+      {showCloudWatchManager && (
+        <CloudWatchManager
+          isOpen={showCloudWatchManager}
+          onClose={() => setShowCloudWatchManager(false)}
+        />
+      )}
     </div>
   );
 };
