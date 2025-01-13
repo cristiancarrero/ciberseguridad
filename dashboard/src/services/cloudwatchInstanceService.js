@@ -2,51 +2,49 @@ import { EC2Client, DescribeInstancesCommand } from "@aws-sdk/client-ec2";
 
 let cwInstanceClient = null;
 
-export const initializeCloudWatchInstances = (credentials, region) => {
+export const initializeCloudWatchInstances = (credentials) => {
+  console.log('Inicializando CloudWatch Instance Client...');
   cwInstanceClient = new EC2Client({
-    credentials: credentials,
-    region: region
+    region: credentials.region,
+    credentials: {
+      accessKeyId: credentials.credentials.accessKeyId,
+      secretAccessKey: credentials.credentials.secretAccessKey,
+      sessionToken: credentials.credentials.sessionToken
+    }
   });
 };
 
 export const getCloudWatchInstances = async () => {
   if (!cwInstanceClient) {
     console.error('CloudWatch Instance Client no inicializado');
-    // Para desarrollo, devolvemos datos de prueba
-    return [
-      { id: 'i-123456', name: 'Test Instance 1', type: 't2.micro', state: 'running' },
-      { id: 'i-789012', name: 'Test Instance 2', type: 't2.small', state: 'running' }
-    ];
+    return [];
   }
 
   try {
-    const command = new DescribeInstancesCommand({
-      Filters: [
-        {
-          Name: 'instance-state-name',
-          Values: ['running']
-        }
-      ]
-    });
-    
+    console.log('Obteniendo instancias para CloudWatch...');
+    const command = new DescribeInstancesCommand({});
     const response = await cwInstanceClient.send(command);
+    
     const instances = [];
     
-    response.Reservations.forEach(reservation => {
-      reservation.Instances.forEach(instance => {
-        const nameTag = instance.Tags?.find(tag => tag.Key === 'Name');
-        instances.push({
-          id: instance.InstanceId,
-          name: nameTag?.Value || instance.InstanceId,
-          type: instance.InstanceType,
-          state: instance.State.Name
-        });
+    response.Reservations?.forEach(reservation => {
+      reservation.Instances?.forEach(instance => {
+        // Solo incluimos instancias que no estén terminadas
+        if (instance.State.Name !== 'terminated') {
+          const nameTag = instance.Tags?.find(tag => tag.Key === 'Name');
+          instances.push({
+            id: instance.InstanceId,
+            name: nameTag?.Value || instance.InstanceId,
+            type: instance.InstanceType
+          });
+        }
       });
     });
 
+    console.log('Instancias encontradas:', instances);
     return instances;
   } catch (error) {
-    console.error('Error al obtener instancias:', error);
+    console.error('Error al obtener instancias para CloudWatch:', error);
     return [];
   }
 };

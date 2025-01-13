@@ -25,6 +25,8 @@
   flex-direction: column;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 1001;
 }
 
 .modal-header {
@@ -53,6 +55,8 @@
   color: var(--text-secondary);
   font-size: 1.75rem;
   cursor: pointer;
+  padding: 0;
+  line-height: 1;
   transition: color 0.2s;
 }
 
@@ -283,4 +287,258 @@
   padding: 1.5rem;
   min-height: 300px;
   margin-top: 1rem;
+}
+
+/* Estilos para el selector de instancias */
+
+.instance-selector-wrapper {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.instance-selector-modal {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 600px;
+  height: 670px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.instance-selector-header {
+  background: var(--bg-primary);
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.instance-selector-header h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 0;
+  font-size: 1.25rem;
+  color: var(--text-primary);
+}
+
+.instance-selector-header svg {
+  color: var(--accent-color);
+  font-size: 1.25rem;
+}
+
+.instance-selector-content {
+  padding: 1.25rem 1.5rem;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.instance-option {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  margin-bottom: 0.75rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-height: 70px;
+}
+
+.instance-option:last-child {
+  margin-bottom: 0;
+}
+
+.instance-option:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-color);
+  background: var(--bg-hover);
+}
+
+.instance-option.selected {
+  background: var(--accent-color-light);
+  border-color: var(--accent-color);
+}
+
+.instance-option input[type="radio"] {
+  margin-right: 1rem;
+  width: 18px;
+  height: 18px;
+  accent-color: var(--accent-color);
+}
+
+.instance-option > div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.instance-name {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.instance-type {
+  display: inline-block;
+  padding: 0.35rem 0.75rem;
+  background: var(--accent-color-light);
+  color: var(--accent-color);
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.instance-selector-footer {
+  padding: 1rem 1.5rem;
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  min-height: 72px;
+}
+
+.cancel-btn,
+.confirm-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-btn {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.cancel-btn:hover {
+  background: var(--bg-hover);
+}
+
+.confirm-btn {
+  background: var(--accent-color);
+  color: white;
+  border: 1px solid var(--accent-color);
+}
+
+.confirm-btn:hover {
+  opacity: 0.9;
+}
+
+.confirm-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.loading-state,
+.empty-state {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 2rem;
+  text-align: center;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+}
+
+.loading-spinner {
+  border: 3px solid var(--bg-hover);
+  border-top: 3px solid var(--accent-color);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 1rem;
+}
+
+.empty-icon {
+  font-size: 2.5rem;
+  color: var(--text-tertiary);
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Añade estos estilos para el buscador */
+.search-box {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.75rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.search-box input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  background: var(--bg-hover);
+}
+
+.search-box input::placeholder {
+  color: var(--text-secondary);
+}
+
+.search-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+/* Ajusta el padding del contenido para acomodar el buscador */
+.instance-selector-content {
+  padding: 1.5rem;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 400px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Ajusta el espacio entre el buscador y la lista */
+.instance-option:first-child {
+  margin-top: 0;
+}
+
+/* Contenedor para la lista de instancias */
+.instances-list-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 } 
