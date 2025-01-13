@@ -1,4 +1,4 @@
-import { EC2Client, DescribeInstancesCommand, RunInstancesCommand, StartInstancesCommand, StopInstancesCommand, TerminateInstancesCommand, DescribeSecurityGroupsCommand, CreateSecurityGroupCommand, AuthorizeSecurityGroupIngressCommand } from "@aws-sdk/client-ec2";
+import { EC2Client, DescribeInstancesCommand, RunInstancesCommand, StartInstancesCommand, StopInstancesCommand, TerminateInstancesCommand, DescribeSecurityGroupsCommand, CreateSecurityGroupCommand, AuthorizeSecurityGroupIngressCommand, DescribeVpcsCommand, DescribeSubnetsCommand } from "@aws-sdk/client-ec2";
 
 let ec2Client = null;
 
@@ -58,6 +58,16 @@ export const listInstances = async () => {
   }
 };
 
+export const listSecurityGroups = async () => {
+  try {
+    const response = await fetch('/api/security-groups');
+    const groups = await response.json();
+    return groups;
+  } catch (error) {
+    throw new Error('Error al listar grupos de seguridad: ' + error.message);
+  }
+};
+
 // Función auxiliar para obtener el grupo de seguridad por defecto
 const getDefaultSecurityGroup = async () => {
   try {
@@ -75,45 +85,103 @@ const getDefaultSecurityGroup = async () => {
 export const launchInstance = async (instanceData) => {
   try {
     console.log('Lanzando nueva instancia EC2...');
+    
+    // Obtener VPC por defecto
+    const vpcCommand = new DescribeVpcsCommand({
+      Filters: [{ Name: 'isDefault', Values: ['true'] }]
+    });
+    const vpcResponse = await ec2Client.send(vpcCommand);
+    
+    if (!vpcResponse.Vpcs || vpcResponse.Vpcs.length === 0) {
+      throw new Error('No se encontró una VPC por defecto');
+    }
+    const vpcId = vpcResponse.Vpcs[0].VpcId;
 
+    // Obtener una subred de la VPC por defecto
+    const subnetCommand = new DescribeSubnetsCommand({
+      Filters: [{ Name: 'vpc-id', Values: [vpcId] }]
+    });
+    const subnetResponse = await ec2Client.send(subnetCommand);
+
+    if (!subnetResponse.Subnets || subnetResponse.Subnets.length === 0) {
+      throw new Error('No se encontraron subredes en la VPC por defecto');
+    }
+
+    // Crear grupo de seguridad
+    const sgName = `ec2-sg-${Date.now()}`;
+    const createSgCommand = new CreateSecurityGroupCommand({
+      GroupName: sgName,
+      Description: 'Security group for EC2 instance',
+      VpcId: vpcId
+    });
+    
+    const { GroupId } = await ec2Client.send(createSgCommand);
+
+    // Configurar reglas de seguridad (SSH)
+    await ec2Client.send(new AuthorizeSecurityGroupIngressCommand({
+      GroupId: GroupId,
+      IpPermissions: [{
+        IpProtocol: 'tcp',
+        FromPort: 22,
+        ToPort: 22,
+        IpRanges: [{ CidrIp: '0.0.0.0/0' }]
+      }]
+    }));
+
+    // Lanzar instancia
     const command = new RunInstancesCommand({
+      MaxCount: 1,
+      MinCount: 1,
       ImageId: instanceData.imageId,
       InstanceType: instanceData.type,
       KeyName: 'vockey',
-      MinCount: 1,
-      MaxCount: 1,
-      // Añadir configuración de red explícita
-      NetworkInterfaces: [{
-        AssociatePublicIpAddress: true,
-        DeviceIndex: 0,
-        DeleteOnTermination: true,
-        SubnetId: 'subnet-002adab6199919fef' // Subnet ID que vemos en la imagen
-      }],
+      SubnetId: subnetResponse.Subnets[0].SubnetId,
+      SecurityGroupIds: [GroupId],
       TagSpecifications: [{
         ResourceType: 'instance',
         Tags: [
-          { Key: 'Name', Value: instanceData.name },
-          { Key: 'Environment', Value: instanceData.tags.Environment },
-          { Key: 'Project', Value: instanceData.tags.Project }
+          { Key: 'Name', Value: instanceData.name }
         ]
-      }],
-      UserData: btoa(`#!/bin/bash
-# Actualizar el sistema
-yum update -y
-
-# Configurar acceso SSH
-sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
-sed -i 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
-
-# Reiniciar servicio SSH
-systemctl restart sshd`)
+      }]
     });
 
     const response = await ec2Client.send(command);
-    return response.Instances[0].InstanceId;
+    return response.Instances[0];
   } catch (error) {
-    console.error('Error lanzando instancia EC2:', error);
-    throw new Error(`Error al lanzar la instancia: ${error.message}`);
+    console.error('Error al lanzar instancia:', error);
+    throw error;
+  }
+};
+
+// Función auxiliar para crear un grupo de seguridad
+const createSecurityGroup = async (name) => {
+  try {
+    // Crear el grupo de seguridad
+    const createCommand = new CreateSecurityGroupCommand({
+      GroupName: name,
+      Description: 'Security group for SSH access'
+    });
+    
+    const { GroupId } = await ec2Client.send(createCommand);
+
+    // Configurar reglas de entrada para SSH
+    const authorizeCommand = new AuthorizeSecurityGroupIngressCommand({
+      GroupId: GroupId,
+      IpPermissions: [
+        {
+          IpProtocol: 'tcp',
+          FromPort: 22,
+          ToPort: 22,
+          IpRanges: [{ CidrIp: '0.0.0.0/0' }]
+        }
+      ]
+    });
+
+    await ec2Client.send(authorizeCommand);
+    return GroupId;
+  } catch (error) {
+    console.error('Error creando grupo de seguridad:', error);
+    throw error;
   }
 };
 
@@ -167,26 +235,16 @@ export const testEC2Connection = async () => {
   }
 };
 
-const createSecurityGroup = async (instanceName) => {
-  const createSgCommand = new CreateSecurityGroupCommand({
-    GroupName: `${instanceName}-sg`,
-    Description: 'Security group for SSH access'
-  });
+export const getInstanceDNS = (instance) => {
+  const region = 'us-west-2'; // O la región que corresponda
+  return `ec2-${instance.publicIp.replace(/\./g, '-')}.${region}.compute.amazonaws.com`;
+};
 
-  const sg = await ec2Client.send(createSgCommand);
-
-  const authorizeSgCommand = new AuthorizeSecurityGroupIngressCommand({
-    GroupId: sg.GroupId,
-    IpPermissions: [
-      {
-        IpProtocol: 'tcp',
-        FromPort: 22,
-        ToPort: 22,
-        IpRanges: [{ CidrIp: '0.0.0.0/0' }]
-      }
-    ]
-  });
-
-  await ec2Client.send(authorizeSgCommand);
-  return sg.GroupId;
+export const getSSHConfig = (instance) => {
+  return {
+    username: 'ec2-user',
+    host: getInstanceDNS(instance),
+    port: 22,
+    privateKey: sessionStorage.getItem('ssh_key')
+  };
 }; 

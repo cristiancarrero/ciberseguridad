@@ -8,7 +8,7 @@ import InstanceTerminal from './InstanceTerminal';
 
 const INSTANCE_PRESETS = {
   basic: {
-    name: "Instancia Básica",
+    name: "Instancia Básica (t2.micro)",
     type: "t2.micro",
     description: "Ideal para desarrollo y pruebas",
     specs: {
@@ -16,14 +16,10 @@ const INSTANCE_PRESETS = {
       memory: "1 GB RAM",
       storage: "8 GB SSD"
     },
-    imageId: "ami-0735c191cf914754d", // Amazon Linux 2
-    tags: {
-      Environment: "Development",
-      Project: "Testing"
-    }
+    imageId: "ami-0735c191cf914754d"
   },
   standard: {
-    name: "Instancia Estándar",
+    name: "Instancia Estándar (t2.small)",
     type: "t2.small",
     description: "Recomendada para aplicaciones en producción",
     specs: {
@@ -31,11 +27,7 @@ const INSTANCE_PRESETS = {
       memory: "2 GB RAM",
       storage: "16 GB SSD"
     },
-    imageId: "ami-0735c191cf914754d", // Amazon Linux 2
-    tags: {
-      Environment: "Production",
-      Project: "Main"
-    }
+    imageId: "ami-0735c191cf914754d"
   }
 };
 
@@ -158,12 +150,7 @@ const EC2Manager = ({ isOpen, onClose }) => {
         type: selectedConfig.type,
         imageId: selectedConfig.imageId,
         keyName: 'vockey',
-        securityGroup: 'default',
-        tags: {
-          Environment: selectedConfig.tags.Environment,
-          Project: selectedConfig.tags.Project,
-          Name: instanceName
-        }
+        securityGroup: 'default'
       };
 
       console.log('Creando instancia con configuración:', instanceData);
@@ -386,7 +373,9 @@ const EC2Manager = ({ isOpen, onClose }) => {
                   >
                     <div className="preset-header">
                       <FaServer />
-                      <h3>{INSTANCE_PRESETS.basic.name}</h3>
+                      <h3>
+                        Instancia Básica <span className="instance-type">t2.micro</span>
+                      </h3>
                     </div>
                     <p className="preset-description">{INSTANCE_PRESETS.basic.description}</p>
                     <div className="preset-specs">
@@ -411,7 +400,9 @@ const EC2Manager = ({ isOpen, onClose }) => {
                   >
                     <div className="preset-header">
                       <FaServer />
-                      <h3>{INSTANCE_PRESETS.standard.name}</h3>
+                      <h3>
+                        Instancia Estándar <span className="instance-type">t2.small</span>
+                      </h3>
                     </div>
                     <p className="preset-description">{INSTANCE_PRESETS.standard.description}</p>
                     <div className="preset-specs">
@@ -473,9 +464,14 @@ const EC2Manager = ({ isOpen, onClose }) => {
               <div className="modal-body">
                 {!hasSSHKey ? (
                   <SSHKeyManager 
+                    onClose={() => setShowConnectionModal(false)}
                     onKeyUpdate={(hasKey) => {
                       setHasSSHKey(hasKey);
-                    }} 
+                      if (hasKey) {
+                        setShowTerminal(true);
+                        setShowConnectionModal(false);
+                      }
+                    }}
                   />
                 ) : (
                   <div className="connection-ready">

@@ -1,62 +1,64 @@
-import React, { useState, useEffect } from 'react';
-import { FaKey, FaUpload, FaCheck } from 'react-icons/fa';
+import React, { useState } from 'react';
+import { FaKey } from 'react-icons/fa';
+import '../styles/components/ssh-key-manager.css';
 
-const SSHKeyManager = ({ onKeyUpdate }) => {
-  const [hasKey, setHasKey] = useState(false);
+const SSHKeyManager = ({ onClose, onKeyUpdate }) => {
+  const [privateKey, setPrivateKey] = useState('');
+  const [error, setError] = useState(null);
+  const [isConnecting, setIsConnecting] = useState(false);
 
-  useEffect(() => {
-    // Verificar si ya hay una clave almacenada en la sesión
-    const storedKey = sessionStorage.getItem('ssh_key');
-    setHasKey(!!storedKey);
-    if (storedKey) {
-      onKeyUpdate(true);
+  const handleConnect = async () => {
+    if (!privateKey.includes('BEGIN RSA PRIVATE KEY')) {
+      setError('Por favor, introduce una clave RSA privada válida');
+      return;
     }
-  }, [onKeyUpdate]);
-
-  const handleKeyUpload = async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
 
     try {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const pemContent = e.target.result;
-        sessionStorage.setItem('ssh_key', pemContent);
-        setHasKey(true);
-        onKeyUpdate(true);
-      };
-      reader.readAsText(file);
+      setIsConnecting(true);
+      setError(null);
+      sessionStorage.setItem('ssh_key', privateKey);
+      onKeyUpdate(true);
+      onClose();
     } catch (error) {
-      console.error('Error al cargar la clave SSH:', error);
-      alert('Error al cargar el archivo PEM. Asegúrate de que es un archivo válido.');
+      setError('Error al procesar la clave: ' + error.message);
+    } finally {
+      setIsConnecting(false);
     }
   };
 
   return (
-    <div className="ssh-key-manager">
-      {!hasKey ? (
-        <div className="key-upload-container">
-          <div className="key-upload-content">
-            <FaKey size={24} />
-            <h3>Clave SSH requerida</h3>
-            <p>Sube tu archivo vockey.pem para conectarte a las instancias</p>
-            <label className="upload-button">
-              <FaUpload /> Seleccionar archivo PEM
-              <input
-                type="file"
-                accept=".pem"
-                onChange={handleKeyUpload}
-                style={{ display: 'none' }}
-              />
-            </label>
+    <div className="ssh-key-modal">
+      <div className="ssh-key-content">
+        <div className="ssh-key-header">
+          <FaKey className="key-icon" />
+          <h2>Clave SSH requerida</h2>
+        </div>
+        <div className="ssh-key-body">
+          <p>Introduce tu clave RSA privada para conectarte a las instancias</p>
+          {error && <div className="error-message">{error}</div>}
+          <textarea
+            value={privateKey}
+            onChange={(e) => setPrivateKey(e.target.value)}
+            placeholder="-----BEGIN RSA PRIVATE KEY-----..."
+            rows={15}
+          />
+          <div className="ssh-key-actions">
+            <button 
+              className="cancel-btn"
+              onClick={onClose}
+            >
+              Cancelar
+            </button>
+            <button 
+              className="connect-btn"
+              onClick={handleConnect}
+              disabled={isConnecting}
+            >
+              {isConnecting ? 'Conectando...' : 'Conectar'}
+            </button>
           </div>
         </div>
-      ) : (
-        <div className="key-status">
-          <FaCheck className="key-icon" />
-          <span>Clave SSH cargada</span>
-        </div>
-      )}
+      </div>
     </div>
   );
 };

@@ -242,9 +242,10 @@
 
 .preset-selector {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
   margin-bottom: 2rem;
+  align-items: stretch;
 }
 
 .preset-card {
@@ -254,7 +255,9 @@
   padding: 1.5rem;
   cursor: pointer;
   transition: all 0.3s ease;
-  height: fit-content;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .preset-card:hover {
@@ -274,17 +277,35 @@
   margin-bottom: 1rem;
 }
 
-.preset-header svg {
-  color: #4ecdc4;
-  font-size: 1.5rem;
+.preset-header h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.preset-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.preset-title h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.1rem;
 }
 
 .preset-description {
   color: rgba(255, 255, 255, 0.6);
   margin-bottom: 1rem;
+  flex-grow: 1;
 }
 
 .preset-specs {
+  margin-top: auto;
   display: grid;
   gap: 0.5rem;
 }
@@ -489,4 +510,45 @@
 .connection-steps ul {
   margin: 0.5rem 0;
   padding-left: 1.5rem;
+}
+
+.preset-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.preset-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.preset-title h3 {
+  margin: 0;
+  color: #fff;
+  display: inline;
+}
+
+.instance-type {
+  color: #67d1d3;
+  background: rgba(103, 209, 211, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.9em;
+  font-family: monospace;
+  display: inline-block;
+}
+
+.preset-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 } 

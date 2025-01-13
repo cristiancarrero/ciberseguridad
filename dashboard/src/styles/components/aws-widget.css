@@ -1,0 +1,78 @@
+.aws-service-widget {
+  background: #1a1f2e;
+  border-radius: 10px;
+  padding: 20px;
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.widget-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.widget-header h3 {
+  margin: 0;
+  font-size: 1.2em;
+}
+
+.connection-status {
+  margin-left: auto;
+  padding: 5px 10px;
+  border-radius: 15px;
+  font-size: 0.85em;
+}
+
+.connection-status.connected {
+  background: #4CAF50;
+  color: white;
+}
+
+.connection-status.disconnected {
+  background: #f44336;
+  color: white;
+}
+
+.widget-metrics {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.metric-item {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.metric-item label {
+  display: block;
+  color: #8b949e;
+  font-size: 0.9em;
+  margin-bottom: 8px;
+}
+
+.metric-value {
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+.widget-action-button {
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, #00b4db 0%, #0083b0 100%);
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.widget-action-button:hover {
+  transform: translateY(-2px);
+} 
