@@ -1,0 +1,53 @@
+.aws-connect-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: grid;
+  place-items: center;
+  z-index: 100000;
+}
+
+.aws-connect-modal {
+  background: #1a1f2e;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 500px;
+  overflow: hidden;
+  color: white;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.aws-connect-header {
+  padding: 1.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.aws-connect-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  color: white;
+}
+
+.aws-connect-close {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.aws-connect-close:hover {
+  color: white;
+  transform: rotate(90deg);
+}
+
+.aws-connect-body {
+  padding: 1.5rem;
+} 

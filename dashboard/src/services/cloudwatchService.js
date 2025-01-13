@@ -1,35 +1,41 @@
 import { CloudWatchClient, GetMetricDataCommand } from "@aws-sdk/client-cloudwatch";
 
-export const getMetrics = async (metricName, period = 3600) => {
-  const client = new CloudWatchClient({ region: "tu-region" });
-  
-  const endTime = new Date();
-  const startTime = new Date(endTime - period * 1000);
+let cwClient = null;
 
-  const command = new GetMetricDataCommand({
-    StartTime: startTime,
-    EndTime: endTime,
-    MetricDataQueries: [
-      {
-        Id: 'cpu',
-        MetricStat: {
-          Metric: {
-            Namespace: 'AWS/EC2',
-            MetricName: metricName,
-            Dimensions: [
-              {
-                Name: 'InstanceId',
-                Value: 'tu-instance-id'
-              }
-            ]
-          },
-          Period: 300, // 5 minutos
-          Stat: 'Average'
-        }
-      }
-    ]
+export const initializeCloudWatch = (credentials, region) => {
+  cwClient = new CloudWatchClient({
+    credentials: credentials,
+    region: region
   });
+};
 
-  const response = await client.send(command);
-  return response.MetricDataResults[0];
+export const getMetrics = async (instanceId, metricName) => {
+  if (!cwClient) {
+    throw new Error('CloudWatch client not initialized');
+  }
+
+  try {
+    // En un entorno real, aquí harías la llamada a CloudWatch
+    // Por ahora, devolvemos datos simulados
+    const mockMetrics = {
+      cpu: Math.floor(Math.random() * 100),
+      memory: Math.floor(Math.random() * 16),
+      network: Math.floor(Math.random() * 1000),
+      disk: Math.floor(Math.random() * 500),
+      status: Math.random() > 0.5 ? 'ok' : 'warning'
+    };
+
+    return mockMetrics;
+  } catch (error) {
+    console.error('Error getting CloudWatch metrics:', error);
+    throw error;
+  }
+};
+
+export const createAlarm = async (alarmConfig) => {
+  // Implement alarm creation logic
+};
+
+export const getLogs = async (logGroupName, filterPattern) => {
+  // Implement log retrieval logic
 }; 

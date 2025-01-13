@@ -128,3 +128,19 @@ svg {
 .text-bold { font-weight: 600; }
 .text-small { font-size: var(--font-size-sm); }
 .text-large { font-size: var(--font-size-lg); } 
+
+:root {
+  --bg-primary: #1a1f2e;
+  --bg-secondary: #242b3d;
+  --bg-tertiary: #2f3850;
+  --bg-hover: rgba(255, 255, 255, 0.05);
+  
+  --text-primary: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.8);
+  --text-tertiary: rgba(255, 255, 255, 0.6);
+  
+  --accent-color: #4ecdc4;
+  --accent-color-light: rgba(78, 205, 196, 0.1);
+  
+  --border-color: rgba(255, 255, 255, 0.1);
+} 

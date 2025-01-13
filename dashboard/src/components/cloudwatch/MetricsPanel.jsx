@@ -1,83 +1,58 @@
 import React, { useState } from 'react';
-import { FaChartLine, FaServer, FaDatabase, FaLambda } from 'react-icons/fa';
+import MetricButton from './MetricButton';
 
 const MetricsPanel = () => {
-  const [selectedService, setSelectedService] = useState(null);
+  const [metrics, setMetrics] = useState({});
 
-  const services = [
+  const handleMetricAdd = (metricType, newMetrics) => {
+    setMetrics(prev => ({
+      ...prev,
+      [metricType]: newMetrics
+    }));
+  };
+
+  const metricTypes = [
     {
-      id: 'ec2',
-      name: 'Amazon EC2',
-      icon: <FaServer />,
-      metrics: [
-        { name: 'CPUUtilization', label: 'CPU Utilization', unit: '%' },
-        { name: 'NetworkIn', label: 'Network In', unit: 'bytes' },
-        { name: 'NetworkOut', label: 'Network Out', unit: 'bytes' },
-        { name: 'DiskReadOps', label: 'Disk Read Ops', unit: 'count' },
-        { name: 'DiskWriteOps', label: 'Disk Write Ops', unit: 'count' }
-      ]
+      type: 'CPU Utilization',
+      description: 'Uso de CPU de la instancia',
+      unit: '%'
     },
     {
-      id: 'rds',
-      name: 'Amazon RDS',
-      icon: <FaDatabase />,
-      metrics: [
-        { name: 'DatabaseConnections', label: 'DB Connections', unit: 'count' },
-        { name: 'ReadIOPS', label: 'Read IOPS', unit: 'count/second' },
-        { name: 'WriteIOPS', label: 'Write IOPS', unit: 'count/second' },
-        { name: 'FreeStorageSpace', label: 'Free Storage', unit: 'bytes' }
-      ]
+      type: 'Memory Usage',
+      description: 'Uso de memoria RAM',
+      unit: 'GB'
     },
     {
-      id: 'lambda',
-      name: 'AWS Lambda',
-      icon: <FaLambda />,
-      metrics: [
-        { name: 'Invocations', label: 'Invocations', unit: 'count' },
-        { name: 'Errors', label: 'Errors', unit: 'count' },
-        { name: 'Duration', label: 'Duration', unit: 'milliseconds' },
-        { name: 'Throttles', label: 'Throttles', unit: 'count' }
-      ]
+      type: 'Network I/O',
+      description: 'Tráfico de red entrante/saliente',
+      unit: 'MB/s'
+    },
+    {
+      type: 'Disk I/O',
+      description: 'Operaciones de lectura/escritura en disco',
+      unit: 'IOPS'
+    },
+    {
+      type: 'Status Check',
+      description: 'Estado de la instancia',
+      unit: 'Status'
     }
   ];
 
   return (
     <div className="metrics-panel">
-      <div className="services-list">
-        {services.map(service => (
-          <div 
-            key={service.id}
-            className={`service-item ${selectedService?.id === service.id ? 'active' : ''}`}
-            onClick={() => setSelectedService(service)}
-          >
-            <div className="service-icon">{service.icon}</div>
-            <div className="service-info">
-              <h4>{service.name}</h4>
-              <span>{service.metrics.length} métricas disponibles</span>
-            </div>
-          </div>
+      <h2>Métricas Disponibles</h2>
+      <div className="metrics-grid">
+        {metricTypes.map((metric) => (
+          <MetricButton
+            key={metric.type}
+            metricType={metric.type}
+            description={metric.description}
+            unit={metric.unit}
+            onMetricAdd={(newMetrics) => handleMetricAdd(metric.type, newMetrics)}
+          />
         ))}
       </div>
-
-      {selectedService && (
-        <div className="metrics-list">
-          <h3>Métricas de {selectedService.name}</h3>
-          <div className="metrics-grid">
-            {selectedService.metrics.map(metric => (
-              <div key={metric.name} className="metric-card">
-                <h4>{metric.label}</h4>
-                <div className="metric-details">
-                  <span>Nombre: {metric.name}</span>
-                  <span>Unidad: {metric.unit}</span>
-                </div>
-                <button className="add-metric-btn">
-                  <FaChartLine /> Monitorizar
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 };
