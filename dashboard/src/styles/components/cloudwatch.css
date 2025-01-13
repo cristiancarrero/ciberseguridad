@@ -183,9 +183,9 @@
 .add-metric-btn {
   width: 100%;
   padding: 0.75rem;
-  background: var(--bg-hover);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
+  background: var(--accent-color);
+  color: white;
+  border: none;
   border-radius: 8px;
   cursor: pointer;
   font-size: 0.95rem;
@@ -193,9 +193,7 @@
 }
 
 .add-metric-btn:hover {
-  background: var(--accent-color);
-  color: white;
-  border-color: var(--accent-color);
+  opacity: 0.9;
 }
 
 /* Estilos para la sección de alarmas */
@@ -541,4 +539,30 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+}
+
+.metric-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.view-metric-btn {
+  padding: 0.75rem;
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+}
+
+.view-metric-btn:hover {
+  background: var(--bg-primary);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
 } 

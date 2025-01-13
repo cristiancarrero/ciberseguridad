@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FaChartLine, FaBell, FaList, FaMicrochip, FaMemory, FaNetworkWired, FaHdd, FaCheckCircle } from 'react-icons/fa';
+import { FaChartLine, FaBell, FaList, FaMicrochip, FaMemory, FaNetworkWired, FaHdd, FaCheckCircle, FaEye } from 'react-icons/fa';
 import InstanceSelectorModal from './cloudwatch/InstanceSelectorModal';
 import '../styles/components/cloudwatch.css';
 
@@ -59,7 +59,7 @@ const CloudWatchManager = ({ isOpen, onClose }) => {
       <div className="metrics-grid">
         {metrics.map(metric => (
           <div key={metric.id} className="metric-card">
-            <div className="metric-icon" style={{ backgroundColor: `${metric.color}20`, color: metric.color }}>
+            <div className="metric-icon">
               {metric.icon}
             </div>
             <div className="metric-info">
@@ -68,13 +68,20 @@ const CloudWatchManager = ({ isOpen, onClose }) => {
                 <span className="metric-unit">{metric.unit}</span>
               </div>
               <p className="metric-description">{metric.description}</p>
-              <button 
-                className="add-metric-btn"
-                onClick={() => handleAddMetric(metric)}
-                style={{ backgroundColor: metric.color }}
-              >
-                Añadir a Métricas
-              </button>
+              <div className="metric-actions">
+                <button 
+                  className="add-metric-btn"
+                  onClick={() => handleAddMetric(metric)}
+                >
+                  Añadir a Métricas
+                </button>
+                <button 
+                  className="view-metric-btn"
+                  onClick={() => handleViewMetric(metric)}
+                >
+                  <FaEye />
+                </button>
+              </div>
             </div>
           </div>
         ))}
@@ -132,6 +139,10 @@ const CloudWatchManager = ({ isOpen, onClose }) => {
     console.log('Instancia seleccionada:', instance);
     console.log('Para la métrica:', selectedMetricType);
     setShowInstanceSelector(false);
+  };
+
+  const handleViewMetric = (metric) => {
+    console.log('Ver métrica:', metric);
   };
 
   return (
