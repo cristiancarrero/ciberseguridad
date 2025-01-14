@@ -18,7 +18,7 @@ import AwsConnectModal from './AwsConnectModal';
 import '../styles/components/modal.css';
 import EC2Manager from './EC2Manager';
 import { loadAwsConfig } from '../services/awsService';
-import CloudWatchManager from './CloudWatchManager';
+import CloudWatchManager from './cloudwatch/CloudWatchManager';
 import Seguridad from './Seguridad';
 import { useMetricsPersistence } from '../hooks/useMetricsPersistence';
 
@@ -319,7 +319,7 @@ const Dashboard = () => {
               <CloudWatchManager
                 isOpen={showCloudWatchManager}
                 onClose={() => setShowCloudWatchManager(false)}
-                onAddMetric={handleAddMetric}
+                onAddMetric={addMetric}
               />
             )}
           </div>
@@ -739,7 +739,7 @@ const Dashboard = () => {
         <CloudWatchManager
           isOpen={showCloudWatchManager}
           onClose={() => setShowCloudWatchManager(false)}
-          onAddMetric={handleAddMetric}
+          onAddMetric={addMetric}
         />
       )}
     </div>

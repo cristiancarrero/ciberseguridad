@@ -1,0 +1,153 @@
+/* Estilos para el panel de alarmas */
+.alarms-panel {
+  padding: 2rem;
+  height: 100%;
+}
+
+.no-alarms {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+  padding: 2rem;
+}
+
+.bell-icon {
+  font-size: 3rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.create-alarm-btn {
+  margin-top: 1.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.create-alarm-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(78, 205, 196, 0.2);
+}
+
+.alarms-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  padding: 1rem;
+}
+
+.alarm-card {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.alarm-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.alarm-header h3 {
+  margin: 0;
+  color: var(--text-primary);
+}
+
+.status {
+  padding: 0.35rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.status.OK {
+  background: rgba(46, 213, 115, 0.1);
+  color: #2ed573;
+}
+
+.status.ALARM {
+  background: rgba(255, 71, 87, 0.1);
+  color: #ff4757;
+}
+
+.alarm-details {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.alarm-details p {
+  margin: 0.5rem 0;
+}
+
+/* Mantener los estilos del formulario */
+.form-content {
+  margin: 1.5rem 0;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.cancel-btn,
+.create-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.cancel-btn {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.create-btn {
+  background: var(--accent-color);
+  color: white;
+  border: none;
+}
+
+/* Asegurar que los botones sean visibles */
+.modal-actions button {
+  background: var(--accent-color);
+  color: white;
+}
+
+.modal-actions .cancel-btn {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+} 

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { FaChartLine, FaBell, FaList, FaMicrochip, FaMemory, FaNetworkWired, FaHdd, FaCheckCircle, FaEye, FaServer } from 'react-icons/fa';
-import InstanceSelectorModal from './cloudwatch/InstanceSelectorModal';
-import MetricModal from './cloudwatch/MetricModal';
-import '../styles/components/cloudwatch.css';
-import { initializeEC2Client } from '../services/ec2Service';
+import InstanceSelectorModal from './InstanceSelectorModal';
+import MetricModal from './MetricModal';
+import '../../styles/components/cloudwatch.css';
+import { initializeEC2Client } from '../../services/ec2Service';
+import CreateAlarmModal from './CreateAlarmModal';
 
 const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
   const [activeTab, setActiveTab] = useState('métricas');
@@ -12,6 +13,7 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
   const [selectedMetric, setSelectedMetric] = useState(null);
   const [showMetricModal, setShowMetricModal] = useState(false);
   const [selectedInstance, setSelectedInstance] = useState(null);
+  const [showCreateAlarmModal, setShowCreateAlarmModal] = useState(false);
   
   // Inicializar assignedInstances desde localStorage
   const [assignedInstances, setAssignedInstances] = useState(() => {
@@ -136,7 +138,10 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
           <FaBell className="no-data-icon" />
           <h3>No hay alarmas configuradas</h3>
           <p>Añade una alarma para monitorear tus recursos</p>
-          <button className="add-alarm-btn">
+          <button 
+            className="add-alarm-btn"
+            onClick={() => setShowCreateAlarmModal(true)}
+          >
             Crear Nueva Alarma
           </button>
         </div>
@@ -288,6 +293,16 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
             metric={selectedMetric}
             instance={selectedInstance}
             onClose={() => setShowMetricModal(false)}
+          />
+        )}
+
+        {showCreateAlarmModal && (
+          <CreateAlarmModal
+            onClose={() => setShowCreateAlarmModal(false)}
+            onCreate={(data) => {
+              console.log('Nueva alarma:', data);
+              setShowCreateAlarmModal(false);
+            }}
           />
         )}
       </div>

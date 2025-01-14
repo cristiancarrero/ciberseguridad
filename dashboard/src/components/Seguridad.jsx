@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaChartLine, FaTimes } from 'react-icons/fa';
-import CloudWatchManager from './CloudWatchManager';
+import CloudWatchManager from './cloudwatch/CloudWatchManager';
 import MetricChart from './MetricChart';
 
 const Seguridad = ({ metrics, onRemoveMetric, onMetricUpdate, onAddMetric, isAwsConnected, currentValues }) => {
