@@ -3,6 +3,7 @@ import { FaChartLine, FaBell, FaList, FaMicrochip, FaMemory, FaNetworkWired, FaH
 import InstanceSelectorModal from './cloudwatch/InstanceSelectorModal';
 import MetricModal from './cloudwatch/MetricModal';
 import '../styles/components/cloudwatch.css';
+import { initializeEC2Client } from '../services/ec2Service';
 
 const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
   const [activeTab, setActiveTab] = useState('métricas');
@@ -27,6 +28,13 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
   useEffect(() => {
     localStorage.setItem('cloudwatch_assigned_instances', JSON.stringify(assignedInstances));
   }, [assignedInstances]);
+
+  useEffect(() => {
+    const awsConfig = JSON.parse(localStorage.getItem('awsConfig'));
+    if (awsConfig) {
+      initializeEC2Client(awsConfig);
+    }
+  }, []);
 
   if (!isOpen) return null;
 
@@ -167,9 +175,13 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
   };
 
   const handleInstanceSelect = (instance) => {
+    console.log('Nueva instancia seleccionada:', instance);
     const newAssignedInstances = {
       ...assignedInstances,
-      [selectedMetricType.id]: instance
+      [selectedMetricType.id]: {
+        id: instance.id,
+        name: instance.name || instance.id
+      }
     };
     setAssignedInstances(newAssignedInstances);
     localStorage.setItem('cloudwatch_assigned_instances', JSON.stringify(newAssignedInstances));
@@ -177,14 +189,19 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
     setShowInstanceSelector(false);
     if (selectedMetricType) {
       setSelectedMetric(selectedMetricType);
+      setSelectedInstance(instance);
       setShowMetricModal(true);
     }
   };
 
   const handleViewMetric = (metric) => {
     if (assignedInstances[metric.id]) {
+      console.log('Instancia seleccionada para ver métrica:', assignedInstances[metric.id]);
       setSelectedMetric(metric);
-      setSelectedInstance(assignedInstances[metric.id]);
+      setSelectedInstance({
+        id: assignedInstances[metric.id].id,
+        name: assignedInstances[metric.id].name
+      });
       setShowMetricModal(true);
     } else {
       setSelectedMetricType(metric);
@@ -193,18 +210,34 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
   };
 
   const handleAddToDashboard = (metric, instance) => {
+    if (!instance || !instance.id) {
+      console.error('ID de instancia no válido:', instance);
+      return;
+    }
+
     const newMetric = {
       title: metric.title,
       instanceId: instance.id,
+      instanceName: instance.name,
       type: metric.id,
       value: '0',
       unit: metric.unit,
       metricName: metric.metricName || metric.id,
       icon: metric.icon
     };
-    
+
     onAddMetric(newMetric);
     onClose();
+  };
+
+  const handleAssignInstance = (metricType, instance) => {
+    setAssignedInstances(prev => ({
+      ...prev,
+      [metricType]: {
+        id: instance.InstanceId,
+        name: instance.Tags?.find(tag => tag.Key === 'Name')?.Value || instance.InstanceId
+      }
+    }));
   };
 
   return (

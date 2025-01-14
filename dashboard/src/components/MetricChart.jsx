@@ -1,44 +1,81 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { getInstanceMetrics } from '../services/cloudwatchService';
 
-const MetricChart = ({ metricData, timeRange }) => {
+// Cache global para los datos de las métricas
+const metricsCache = new Map();
+
+const MetricChart = ({ metricData, timeRange, onValueUpdate }) => {
   const [chartData, setChartData] = useState([]);
+  const lastFetchRef = useRef(0);
+  const cacheKey = `${metricData.instanceId}-${metricData.type}-${timeRange}`;
 
   useEffect(() => {
     const fetchMetricData = async () => {
       try {
-        let metricName;
-        switch(metricData.type) {
-          case 'cpu':
-            metricName = 'CPUUtilization';
-            break;
-          case 'network':
-            metricName = 'NetworkIn';
-            break;
-          case 'disk':
-            metricName = 'DiskReadOps';
-            break;
-          case 'status':
-            metricName = 'StatusCheckFailed';
-            break;
-          default:
-            metricName = '';
+        if (!metricData.instanceId) return;
+
+        const now = Date.now();
+        const cachedData = metricsCache.get(cacheKey);
+        if (cachedData && now - lastFetchRef.current < 60000) {
+          setChartData(cachedData);
+          if (cachedData.length > 0) {
+            onValueUpdate?.(cachedData[cachedData.length - 1].value);
+          }
+          return;
         }
 
-        console.log('Solicitando métrica:', metricName, 'para instancia:', metricData.instanceId);
-        const response = await getInstanceMetrics(metricData.instanceId, metricName);
-        console.log('Respuesta de métrica:', response);
+        let formattedData = [];
         
-        if (response && response.Timestamps && response.Values) {
-          const formattedData = response.Timestamps.map((timestamp, index) => ({
-            time: new Date(timestamp).toLocaleTimeString('es-ES', {
-              hour: '2-digit',
-              minute: '2-digit'
-            }),
-            value: response.Values[index]
-          }));
-          setChartData(formattedData);
+        if (metricData.type === 'network') {
+          const [networkInData, networkOutData] = await Promise.all([
+            getInstanceMetrics(metricData.instanceId, 'NetworkIn'),
+            getInstanceMetrics(metricData.instanceId, 'NetworkOut')
+          ]);
+
+          if (networkInData?.Timestamps && networkOutData?.Timestamps) {
+            const combinedData = networkInData.Timestamps.map((timestamp, index) => ({
+              timestamp: new Date(timestamp),
+              value: (networkInData.Values[index] || 0) + (networkOutData.Values[index] || 0)
+            }));
+
+            combinedData.sort((a, b) => b.timestamp - a.timestamp);
+            formattedData = combinedData.map(item => ({
+              time: item.timestamp.toLocaleTimeString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit'
+              }),
+              value: item.value
+            })).reverse();
+          }
+        } else {
+          const metricName = {
+            cpu: 'CPUUtilization',
+            disk: 'EBSReadOps',
+            status: 'StatusCheckFailed_System'
+          }[metricData.type] || '';
+
+          const response = await getInstanceMetrics(metricData.instanceId, metricName);
+          
+          if (response?.Timestamps && response?.Values) {
+            formattedData = response.Timestamps.map((timestamp, index) => ({
+              time: new Date(timestamp).toLocaleTimeString('es-ES', {
+                hour: '2-digit',
+                minute: '2-digit'
+              }),
+              value: response.Values[index]
+            }))
+            .sort((a, b) => new Date(b.time) - new Date(a.time))
+            .reverse();
+          }
+        }
+
+        metricsCache.set(cacheKey, formattedData);
+        lastFetchRef.current = now;
+        setChartData(formattedData);
+        
+        if (formattedData.length > 0) {
+          onValueUpdate?.(formattedData[formattedData.length - 1].value);
         }
       } catch (error) {
         console.error('Error al obtener datos de la métrica:', error);
@@ -48,7 +85,7 @@ const MetricChart = ({ metricData, timeRange }) => {
     fetchMetricData();
     const interval = setInterval(fetchMetricData, 60000);
     return () => clearInterval(interval);
-  }, [metricData.instanceId, metricData.type, timeRange]);
+  }, [metricData.instanceId, metricData.type, timeRange, onValueUpdate, cacheKey]);
 
   return (
     <div className="metric-chart">

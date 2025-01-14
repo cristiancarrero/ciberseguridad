@@ -1,18 +1,9 @@
 import React, { useState } from 'react';
-import { FaChartLine } from 'react-icons/fa';
+import { FaChartLine, FaTimes } from 'react-icons/fa';
 import CloudWatchManager from './CloudWatchManager';
 import MetricChart from './MetricChart';
 
-const getInstanceName = (instanceId) => {
-  // Mapa de IDs a nombres
-  const instanceNames = {
-    'i-0e82a3a9b592bb8dd': 'rfeefef',
-    // Añadir más mapeos según sea necesario
-  };
-  return instanceNames[instanceId] || instanceId;
-};
-
-const Seguridad = ({ onAddMetric, metrics, isAwsConnected }) => {
+const Seguridad = ({ metrics, onRemoveMetric, onMetricUpdate, onAddMetric, isAwsConnected, currentValues }) => {
   const [timeFilter, setTimeFilter] = useState('24h');
 
   return (
@@ -48,19 +39,35 @@ const Seguridad = ({ onAddMetric, metrics, isAwsConnected }) => {
           <>
             {metrics.map((metric, index) => (
               <div key={index} className="metric-widget">
+                <button 
+                  className="remove-metric-btn"
+                  onClick={() => onRemoveMetric(index)}
+                  title="Eliminar métrica"
+                >
+                  <FaTimes />
+                </button>
+                
                 <div className="widget-header">
                   <div className="metric-info">
                     <h4>{metric.title}</h4>
-                    <span className="instance-id">
-                      {getInstanceName(metric.instanceId)}
+                    <span className="instance-name">
+                      {metric.instanceName || metric.instanceId}
                     </span>
                   </div>
-                  <div className="metric-value">{metric.value || '0'}</div>
+                  <div className="metric-value">
+                    {metric.type === 'cpu' ? `${Number(currentValues[index] || 0).toFixed(2)}%` :
+                     metric.type === 'network' ? `${Math.round(currentValues[index] || 0)} ${metric.unit}` :
+                     metric.type === 'disk' ? `${Math.round(currentValues[index] || 0)} ${metric.unit}` :
+                     metric.type === 'status' ? (currentValues[index] === 0 ? 'OK' : 'Failed') :
+                     `${currentValues[index] || 0} ${metric.unit}`}
+                    <span className="update-indicator"></span>
+                  </div>
                 </div>
                 <div className="widget-content">
                   <MetricChart 
                     metricData={metric}
                     timeRange={timeFilter}
+                    onValueUpdate={(value) => onMetricUpdate(index, value)}
                   />
                 </div>
               </div>

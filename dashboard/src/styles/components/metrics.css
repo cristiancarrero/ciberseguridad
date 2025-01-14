@@ -12,6 +12,7 @@
   min-height: 300px;
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .widget-header {
@@ -46,6 +47,9 @@
   font-size: 1.75rem;
   font-weight: 600;
   color: #4ecdc4;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .widget-content {
@@ -462,7 +466,7 @@
   font-size: 0.85rem;
   color: var(--text-secondary);
   opacity: 0.8;
-  font-family: monospace; /* Para IDs de instancia */
+  font-family: monospace;
   margin-top: 0.25rem;
 }
 
@@ -473,4 +477,105 @@
   margin: 0;
   display: flex;
   flex-direction: column;
+}
+
+.update-indicator {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #4ecdc4;
+  margin-left: 8px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+.metric-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.remove-metric-btn {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  opacity: 0.7;
+}
+
+.remove-metric-btn:hover {
+  color: #ff6b6b;
+  background: rgba(255, 107, 107, 0.1);
+  opacity: 1;
+}
+
+.metric-header {
+  margin-bottom: 10px;
+}
+
+.instance-name {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  opacity: 0.8;
+}
+
+.instance-id {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  opacity: 0.8;
+  font-family: monospace;
+  margin-top: 0.25rem;
+}
+
+.metric-info h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-chart.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+}
+
+.loading-spinner {
+  width: 30px;
+  height: 30px;
+  border: 3px solid rgba(78, 205, 196, 0.1);
+  border-top-color: #4ecdc4;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 } 

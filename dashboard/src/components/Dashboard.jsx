@@ -20,6 +20,7 @@ import EC2Manager from './EC2Manager';
 import { loadAwsConfig } from '../services/awsService';
 import CloudWatchManager from './CloudWatchManager';
 import Seguridad from './Seguridad';
+import { useMetricsPersistence } from '../hooks/useMetricsPersistence';
 
 const Dashboard = () => {
   const [currentSection, setCurrentSection] = useState(() => {
@@ -35,7 +36,13 @@ const Dashboard = () => {
   });
   const [isEC2ManagerOpen, setIsEC2ManagerOpen] = useState(false);
   const [showCloudWatchManager, setShowCloudWatchManager] = useState(false);
-  const [dashboardMetrics, setDashboardMetrics] = useState([]);
+  const { 
+    metrics: dashboardMetrics, 
+    metricValues: metricsValues,
+    addMetric, 
+    removeMetric,
+    updateMetricValue 
+  } = useMetricsPersistence();
 
   // Añadir estado para los servicios
   const [awsServices, setAwsServices] = useState(() => {
@@ -122,7 +129,15 @@ const Dashboard = () => {
   };
 
   const handleAddMetric = (newMetric) => {
-    setDashboardMetrics(prev => [...prev, newMetric]);
+    addMetric(newMetric);
+  };
+
+  const handleRemoveMetric = (index) => {
+    removeMetric(index);
+  };
+
+  const handleMetricUpdate = (index, value) => {
+    updateMetricValue(index, value);
   };
 
   const renderContent = () => {
@@ -292,8 +307,11 @@ const Dashboard = () => {
             <div className="metrics-container">
               <Seguridad 
                 onAddMetric={() => setShowCloudWatchManager(true)}
+                onRemoveMetric={handleRemoveMetric}
+                onMetricUpdate={handleMetricUpdate}
                 metrics={dashboardMetrics}
                 isAwsConnected={isAwsConnected}
+                currentValues={metricsValues}
               />
             </div>
 
