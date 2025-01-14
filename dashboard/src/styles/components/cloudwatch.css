@@ -1094,6 +1094,11 @@
   color: var(--error-color);
 }
 
+.status.insufficient {
+  background: var(--warning-color-light);
+  color: var(--warning-color);
+}
+
 .alarm-details {
   color: var(--text-secondary);
   font-size: 0.95rem;
@@ -1109,4 +1114,22 @@
 
 .alarm-details p svg {
   color: var(--accent-color);
+  margin-right: 0.5rem;
+  width: 16px;
+  height: 16px;
+}
+
+.alarm-details p .fa-envelope {
+  font-size: 0.9em;
+}
+
+.alarm-details p svg {
+  color: var(--accent-color);
+  margin-right: 0.5rem;
+  width: 16px;
+  height: 16px;
+}
+
+.alarm-details p .fa-envelope {
+  font-size: 0.9em;
 } 

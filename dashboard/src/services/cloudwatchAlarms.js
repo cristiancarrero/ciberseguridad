@@ -1,4 +1,4 @@
-import { CloudWatchClient, PutMetricAlarmCommand, DeleteAlarmsCommand } from "@aws-sdk/client-cloudwatch";
+import { CloudWatchClient, PutMetricAlarmCommand, DeleteAlarmsCommand, DescribeAlarmsCommand } from "@aws-sdk/client-cloudwatch";
 import { SNSClient, CreateTopicCommand, SubscribeCommand } from "@aws-sdk/client-sns";
 
 let cloudWatchClient = null;
@@ -24,50 +24,37 @@ export const initializeCloudWatchAlarms = (credentials) => {
   });
 };
 
-export const setupAlarmNotifications = async (email) => {
-  if (!snsClient) {
-    throw new Error('SNS Client no inicializado');
-  }
-
-  try {
-    console.log('Configurando notificaciones para:', email);
-    
-    // Crear un nombre único para el tema
-    const topicName = `CloudWatchAlarms-${Date.now()}`;
-    
-    // Crear el tema SNS
-    const createTopicCommand = new CreateTopicCommand({
-      Name: topicName
-    });
-    console.log('Creando tema SNS...');
-    const topicResponse = await snsClient.send(createTopicCommand);
-    const topicArn = topicResponse.TopicArn;
-    console.log('Tema SNS creado:', topicArn);
-
-    // Suscribir el email al tema
-    const subscribeCommand = new SubscribeCommand({
-      TopicArn: topicArn,
-      Protocol: "email",
-      Endpoint: email
-    });
-    console.log('Suscribiendo email al tema...');
-    await snsClient.send(subscribeCommand);
-    console.log('Email suscrito correctamente');
-
-    return topicArn;
-  } catch (error) {
-    console.error('Error detallado en setupAlarmNotifications:', error);
-    throw new Error(`Error configurando notificaciones: ${error.message}`);
-  }
-};
-
-export const createCloudWatchAlarm = async (alarmData, topicArn) => {
+export const createCloudWatchAlarm = async (alarmData) => {
   if (!cloudWatchClient) {
     throw new Error('CloudWatch Client no inicializado');
   }
 
   try {
-    console.log('Creando alarma con datos:', { alarmData, topicArn });
+    let topicArn = null;
+
+    // Solo crear el tema SNS si hay email
+    if (alarmData.email) {
+      // 1. Crear tema SNS
+      const topicName = `CloudWatch-Alarm-${Date.now()}`;
+      const createTopicCommand = new CreateTopicCommand({
+        Name: topicName
+      });
+      console.log('Creando tema SNS...');
+      const topicResponse = await snsClient.send(createTopicCommand);
+      topicArn = topicResponse.TopicArn;
+      console.log('Tema SNS creado:', topicArn);
+
+      // 2. Suscribir email
+      const subscribeCommand = new SubscribeCommand({
+        TopicArn: topicArn,
+        Protocol: "email",
+        Endpoint: alarmData.email
+      });
+      console.log('Suscribiendo email:', alarmData.email);
+      await snsClient.send(subscribeCommand);
+    }
+
+    // 3. Crear alarma
     const command = new PutMetricAlarmCommand({
       AlarmName: alarmData.name,
       ComparisonOperator: 
@@ -81,7 +68,9 @@ export const createCloudWatchAlarm = async (alarmData, topicArn) => {
         alarmData.metric === 'disk' ? 'DiskReadOps' :
         'NetworkIn',
       Namespace: 'AWS/EC2',
-      Period: 300,
+      Period: 60,
+      DatapointsToAlarm: 1,
+      TreatMissingData: 'breaching',
       Statistic: 'Average',
       Threshold: parseFloat(alarmData.threshold),
       ActionsEnabled: true,
@@ -92,15 +81,16 @@ export const createCloudWatchAlarm = async (alarmData, topicArn) => {
           Value: alarmData.instance
         }
       ],
-      AlarmActions: topicArn ? [topicArn] : []
+      AlarmActions: topicArn ? [topicArn] : [],
+      OKActions: topicArn ? [topicArn] : [],
+      InsufficientDataActions: topicArn ? [topicArn] : []
     });
 
-    console.log('Enviando comando de creación de alarma...');
     await cloudWatchClient.send(command);
     console.log('Alarma creada exitosamente');
     return true;
   } catch (error) {
-    console.error('Error detallado creando alarma en CloudWatch:', error);
+    console.error('Error creando alarma:', error);
     throw error;
   }
 };
@@ -118,7 +108,27 @@ export const deleteCloudWatchAlarm = async (alarmName) => {
     await cloudWatchClient.send(command);
     return true;
   } catch (error) {
-    console.error('Error eliminando alarma de CloudWatch:', error);
+    console.error('Error eliminando alarma:', error);
+    throw error;
+  }
+};
+
+export const getAlarmState = async (alarmName) => {
+  if (!cloudWatchClient) {
+    throw new Error('CloudWatch Client no inicializado');
+  }
+
+  try {
+    const command = new DescribeAlarmsCommand({
+      AlarmNames: [alarmName]
+    });
+    const response = await cloudWatchClient.send(command);
+    if (response.MetricAlarms && response.MetricAlarms.length > 0) {
+      return response.MetricAlarms[0].StateValue;
+    }
+    return 'UNKNOWN';
+  } catch (error) {
+    console.error('Error obteniendo estado de alarma:', error);
     throw error;
   }
 }; 

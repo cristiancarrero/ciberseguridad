@@ -9,7 +9,8 @@ const AlarmForm = ({ onBack, onSubmit, initialData = null }) => {
     metric: initialData?.metric || 'cpu',
     instance: initialData?.instance || '',
     condition: initialData?.condition || 'greater',
-    threshold: initialData?.threshold || ''
+    threshold: initialData?.threshold || '',
+    email: initialData?.email || ''
   });
 
   useEffect(() => {
@@ -159,6 +160,19 @@ const AlarmForm = ({ onBack, onSubmit, initialData = null }) => {
           />
           <small className="form-help">
             Valor entre 0 y 100% (máximo 2 decimales)
+          </small>
+        </div>
+
+        <div className="form-group">
+          <label>Email para notificaciones (opcional)</label>
+          <input
+            type="email"
+            value={formData.email}
+            onChange={e => setFormData({...formData, email: e.target.value})}
+            placeholder="ejemplo@correo.com"
+          />
+          <small className="form-help">
+            Si proporcionas un email, recibirás notificaciones cuando la alarma se active
           </small>
         </div>
 

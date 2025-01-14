@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaChartLine, FaBell, FaList, FaMicrochip, FaMemory, FaNetworkWired, FaHdd, FaCheckCircle, FaEye, FaServer, FaEdit, FaTrash, FaExclamationTriangle } from 'react-icons/fa';
+import { FaChartLine, FaBell, FaList, FaMicrochip, FaMemory, FaNetworkWired, FaHdd, FaCheckCircle, FaEye, FaServer, FaEdit, FaTrash, FaExclamationTriangle, FaEnvelope } from 'react-icons/fa';
 import InstanceSelectorModal from './InstanceSelectorModal';
 import MetricModal from './MetricModal';
 import '../../styles/components/cloudwatch.css';
@@ -7,7 +7,7 @@ import { initializeEC2Client } from '../../services/ec2Service';
 import CreateAlarmModal from './CreateAlarmModal';
 import AlarmForm from './AlarmForm';
 import { initializeCloudWatchInstances } from '../../services/cloudwatchInstanceService';
-import { initializeCloudWatchAlarms, createCloudWatchAlarm, deleteCloudWatchAlarm } from '../../services/cloudwatchAlarms';
+import { initializeCloudWatchAlarms, createCloudWatchAlarm, deleteCloudWatchAlarm, getAlarmState } from '../../services/cloudwatchAlarms';
 
 const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
   const [activeTab, setActiveTab] = useState('métricas');
@@ -53,6 +53,34 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
       initializeCloudWatchAlarms(awsConfig);
     }
   }, []);
+
+  // Añadir efecto para actualizar estados de alarmas
+  useEffect(() => {
+    const updateAlarmStates = async () => {
+      try {
+        const updatedAlarms = await Promise.all(
+          alarms.map(async (alarm) => {
+            const state = await getAlarmState(alarm.name);
+            return {
+              ...alarm,
+              status: state === 'ALARM' ? 'ALARMA' :
+                      state === 'OK' ? 'OK' :
+                      'DATOS INSUFICIENTES'
+            };
+          })
+        );
+        setAlarms(updatedAlarms);
+      } catch (error) {
+        console.error('Error actualizando estados de alarmas:', error);
+      }
+    };
+
+    if (isOpen && alarms.length > 0) {
+      updateAlarmStates();
+      const interval = setInterval(updateAlarmStates, 60000); // Actualizar cada minuto
+      return () => clearInterval(interval);
+    }
+  }, [isOpen, alarms.length]);
 
   if (!isOpen) return null;
 
@@ -210,7 +238,7 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
                           <FaBell className="alarm-icon" />
                           <h3>{alarm.name}</h3>
                         </div>
-                        <span className={`status ${alarm.status.toLowerCase()}`}>
+                        <span className={`status ${getStatusClass(alarm.status)}`}>
                           {alarm.status}
                         </span>
                       </div>
@@ -229,6 +257,9 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
                           alarm.condition === 'equal' ? 'Igual a' :
                           alarm.condition
                         } {alarm.threshold}%</p>
+                        <p><FaEnvelope /> Notificaciones: {
+                          alarm.email ? alarm.email.replace(/(.{3}).*(@.*)/, '$1***$2') : 'No configurado'
+                        }</p>
                       </div>
                     </div>
                   ))}
@@ -375,6 +406,14 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
         console.error('Error al eliminar la alarma:', error);
         alert('Error al eliminar la alarma de CloudWatch');
       }
+    }
+  };
+
+  const getStatusClass = (status) => {
+    switch (status) {
+      case 'ALARMA': return 'alarm';
+      case 'OK': return 'ok';
+      default: return 'insufficient';
     }
   };
 
