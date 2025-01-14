@@ -124,10 +124,42 @@ const AlarmForm = ({ onBack, onSubmit, initialData = null }) => {
           <input
             type="number"
             value={formData.threshold}
-            onChange={e => setFormData({...formData, threshold: e.target.value})}
+            onChange={e => {
+              const value = e.target.value;
+              if (value === '') {
+                setFormData({...formData, threshold: ''});
+              } else {
+                const numValue = parseFloat(value);
+                if (!isNaN(numValue) && numValue >= 0 && numValue <= 100) {
+                  const cleanValue = Number(numValue.toFixed(2)).toString();
+                  setFormData({...formData, threshold: cleanValue});
+                }
+              }
+            }}
+            onFocus={e => {
+              if (formData.threshold === '0') {
+                setFormData({...formData, threshold: ''});
+              }
+            }}
+            onBlur={e => {
+              const value = parseFloat(e.target.value);
+              if (isNaN(value) || value < 0) {
+                setFormData({...formData, threshold: '0'});
+              } else if (value > 100) {
+                setFormData({...formData, threshold: '100'});
+              } else {
+                setFormData({...formData, threshold: Number(value.toFixed(2)).toString()});
+              }
+            }}
+            step="0.01"
+            min="0"
+            max="100"
             placeholder="Ej: 80"
             required
           />
+          <small className="form-help">
+            Valor entre 0 y 100% (máximo 2 decimales)
+          </small>
         </div>
 
         <div className="form-actions">

@@ -7,6 +7,7 @@ import { initializeEC2Client } from '../../services/ec2Service';
 import CreateAlarmModal from './CreateAlarmModal';
 import AlarmForm from './AlarmForm';
 import { initializeCloudWatchInstances } from '../../services/cloudwatchInstanceService';
+import { initializeCloudWatchAlarms, createCloudWatchAlarm, deleteCloudWatchAlarm } from '../../services/cloudwatchAlarms';
 
 const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
   const [activeTab, setActiveTab] = useState('métricas');
@@ -49,6 +50,7 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
     if (awsConfig) {
       initializeEC2Client(awsConfig);
       initializeCloudWatchInstances(awsConfig);
+      initializeCloudWatchAlarms(awsConfig);
     }
   }, []);
 
@@ -341,15 +343,21 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
     }));
   };
 
-  const handleCreateAlarm = (alarmData) => {
-    const newAlarm = {
-      ...alarmData,
-      id: Date.now(),
-      status: 'OK',
-      createdAt: new Date().toISOString()
-    };
-    setAlarms(prev => [...prev, newAlarm]);
-    setIsCreatingAlarm(false);
+  const handleCreateAlarm = async (alarmData) => {
+    try {
+      await createCloudWatchAlarm(alarmData);
+      const newAlarm = {
+        ...alarmData,
+        id: Date.now(),
+        status: 'OK',
+        createdAt: new Date().toISOString()
+      };
+      setAlarms(prev => [...prev, newAlarm]);
+      setIsCreatingAlarm(false);
+    } catch (error) {
+      console.error('Error al crear la alarma:', error);
+      alert('Error al crear la alarma en CloudWatch');
+    }
   };
 
   const handleEditAlarm = (alarm) => {
@@ -357,9 +365,16 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
     setIsCreatingAlarm(true);
   };
 
-  const handleDeleteAlarm = (alarmId) => {
+  const handleDeleteAlarm = async (alarmId) => {
     if (window.confirm('¿Estás seguro de que quieres eliminar esta alarma?')) {
-      setAlarms(prev => prev.filter(alarm => alarm.id !== alarmId));
+      try {
+        const alarm = alarms.find(a => a.id === alarmId);
+        await deleteCloudWatchAlarm(alarm.name);
+        setAlarms(prev => prev.filter(alarm => alarm.id !== alarmId));
+      } catch (error) {
+        console.error('Error al eliminar la alarma:', error);
+        alert('Error al eliminar la alarma de CloudWatch');
+      }
     }
   };
 

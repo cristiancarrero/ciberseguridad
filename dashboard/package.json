@@ -20,6 +20,7 @@
     "@aws-sdk/client-guardduty": "^3.726.1",
     "@aws-sdk/client-iam": "^3.726.1",
     "@aws-sdk/client-s3": "^3.726.1",
+    "@aws-sdk/client-sns": "^3.726.1",
     "@xterm/addon-attach": "^0.11.0",
     "@xterm/addon-fit": "^0.10.0",
     "@xterm/xterm": "^5.5.0",
