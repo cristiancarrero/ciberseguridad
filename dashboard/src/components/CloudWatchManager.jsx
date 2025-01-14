@@ -4,7 +4,7 @@ import InstanceSelectorModal from './cloudwatch/InstanceSelectorModal';
 import MetricModal from './cloudwatch/MetricModal';
 import '../styles/components/cloudwatch.css';
 
-const CloudWatchManager = ({ isOpen, onClose }) => {
+const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
   const [activeTab, setActiveTab] = useState('métricas');
   const [showInstanceSelector, setShowInstanceSelector] = useState(false);
   const [selectedMetricType, setSelectedMetricType] = useState(null);
@@ -49,9 +49,10 @@ const CloudWatchManager = ({ isOpen, onClose }) => {
     },
     {
       id: 'disk',
-      title: 'Disk Operations',
-      description: 'Operaciones de lectura en el volumen EBS',
+      title: 'Disk Read Operations',
+      description: 'Operaciones de lectura por segundo en el volumen EBS',
       unit: 'Ops/s',
+      metricName: 'DiskReadOps',
       icon: <FaHdd />,
       color: 'var(--accent-color)'
     },
@@ -96,6 +97,15 @@ const CloudWatchManager = ({ isOpen, onClose }) => {
               >
                 {assignedInstances[metric.id] ? 'Cambiar Instancia' : 'Añadir a Métricas'}
               </button>
+              {assignedInstances[metric.id] && (
+                <button 
+                  className="add-to-dashboard-btn"
+                  onClick={() => handleAddToDashboard(metric, assignedInstances[metric.id])}
+                  title="Añadir al Dashboard"
+                >
+                  <FaChartLine />
+                </button>
+              )}
               <button 
                 className="view-metric-btn"
                 onClick={() => handleViewMetric(metric)}
@@ -180,6 +190,21 @@ const CloudWatchManager = ({ isOpen, onClose }) => {
       setSelectedMetricType(metric);
       setShowInstanceSelector(true);
     }
+  };
+
+  const handleAddToDashboard = (metric, instance) => {
+    const newMetric = {
+      title: metric.title,
+      instanceId: instance.id,
+      type: metric.id,
+      value: '0',
+      unit: metric.unit,
+      metricName: metric.metricName || metric.id,
+      icon: metric.icon
+    };
+    
+    onAddMetric(newMetric);
+    onClose();
   };
 
   return (

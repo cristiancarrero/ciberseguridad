@@ -19,6 +19,7 @@ import '../styles/components/modal.css';
 import EC2Manager from './EC2Manager';
 import { loadAwsConfig } from '../services/awsService';
 import CloudWatchManager from './CloudWatchManager';
+import Seguridad from './Seguridad';
 
 const Dashboard = () => {
   const [currentSection, setCurrentSection] = useState(() => {
@@ -34,6 +35,7 @@ const Dashboard = () => {
   });
   const [isEC2ManagerOpen, setIsEC2ManagerOpen] = useState(false);
   const [showCloudWatchManager, setShowCloudWatchManager] = useState(false);
+  const [dashboardMetrics, setDashboardMetrics] = useState([]);
 
   // Añadir estado para los servicios
   const [awsServices, setAwsServices] = useState(() => {
@@ -117,6 +119,10 @@ const Dashboard = () => {
     } catch (error) {
       console.error('Test Connection Error:', error);
     }
+  };
+
+  const handleAddMetric = (newMetric) => {
+    setDashboardMetrics(prev => [...prev, newMetric]);
   };
 
   const renderContent = () => {
@@ -269,165 +275,35 @@ const Dashboard = () => {
       case 'metrics':
         return (
           <div className="metrics-section">
-            <div className="content-header">
-              <h1 className="content-title">Métricas de Seguridad</h1>
-              <div className="time-range">
-                <button className="time-btn active">24h</button>
-                <button className="time-btn">7d</button>
-                <button className="time-btn">30d</button>
-                <button className="time-btn">90d</button>
-              </div>
-            </div>
-
-            {/* Métricas principales */}
-            <div className="widgets-grid main-widgets">
-              <div className="widget metric-widget">
-                <div className="metric-header">
-                  <div className="metric-icon">
-                    <FaShieldAlt />
+            <div className="metrics-header">
+              <div className="header-content">
+                <div className="metrics-title">
+                  <div className="metrics-icon">
+                    <FaChartLine />
                   </div>
-                  <div className="metric-trend positive">+5%</div>
-                </div>
-                <div className="metric-value">99.9%</div>
-                <div className="metric-label">Uptime de Seguridad</div>
-                <div className="metric-chart">
-                  <ResponsiveContainer width="100%" height={50}>
-                    <LineChart data={uptimeData}>
-                      <Line type="monotone" dataKey="value" stroke="#4ecdc4" strokeWidth={2} dot={false} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-
-              <div className="widget metric-widget">
-                <div className="metric-header">
-                  <div className="metric-icon warning">
-                    <FaShieldAlt />
-                  </div>
-                  <div className="metric-trend negative">+12</div>
-                </div>
-                <div className="metric-value">47</div>
-                <div className="metric-label">Intentos de Intrusión</div>
-                <div className="metric-chart">
-                  <ResponsiveContainer width="100%" height={50}>
-                    <LineChart data={intrusionData}>
-                      <Line type="monotone" dataKey="value" stroke="#ff6b6b" strokeWidth={2} dot={false} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-
-              <div className="widget metric-widget">
-                <div className="metric-header">
-                  <div className="metric-icon success">
-                    <FaLock />
-                  </div>
-                  <div className="metric-trend positive">-25ms</div>
-                </div>
-                <div className="metric-value">128ms</div>
-                <div className="metric-label">Latencia de Respuesta</div>
-                <div className="metric-chart">
-                  <ResponsiveContainer width="100%" height={50}>
-                    <LineChart data={latencyData}>
-                      <Line type="monotone" dataKey="value" stroke="#4ecdc4" strokeWidth={2} dot={false} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-
-              <div className="widget metric-widget">
-                <div className="metric-header">
-                  <div className="metric-icon danger">
-                    <FaBell />
-                  </div>
-                  <div className="metric-trend negative">+8</div>
-                </div>
-                <div className="metric-value">23</div>
-                <div className="metric-label">Alertas Activas</div>
-                <div className="metric-chart">
-                  <ResponsiveContainer width="100%" height={50}>
-                    <LineChart data={alertsData}>
-                      <Line type="monotone" dataKey="value" stroke="#ff6b6b" strokeWidth={2} dot={false} />
-                    </LineChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            </div>
-
-            {/* Gráficos detallados */}
-            <div className="widgets-grid secondary-widgets">
-              {/* Distribución de Amenazas */}
-              <div className="widget chart-widget">
-                <div className="chart-header">
-                  <div>
-                    <h3 className="chart-title">Distribución de Amenazas</h3>
-                    <div className="chart-subtitle">Por tipo de ataque</div>
-                  </div>
-                </div>
-                <ResponsiveContainer width="100%" height={300}>
-                  <BarChart data={threatData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                    <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-                    <YAxis stroke="rgba(255,255,255,0.5)" />
-                    <Tooltip />
-                    <Bar dataKey="value" fill="#4ecdc4" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Rendimiento de Seguridad */}
-              <div className="widget chart-widget">
-                <div className="chart-header">
-                  <div>
-                    <h3 className="chart-title">Rendimiento de Seguridad</h3>
-                    <div className="chart-subtitle">Tiempo de respuesta vs Amenazas</div>
-                  </div>
-                </div>
-                <ResponsiveContainer width="100%" height={300}>
-                  <LineChart data={performanceData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" />
-                    <XAxis dataKey="name" stroke="rgba(255,255,255,0.5)" />
-                    <YAxis stroke="rgba(255,255,255,0.5)" />
-                    <Tooltip />
-                    <Line type="monotone" dataKey="response" stroke="#4ecdc4" name="Tiempo de Respuesta" />
-                    <Line type="monotone" dataKey="threats" stroke="#ff6b6b" name="Amenazas" />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-
-              {/* Lista de Eventos */}
-              <div className="widget events-widget">
-                <div className="chart-header">
-                  <h3 className="chart-title">Eventos de Seguridad</h3>
-                </div>
-                <div className="events-list">
-                  <div className="event-item">
-                    <div className="event-severity high"></div>
-                    <div className="event-content">
-                      <div className="event-title">Intento de SQL Injection detectado</div>
-                      <div className="event-details">IP: 192.168.1.100 | Endpoint: /api/users</div>
-                    </div>
-                    <div className="event-time">12:45</div>
-                  </div>
-                  <div className="event-item">
-                    <div className="event-severity medium"></div>
-                    <div className="event-content">
-                      <div className="event-title">Múltiples intentos de login fallidos</div>
-                      <div className="event-details">Usuario: admin | IP: 192.168.1.150</div>
-                    </div>
-                    <div className="event-time">12:30</div>
-                  </div>
-                  <div className="event-item">
-                    <div className="event-severity low"></div>
-                    <div className="event-content">
-                      <div className="event-title">Certificado SSL próximo a expirar</div>
-                      <div className="event-details">Dominio: api.example.com | 15 días restantes</div>
-                    </div>
-                    <div className="event-time">12:15</div>
+                  <div className="metrics-title-text">
+                    <h1>Métricas de Seguridad</h1>
+                    <p>Monitoreo de recursos AWS</p>
                   </div>
                 </div>
               </div>
             </div>
+            
+            <div className="metrics-container">
+              <Seguridad 
+                onAddMetric={() => setShowCloudWatchManager(true)}
+                metrics={dashboardMetrics}
+                isAwsConnected={isAwsConnected}
+              />
+            </div>
+
+            {showCloudWatchManager && (
+              <CloudWatchManager
+                isOpen={showCloudWatchManager}
+                onClose={() => setShowCloudWatchManager(false)}
+                onAddMetric={handleAddMetric}
+              />
+            )}
           </div>
         );
       case 'security':
@@ -845,61 +721,11 @@ const Dashboard = () => {
         <CloudWatchManager
           isOpen={showCloudWatchManager}
           onClose={() => setShowCloudWatchManager(false)}
+          onAddMetric={handleAddMetric}
         />
       )}
     </div>
   );
 };
-
-// Datos de ejemplo para los gráficos
-const performanceData = [
-  { name: '00:00', EC2: 400, RDS: 240, S3: 180 },
-  { name: '04:00', EC2: 300, RDS: 139, S3: 220 },
-  { name: '08:00', EC2: 200, RDS: 980, S3: 290 },
-  { name: '12:00', EC2: 278, RDS: 390, S3: 200 },
-  { name: '16:00', EC2: 189, RDS: 480, S3: 310 },
-  { name: '20:00', EC2: 239, RDS: 380, S3: 250 },
-  { name: '24:00', EC2: 349, RDS: 430, S3: 280 },
-];
-
-const securityData = [
-  { name: 'Lun', alta: 4, media: 3, baja: 2 },
-  { name: 'Mar', alta: 3, media: 4, baja: 3 },
-  { name: 'Mie', alta: 2, media: 3, baja: 4 },
-  { name: 'Jue', alta: 3, media: 3, baja: 3 },
-  { name: 'Vie', alta: 4, media: 4, baja: 2 },
-  { name: 'Sab', alta: 3, media: 3, baja: 3 },
-  { name: 'Dom', alta: 2, media: 2, baja: 4 },
-];
-
-// Datos de ejemplo para las métricas
-const uptimeData = Array.from({ length: 20 }, (_, i) => ({
-  name: i,
-  value: 99.5 + Math.random() * 0.5
-}));
-
-const intrusionData = Array.from({ length: 20 }, (_, i) => ({
-  name: i,
-  value: 30 + Math.random() * 30
-}));
-
-const latencyData = Array.from({ length: 20 }, (_, i) => ({
-  name: i,
-  value: 100 + Math.random() * 50
-}));
-
-const alertsData = Array.from({ length: 20 }, (_, i) => ({
-  name: i,
-  value: 15 + Math.random() * 15
-}));
-
-const threatData = [
-  { name: 'SQL Injection', value: 45 },
-  { name: 'XSS', value: 32 },
-  { name: 'DDoS', value: 28 },
-  { name: 'Brute Force', value: 25 },
-  { name: 'MITM', value: 18 },
-  { name: 'Otros', value: 15 }
-];
 
 export default Dashboard; 

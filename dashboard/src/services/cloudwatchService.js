@@ -4,7 +4,6 @@ export const getInstanceMetrics = async (instanceId, metricName, period = 300) =
   try {
     console.log('Solicitando métricas:', { instanceId, metricName, period });
     
-    // Obtener las credenciales del localStorage
     const awsConfig = JSON.parse(localStorage.getItem('awsConfig'));
     
     if (!awsConfig || !awsConfig.credentials) {
@@ -47,13 +46,11 @@ export const getInstanceMetrics = async (instanceId, metricName, period = 300) =
       ]
     });
 
-    console.log('Enviando comando:', command);
     const response = await client.send(command);
-    console.log('Respuesta recibida:', response);
-
+    console.log('Respuesta de CloudWatch:', response);
     return response.MetricDataResults[0];
   } catch (error) {
     console.error('Error detallado al obtener métricas:', error);
-    throw new Error(`Error al obtener métricas: ${error.message}`);
+    throw error;
   }
 }; 
