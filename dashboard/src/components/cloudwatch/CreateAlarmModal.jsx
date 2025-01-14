@@ -3,23 +3,61 @@ import { useAWS } from '../../context/AWSContext';
 import { FaBell } from 'react-icons/fa';
 import '../../styles/components/modal.css';
 
+const METRIC_OPTIONS = [
+  {
+    value: 'CPUUtilization',
+    label: 'CPU Utilization',
+    unit: '%',
+    defaultThreshold: 80
+  },
+  {
+    value: 'MemoryUtilization',
+    label: 'Memory Usage',
+    unit: '%',
+    defaultThreshold: 80
+  },
+  {
+    value: 'DiskSpaceUtilization',
+    label: 'Disk Space Usage',
+    unit: '%',
+    defaultThreshold: 85
+  }
+];
+
+const CONDITION_OPTIONS = [
+  { value: 'GreaterThanThreshold', label: 'Mayor que' },
+  { value: 'LessThanThreshold', label: 'Menor que' },
+  { value: 'GreaterThanOrEqualToThreshold', label: 'Mayor o igual que' }
+];
+
 const CreateAlarmModal = ({ onClose, onCreate }) => {
   const { instances } = useAWS();
   const [formData, setFormData] = useState({
     name: '',
-    metric: 'cpu',
-    instance: '',
-    condition: 'greater',
-    threshold: '',
+    metric: METRIC_OPTIONS[0].value,
+    condition: CONDITION_OPTIONS[0].value,
+    threshold: METRIC_OPTIONS[0].defaultThreshold,
+    instance: ''
   });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onCreate({
+  const handleMetricChange = (metric) => {
+    const selectedMetric = METRIC_OPTIONS.find(m => m.value === metric);
+    setFormData({
       ...formData,
-      status: 'OK',
-      createdAt: new Date().toISOString()
+      metric,
+      threshold: selectedMetric.defaultThreshold
     });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      // Aquí implementaremos la creación de la alarma usando AWS SDK
+      console.log('Creando alarma:', formData);
+      onCreate(formData);
+    } catch (error) {
+      console.error('Error al crear alarma:', error);
+    }
   };
 
   console.log('CreateAlarmModal renderizado');
@@ -52,13 +90,14 @@ const CreateAlarmModal = ({ onClose, onCreate }) => {
                 <label>Métrica</label>
                 <select
                   value={formData.metric}
-                  onChange={e => setFormData({...formData, metric: e.target.value})}
+                  onChange={e => handleMetricChange(e.target.value)}
                   required
                 >
-                  <option value="cpu">CPU Utilization</option>
-                  <option value="memory">Memory Usage</option>
-                  <option value="disk">Disk Usage</option>
-                  <option value="network">Network I/O</option>
+                  {METRIC_OPTIONS.map(metric => (
+                    <option key={metric.value} value={metric.value}>
+                      {metric.label}
+                    </option>
+                  ))}
                 </select>
               </div>
 
@@ -85,9 +124,11 @@ const CreateAlarmModal = ({ onClose, onCreate }) => {
                   onChange={e => setFormData({...formData, condition: e.target.value})}
                   required
                 >
-                  <option value="greater">Mayor que</option>
-                  <option value="less">Menor que</option>
-                  <option value="equal">Igual a</option>
+                  {CONDITION_OPTIONS.map(condition => (
+                    <option key={condition.value} value={condition.value}>
+                      {condition.label}
+                    </option>
+                  ))}
                 </select>
               </div>
 

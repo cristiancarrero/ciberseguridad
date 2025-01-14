@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { FaChartLine, FaBell, FaList, FaMicrochip, FaMemory, FaNetworkWired, FaHdd, FaCheckCircle, FaEye, FaServer } from 'react-icons/fa';
+import { FaChartLine, FaBell, FaList, FaMicrochip, FaMemory, FaNetworkWired, FaHdd, FaCheckCircle, FaEye, FaServer, FaEdit, FaTrash, FaExclamationTriangle } from 'react-icons/fa';
 import InstanceSelectorModal from './InstanceSelectorModal';
 import MetricModal from './MetricModal';
 import '../../styles/components/cloudwatch.css';
 import { initializeEC2Client } from '../../services/ec2Service';
 import CreateAlarmModal from './CreateAlarmModal';
+import AlarmForm from './AlarmForm';
+import { initializeCloudWatchInstances } from '../../services/cloudwatchInstanceService';
 
 const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
   const [activeTab, setActiveTab] = useState('métricas');
@@ -13,7 +15,13 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
   const [selectedMetric, setSelectedMetric] = useState(null);
   const [showMetricModal, setShowMetricModal] = useState(false);
   const [selectedInstance, setSelectedInstance] = useState(null);
+  const [alarms, setAlarms] = useState(() => {
+    const savedAlarms = localStorage.getItem('cloudwatch_alarms');
+    return savedAlarms ? JSON.parse(savedAlarms) : [];
+  });
   const [showCreateAlarmModal, setShowCreateAlarmModal] = useState(false);
+  const [isCreatingAlarm, setIsCreatingAlarm] = useState(false);
+  const [selectedAlarm, setSelectedAlarm] = useState(null);
   
   // Inicializar assignedInstances desde localStorage
   const [assignedInstances, setAssignedInstances] = useState(() => {
@@ -31,10 +39,16 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
     localStorage.setItem('cloudwatch_assigned_instances', JSON.stringify(assignedInstances));
   }, [assignedInstances]);
 
+  // Guardar alarmas en localStorage cuando cambien
+  useEffect(() => {
+    localStorage.setItem('cloudwatch_alarms', JSON.stringify(alarms));
+  }, [alarms]);
+
   useEffect(() => {
     const awsConfig = JSON.parse(localStorage.getItem('awsConfig'));
     if (awsConfig) {
       initializeEC2Client(awsConfig);
+      initializeCloudWatchInstances(awsConfig);
     }
   }, []);
 
@@ -132,20 +146,102 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
 
   const renderAlarmsTab = () => (
     <div className="tab-content">
-      <h2 className="content-title">Alarmas</h2>
-      <div className="alarms-container">
-        <div className="no-alarms">
-          <FaBell className="no-data-icon" />
-          <h3>No hay alarmas configuradas</h3>
-          <p>Añade una alarma para monitorear tus recursos</p>
-          <button 
-            className="add-alarm-btn"
-            onClick={() => setShowCreateAlarmModal(true)}
-          >
-            Crear Nueva Alarma
-          </button>
-        </div>
-      </div>
+      {isCreatingAlarm ? (
+        <AlarmForm 
+          onBack={() => {
+            setIsCreatingAlarm(false);
+            setSelectedAlarm(null);
+          }}
+          onSubmit={(formData) => {
+            if (selectedAlarm) {
+              setAlarms(prev => prev.map(alarm => 
+                alarm.id === selectedAlarm.id 
+                  ? { ...alarm, ...formData }
+                  : alarm
+              ));
+            } else {
+              handleCreateAlarm(formData);
+            }
+            setSelectedAlarm(null);
+          }}
+          initialData={selectedAlarm}
+        />
+      ) : (
+        <>
+          <h2 className="content-title">Alarmas</h2>
+          <div className="alarms-container">
+            {alarms.length === 0 ? (
+              <div className="no-alarms">
+                <FaBell className="no-data-icon" />
+                <h3>No hay alarmas configuradas</h3>
+                <p>Añade una alarma para monitorear tus recursos</p>
+                <button 
+                  className="add-alarm-btn"
+                  onClick={() => setIsCreatingAlarm(true)}
+                >
+                  Crear Nueva Alarma
+                </button>
+              </div>
+            ) : (
+              <>
+                <div className="alarms-list">
+                  {alarms.map(alarm => (
+                    <div key={alarm.id} className="alarm-card">
+                      <div className="alarm-actions">
+                        <button 
+                          className="alarm-action-btn"
+                          onClick={() => handleEditAlarm(alarm)}
+                          title="Editar alarma"
+                        >
+                          <FaEdit />
+                        </button>
+                        <button 
+                          className="alarm-action-btn delete"
+                          onClick={() => handleDeleteAlarm(alarm.id)}
+                          title="Eliminar alarma"
+                        >
+                          <FaTrash />
+                        </button>
+                      </div>
+                      <div className="alarm-header">
+                        <div className="alarm-title">
+                          <FaBell className="alarm-icon" />
+                          <h3>{alarm.name}</h3>
+                        </div>
+                        <span className={`status ${alarm.status.toLowerCase()}`}>
+                          {alarm.status}
+                        </span>
+                      </div>
+                      <div className="alarm-details">
+                        <p><FaChartLine /> Métrica: {
+                          alarm.metric === 'cpu' ? 'CPU Utilization' :
+                          alarm.metric === 'memory' ? 'Memory Usage' :
+                          alarm.metric === 'disk' ? 'Disk Usage' :
+                          alarm.metric === 'network' ? 'Network I/O' :
+                          alarm.metric
+                        }</p>
+                        <p><FaServer /> Instancia: {alarm.instanceName || alarm.instance}</p>
+                        <p><FaExclamationTriangle /> Condición: {
+                          alarm.condition === 'greater' ? 'Mayor que' :
+                          alarm.condition === 'less' ? 'Menor que' :
+                          alarm.condition === 'equal' ? 'Igual a' :
+                          alarm.condition
+                        } {alarm.threshold}%</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <button 
+                  className="add-alarm-btn"
+                  onClick={() => setIsCreatingAlarm(true)}
+                >
+                  Crear Nueva Alarma
+                </button>
+              </>
+            )}
+          </div>
+        </>
+      )}
     </div>
   );
 
@@ -243,6 +339,28 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
         name: instance.Tags?.find(tag => tag.Key === 'Name')?.Value || instance.InstanceId
       }
     }));
+  };
+
+  const handleCreateAlarm = (alarmData) => {
+    const newAlarm = {
+      ...alarmData,
+      id: Date.now(),
+      status: 'OK',
+      createdAt: new Date().toISOString()
+    };
+    setAlarms(prev => [...prev, newAlarm]);
+    setIsCreatingAlarm(false);
+  };
+
+  const handleEditAlarm = (alarm) => {
+    setSelectedAlarm(alarm);
+    setIsCreatingAlarm(true);
+  };
+
+  const handleDeleteAlarm = (alarmId) => {
+    if (window.confirm('¿Estás seguro de que quieres eliminar esta alarma?')) {
+      setAlarms(prev => prev.filter(alarm => alarm.id !== alarmId));
+    }
   };
 
   return (
