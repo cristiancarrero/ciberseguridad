@@ -733,16 +733,42 @@
 
 .assigned-instance {
   margin: 0.5rem 0;
-  padding: 0.5rem;
+  padding: 0.75rem;
   background: var(--bg-tertiary);
-  border-radius: 4px;
+  border-radius: 6px;
   border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .assigned-instance .instance-name {
   font-size: 0.9rem;
   color: var(--text-primary);
   font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.assigned-instance .instance-name::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Ajustar el estilo del botón cuando hay una instancia asignada */
+.metric-card.has-instance .add-metric-btn {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.metric-card.has-instance .view-metric-btn {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .metric-actions {

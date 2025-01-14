@@ -13,9 +13,28 @@ const MetricModal = ({ metric, instance, onClose }) => {
       setLoading(true);
       setError(null);
       
+      let metricName;
+      switch (metric.id) {
+        case 'cpu':
+          metricName = 'CPUUtilization';
+          break;
+        case 'network':
+          metricName = 'NetworkIn';
+          break;
+        case 'disk':
+          metricName = 'EBSReadOps';
+          break;
+        case 'status':
+          metricName = 'StatusCheckFailed';
+          break;
+        default:
+          metricName = metric.id;
+      }
+
+      console.log('Solicitando métrica:', metricName);
       const data = await getInstanceMetrics(
         instance.id,
-        metric.id === 'cpu' ? 'CPUUtilization' : metric.id
+        metricName
       );
 
       if (!data || !data.Timestamps || !data.Values) {
@@ -59,24 +78,26 @@ const MetricModal = ({ metric, instance, onClose }) => {
   }, [metric.id, instance.id]);
 
   const getYAxisDomain = () => {
-    // Para CPU, usar siempre 0-100%
     if (metric.id === 'cpu') {
       return [0, 100];
     }
-
-    // Para otras métricas, calcular el dominio basado en los datos
+    
     if (!metricData || metricData.length === 0) return [0, 100];
     
     const values = metricData.map(d => parseFloat(d.value));
     const min = Math.min(...values);
     const max = Math.max(...values);
     
-    // Calcular un rango que deje espacio arriba y abajo
-    const padding = (max - min) * 0.2;
-    return [
-      Math.max(0, Math.floor(min - padding)), // Redondear hacia abajo
-      Math.ceil(max + padding) // Redondear hacia arriba
-    ];
+    switch (metric.id) {
+      case 'disk':
+        return [0, Math.ceil(max * 1.2)];
+      case 'network':
+        return [0, Math.ceil(max * 1.2)];
+      case 'status':
+        return [0, 1];
+      default:
+        return [Math.max(0, Math.floor(min - (max - min) * 0.1)), Math.ceil(max * 1.1)];
+    }
   };
 
   return (
@@ -156,7 +177,12 @@ const MetricModal = ({ metric, instance, onClose }) => {
                     }}
                     tick={{ fontSize: 12 }}
                     tickCount={5} // Reducir a 5 líneas para tener divisiones más limpias (0, 25, 50, 75, 100 para CPU)
-                    tickFormatter={(value) => `${Math.round(value)}${metric.unit === '%' ? '%' : ''}`} // Redondear valores
+                    tickFormatter={(value) => {
+                      if (metric.id === 'status') {
+                        return value === 0 ? 'OK' : 'Failed';
+                      }
+                      return `${Math.round(value)}${metric.unit === '%' ? '%' : ''}`;
+                    }}
                     allowDecimals={false} // Evitar decimales en las etiquetas
                   />
                   <Tooltip 

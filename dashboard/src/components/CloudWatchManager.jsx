@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { FaChartLine, FaBell, FaList, FaMicrochip, FaMemory, FaNetworkWired, FaHdd, FaCheckCircle, FaEye } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { FaChartLine, FaBell, FaList, FaMicrochip, FaMemory, FaNetworkWired, FaHdd, FaCheckCircle, FaEye, FaServer } from 'react-icons/fa';
 import InstanceSelectorModal from './cloudwatch/InstanceSelectorModal';
 import MetricModal from './cloudwatch/MetricModal';
 import '../styles/components/cloudwatch.css';
@@ -11,13 +11,22 @@ const CloudWatchManager = ({ isOpen, onClose }) => {
   const [selectedMetric, setSelectedMetric] = useState(null);
   const [showMetricModal, setShowMetricModal] = useState(false);
   const [selectedInstance, setSelectedInstance] = useState(null);
-  const [assignedInstances, setAssignedInstances] = useState({
-    cpu: null,
-    memory: null,
-    network: null,
-    disk: null,
-    status: null
+  
+  // Inicializar assignedInstances desde localStorage
+  const [assignedInstances, setAssignedInstances] = useState(() => {
+    const saved = localStorage.getItem('cloudwatch_assigned_instances');
+    return saved ? JSON.parse(saved) : {
+      cpu: null,
+      network: null,
+      disk: null,
+      status: null
+    };
   });
+
+  // Guardar en localStorage cuando cambie assignedInstances
+  useEffect(() => {
+    localStorage.setItem('cloudwatch_assigned_instances', JSON.stringify(assignedInstances));
+  }, [assignedInstances]);
 
   if (!isOpen) return null;
 
@@ -31,26 +40,18 @@ const CloudWatchManager = ({ isOpen, onClose }) => {
       color: 'var(--accent-color)'
     },
     {
-      id: 'memory',
-      title: 'Memory Usage',
-      description: 'Uso de memoria RAM',
-      unit: 'GB',
-      icon: <FaMemory />,
-      color: 'var(--accent-color)'
-    },
-    {
       id: 'network',
       title: 'Network I/O',
       description: 'Tráfico de red entrante/saliente',
-      unit: 'MB/s',
+      unit: 'Bytes',
       icon: <FaNetworkWired />,
       color: 'var(--accent-color)'
     },
     {
       id: 'disk',
-      title: 'Disk I/O',
-      description: 'Operaciones de lectura/escritura en disco',
-      unit: 'IOPS',
+      title: 'Disk Operations',
+      description: 'Operaciones de lectura en el volumen EBS',
+      unit: 'Ops/s',
       icon: <FaHdd />,
       color: 'var(--accent-color)'
     },
@@ -69,7 +70,7 @@ const CloudWatchManager = ({ isOpen, onClose }) => {
       <h2 className="content-title">Métricas Disponibles</h2>
       <div className="metrics-grid">
         {metrics.map(metric => (
-          <div key={metric.id} className="metric-card">
+          <div key={metric.id} className={`metric-card ${assignedInstances[metric.id] ? 'has-instance' : ''}`}>
             <div className="metric-icon">
               {metric.icon}
             </div>
@@ -82,6 +83,7 @@ const CloudWatchManager = ({ isOpen, onClose }) => {
             {assignedInstances[metric.id] && (
               <div className="assigned-instance">
                 <span className="instance-name">
+                  <FaServer className="instance-icon" />
                   {assignedInstances[metric.id].name || assignedInstances[metric.id].id}
                 </span>
               </div>
@@ -155,10 +157,13 @@ const CloudWatchManager = ({ isOpen, onClose }) => {
   };
 
   const handleInstanceSelect = (instance) => {
-    setAssignedInstances(prev => ({
-      ...prev,
+    const newAssignedInstances = {
+      ...assignedInstances,
       [selectedMetricType.id]: instance
-    }));
+    };
+    setAssignedInstances(newAssignedInstances);
+    localStorage.setItem('cloudwatch_assigned_instances', JSON.stringify(newAssignedInstances));
+    
     setShowInstanceSelector(false);
     if (selectedMetricType) {
       setSelectedMetric(selectedMetricType);
