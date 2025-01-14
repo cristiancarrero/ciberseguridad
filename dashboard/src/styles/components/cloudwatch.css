@@ -1090,13 +1090,13 @@
 }
 
 .status.alarm {
-  background: var(--error-color-light);
-  color: var(--error-color);
+  background: var(--warning-color-light);
+  color: var(--warning-color);
 }
 
 .status.insufficient {
-  background: var(--warning-color-light);
-  color: var(--warning-color);
+  background: var(--error-color-light);
+  color: var(--error-color);
 }
 
 .alarm-details {
