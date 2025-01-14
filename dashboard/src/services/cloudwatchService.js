@@ -1,41 +1,59 @@
 import { CloudWatchClient, GetMetricDataCommand } from "@aws-sdk/client-cloudwatch";
 
-let cwClient = null;
-
-export const initializeCloudWatch = (credentials, region) => {
-  cwClient = new CloudWatchClient({
-    credentials: credentials,
-    region: region
-  });
-};
-
-export const getMetrics = async (instanceId, metricName) => {
-  if (!cwClient) {
-    throw new Error('CloudWatch client not initialized');
-  }
-
+export const getInstanceMetrics = async (instanceId, metricName, period = 300) => {
   try {
-    // En un entorno real, aquí harías la llamada a CloudWatch
-    // Por ahora, devolvemos datos simulados
-    const mockMetrics = {
-      cpu: Math.floor(Math.random() * 100),
-      memory: Math.floor(Math.random() * 16),
-      network: Math.floor(Math.random() * 1000),
-      disk: Math.floor(Math.random() * 500),
-      status: Math.random() > 0.5 ? 'ok' : 'warning'
-    };
+    console.log('Solicitando métricas:', { instanceId, metricName, period });
+    
+    // Obtener las credenciales del localStorage
+    const awsConfig = JSON.parse(localStorage.getItem('awsConfig'));
+    
+    if (!awsConfig || !awsConfig.credentials) {
+      throw new Error('No se encontraron credenciales de AWS');
+    }
 
-    return mockMetrics;
+    const client = new CloudWatchClient({ 
+      region: awsConfig.region || 'us-west-2',
+      credentials: {
+        accessKeyId: awsConfig.credentials.accessKeyId,
+        secretAccessKey: awsConfig.credentials.secretAccessKey,
+        sessionToken: awsConfig.credentials.sessionToken
+      }
+    });
+    
+    const now = new Date();
+    const startTime = new Date(now.getTime() - (3600 * 1000)); // Última hora
+
+    const command = new GetMetricDataCommand({
+      StartTime: startTime,
+      EndTime: now,
+      MetricDataQueries: [
+        {
+          Id: 'm1',
+          MetricStat: {
+            Metric: {
+              Namespace: 'AWS/EC2',
+              MetricName: metricName,
+              Dimensions: [
+                {
+                  Name: 'InstanceId',
+                  Value: instanceId
+                }
+              ]
+            },
+            Period: period,
+            Stat: 'Average'
+          }
+        }
+      ]
+    });
+
+    console.log('Enviando comando:', command);
+    const response = await client.send(command);
+    console.log('Respuesta recibida:', response);
+
+    return response.MetricDataResults[0];
   } catch (error) {
-    console.error('Error getting CloudWatch metrics:', error);
-    throw error;
+    console.error('Error detallado al obtener métricas:', error);
+    throw new Error(`Error al obtener métricas: ${error.message}`);
   }
-};
-
-export const createAlarm = async (alarmConfig) => {
-  // Implement alarm creation logic
-};
-
-export const getLogs = async (logGroupName, filterPattern) => {
-  // Implement log retrieval logic
 }; 

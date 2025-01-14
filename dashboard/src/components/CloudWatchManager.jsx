@@ -1,12 +1,23 @@
 import React, { useState } from 'react';
 import { FaChartLine, FaBell, FaList, FaMicrochip, FaMemory, FaNetworkWired, FaHdd, FaCheckCircle, FaEye } from 'react-icons/fa';
 import InstanceSelectorModal from './cloudwatch/InstanceSelectorModal';
+import MetricModal from './cloudwatch/MetricModal';
 import '../styles/components/cloudwatch.css';
 
 const CloudWatchManager = ({ isOpen, onClose }) => {
   const [activeTab, setActiveTab] = useState('métricas');
   const [showInstanceSelector, setShowInstanceSelector] = useState(false);
   const [selectedMetricType, setSelectedMetricType] = useState(null);
+  const [selectedMetric, setSelectedMetric] = useState(null);
+  const [showMetricModal, setShowMetricModal] = useState(false);
+  const [selectedInstance, setSelectedInstance] = useState(null);
+  const [assignedInstances, setAssignedInstances] = useState({
+    cpu: null,
+    memory: null,
+    network: null,
+    disk: null,
+    status: null
+  });
 
   if (!isOpen) return null;
 
@@ -63,25 +74,33 @@ const CloudWatchManager = ({ isOpen, onClose }) => {
               {metric.icon}
             </div>
             <div className="metric-info">
-              <div className="metric-header">
-                <h3>{metric.title}</h3>
-                <span className="metric-unit">{metric.unit}</span>
+              <h3>{metric.title}</h3>
+              <span className="metric-unit">{metric.unit}</span>
+            </div>
+            <p className="metric-description">{metric.description}</p>
+            
+            {assignedInstances[metric.id] && (
+              <div className="assigned-instance">
+                <span className="instance-name">
+                  {assignedInstances[metric.id].name || assignedInstances[metric.id].id}
+                </span>
               </div>
-              <p className="metric-description">{metric.description}</p>
-              <div className="metric-actions">
-                <button 
-                  className="add-metric-btn"
-                  onClick={() => handleAddMetric(metric)}
-                >
-                  Añadir a Métricas
-                </button>
-                <button 
-                  className="view-metric-btn"
-                  onClick={() => handleViewMetric(metric)}
-                >
-                  <FaEye />
-                </button>
-              </div>
+            )}
+
+            <div className="metric-actions">
+              <button 
+                className="add-metric-btn"
+                onClick={() => handleAddMetric(metric)}
+              >
+                {assignedInstances[metric.id] ? 'Cambiar Instancia' : 'Añadir a Métricas'}
+              </button>
+              <button 
+                className="view-metric-btn"
+                onClick={() => handleViewMetric(metric)}
+                disabled={!assignedInstances[metric.id]}
+              >
+                <FaEye />
+              </button>
             </div>
           </div>
         ))}
@@ -136,13 +155,26 @@ const CloudWatchManager = ({ isOpen, onClose }) => {
   };
 
   const handleInstanceSelect = (instance) => {
-    console.log('Instancia seleccionada:', instance);
-    console.log('Para la métrica:', selectedMetricType);
+    setAssignedInstances(prev => ({
+      ...prev,
+      [selectedMetricType.id]: instance
+    }));
     setShowInstanceSelector(false);
+    if (selectedMetricType) {
+      setSelectedMetric(selectedMetricType);
+      setShowMetricModal(true);
+    }
   };
 
   const handleViewMetric = (metric) => {
-    console.log('Ver métrica:', metric);
+    if (assignedInstances[metric.id]) {
+      setSelectedMetric(metric);
+      setSelectedInstance(assignedInstances[metric.id]);
+      setShowMetricModal(true);
+    } else {
+      setSelectedMetricType(metric);
+      setShowInstanceSelector(true);
+    }
   };
 
   return (
@@ -185,6 +217,14 @@ const CloudWatchManager = ({ isOpen, onClose }) => {
           <InstanceSelectorModal
             onClose={() => setShowInstanceSelector(false)}
             onSelect={handleInstanceSelect}
+          />
+        )}
+
+        {showMetricModal && selectedMetric && selectedInstance && (
+          <MetricModal
+            metric={selectedMetric}
+            instance={selectedInstance}
+            onClose={() => setShowMetricModal(false)}
           />
         )}
       </div>

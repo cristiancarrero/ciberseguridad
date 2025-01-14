@@ -122,34 +122,34 @@
 }
 
 .metric-card {
-  background: var(--bg-tertiary);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
+  background: var(--card-bg);
+  border-radius: 8px;
   padding: 1.5rem;
   display: flex;
-  gap: 1.25rem;
-  transition: transform 0.2s, box-shadow 0.2s;
+  flex-direction: column;
+  gap: 1rem;
+  transition: transform 0.2s;
 }
 
 .metric-card:hover {
   transform: translateY(-2px);
-  border-color: var(--accent-color);
 }
 
 .metric-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.5rem;
-  background: var(--bg-hover);
+  background: var(--accent-color-light);
+  border-radius: 8px;
   color: var(--accent-color);
 }
 
 .metric-info {
-  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .metric-header {
@@ -166,34 +166,38 @@
 }
 
 .metric-unit {
-  background: var(--bg-hover);
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
+  font-size: 0.875rem;
   color: var(--text-secondary);
+  padding: 0.25rem 0.5rem;
+  background: var(--bg-secondary);
+  border-radius: 4px;
 }
 
 .metric-description {
   color: var(--text-secondary);
-  margin-bottom: 1rem;
-  font-size: 0.95rem;
+  font-size: 0.875rem;
   line-height: 1.4;
 }
 
+.metric-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
 .add-metric-btn {
-  width: 100%;
-  padding: 0.75rem;
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 4px;
   background: var(--accent-color);
   color: white;
-  border: none;
-  border-radius: 8px;
   cursor: pointer;
-  font-size: 0.95rem;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s;
 }
 
 .add-metric-btn:hover {
-  opacity: 0.9;
+  background: var(--accent-color-dark);
 }
 
 /* Estilos para la sección de alarmas */
@@ -548,21 +552,220 @@
 }
 
 .view-metric-btn {
-  padding: 0.75rem;
-  background: var(--bg-hover);
+  padding: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  background: var(--bg-secondary);
   color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
   cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 42px;
+  transition: background-color 0.2s;
 }
 
 .view-metric-btn:hover {
+  background: var(--bg-hover);
+}
+
+.metric-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000;
+}
+
+.metric-modal-content {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.metric-modal-header {
+  padding: 1.5rem;
   background: var(--bg-primary);
-  border-color: var(--accent-color);
-  color: var(--accent-color);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.metric-modal-title {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.metric-modal-title h3 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.instance-name {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.metric-modal-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.metric-modal-actions button {
+  background: var(--bg-tertiary);
+  border: none;
+  border-radius: 8px;
+  padding: 0.5rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.metric-modal-actions button:hover {
+  background: var(--bg-hover);
+}
+
+.metric-modal-body {
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.metric-chart {
+  background: var(--bg-tertiary);
+  padding: 1.5rem;
+  border-radius: 8px;
+  height: 400px;
+}
+
+.loading-state,
+.error-state,
+.no-data-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  min-height: 300px;
+}
+
+.error-state {
+  color: #ff6b6b;
+}
+
+.retry-btn {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.retry-btn:hover {
+  background: var(--accent-color-dark);
+}
+
+.loading-spinner {
+  border: 3px solid rgba(255,255,255,0.1);
+  border-top: 3px solid var(--accent-color);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.metric-instance-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  background: var(--bg-tertiary);
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+}
+
+.instance-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.instance-name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.instance-id {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* Ajustar el estilo del botón cuando hay una instancia asignada */
+.metric-instance-info .view-metric-btn {
+  background: var(--accent-color);
+  color: white;
+  padding: 0.5rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+}
+
+.metric-instance-info .view-metric-btn:hover {
+  background: var(--accent-color-dark);
+}
+
+.assigned-instance {
+  margin: 0.5rem 0;
+  padding: 0.5rem;
+  background: var(--bg-tertiary);
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.assigned-instance .instance-name {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.metric-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.view-metric-btn {
+  padding: 0.5rem;
+  border: none;
+  border-radius: 4px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.view-metric-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.view-metric-btn:not(:disabled):hover {
+  background: var(--bg-hover);
 } 
