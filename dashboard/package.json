@@ -15,7 +15,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-cloudtrail": "^3.726.1",
     "@aws-sdk/client-cloudwatch": "^3.726.1",
+    "@aws-sdk/client-cloudwatch-logs": "^3.726.1",
     "@aws-sdk/client-ec2": "^3.726.1",
     "@aws-sdk/client-guardduty": "^3.726.1",
     "@aws-sdk/client-iam": "^3.726.1",

@@ -1,12 +1,15 @@
 import React from 'react'
 import Dashboard from './components/Dashboard'
 import Navbar from './components/Navbar'
+import './styles/App.css'
 
 function App() {
   return (
-    <div className="app-container">
+    <div className="app-root">
       <Navbar />
-      <Dashboard />
+      <div className="app-content">
+        <Dashboard />
+      </div>
     </div>
   )
 }

@@ -1,5 +1,11 @@
-import React, { useState } from 'react';
-import { FaBell, FaPlus } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { FaTrash, FaBell, FaExclamationTriangle, FaPlus } from 'react-icons/fa';
+import { 
+  listAlarms, 
+  deleteAlarm, 
+  createAlarm 
+} from '../../services/cloudwatchAlarms';
+import { logSystemEvent } from '../../services/cloudwatchLogs';
 
 const AlarmsPanel = () => {
   const [alarms] = useState([
@@ -20,6 +26,36 @@ const AlarmsPanel = () => {
       service: 'RDS'
     }
   ]);
+
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleDeleteAlarm = async (alarmName) => {
+    try {
+      setLoading(true);
+      await deleteAlarm(alarmName);
+      // Registrar la eliminación de la alarma
+      await logSystemEvent('Alarma eliminada', {
+        Nombre: alarmName,
+        Acción: 'Eliminación',
+        Usuario: 'Sistema',
+        Fecha: new Date().toISOString()
+      }, '/aws/ec2/aws-cloudwatch-alarms');
+      
+      // Actualizar la lista de alarmas
+      const updatedAlarms = alarms.filter(alarm => alarm.AlarmName !== alarmName);
+      setAlarms(updatedAlarms);
+    } catch (error) {
+      await logSystemEvent('Error al eliminar alarma', {
+        Nombre: alarmName,
+        Error: error.message,
+        Fecha: new Date().toISOString()
+      }, '/aws/ec2/aws-cloudwatch-alarms');
+      setError(`Error al eliminar la alarma: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="alarms-panel">
@@ -45,11 +81,18 @@ const AlarmsPanel = () => {
             </div>
             <div className="alarm-actions">
               <button>Editar</button>
-              <button>Eliminar</button>
+              <button
+                onClick={() => handleDeleteAlarm(alarm.name)}
+                disabled={loading}
+              >
+                {loading ? 'Eliminando...' : 'Eliminar'}
+              </button>
             </div>
           </div>
         ))}
       </div>
+
+      {error && <div className="error-message">{error}</div>}
     </div>
   );
 };

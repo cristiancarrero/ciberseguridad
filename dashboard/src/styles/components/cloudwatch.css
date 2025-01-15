@@ -249,48 +249,108 @@
 /* Estilos para la sección de logs */
 .logs-header {
   display: flex;
+  align-items: center;
   gap: 1rem;
   margin-bottom: 1rem;
+  padding: 0.5rem;
 }
 
 .log-group-select {
-  flex: 1;
-  background: var(--bg-secondary);
+  width: 250px;
+  padding: 0.5rem;
+  background: var(--bg-primary);
   border: 1px solid var(--border-color);
-  color: var(--text-primary);
-  padding: 0.75rem;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  transition: all 0.2s ease;
+  border-radius: 6px;
+  color: var(--text-color);
 }
 
-.log-group-select:focus {
-  border-color: var(--accent-color);
-  outline: none;
-}
-
-.refresh-logs-btn {
-  background: var(--bg-hover);
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
   padding: 0.75rem 1.5rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.refresh-logs-btn:hover {
+.refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.refresh-btn .spinning {
+  animation: spin 1s linear infinite;
+}
+
+.auto-refresh {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-color);
+  cursor: pointer;
+  user-select: none;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.auto-refresh:hover {
+  background: var(--bg-hover);
+}
+
+.auto-refresh input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 40px;
+  height: 20px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.auto-refresh input[type="checkbox"]::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  top: 0;
+  left: 0;
+  background: var(--text-secondary);
+  transform: translateX(1px);
+  transition: all 0.3s ease;
+}
+
+.auto-refresh input[type="checkbox"]:checked {
   background: var(--accent-color);
-  color: white;
   border-color: var(--accent-color);
 }
 
+.auto-refresh input[type="checkbox"]:checked::before {
+  background: white;
+  transform: translateX(20px);
+}
+
+.auto-refresh span {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
 .logs-viewer {
-  background: var(--bg-primary);
+  flex: 1;
+  background: var(--bg-secondary);
   border-radius: 8px;
-  padding: 1.5rem;
-  min-height: 300px;
-  margin-top: 1rem;
+  padding: 1rem;
+  overflow-y: auto;
+  min-height: 400px;
+  margin-bottom: 1.5rem;
 }
 
 /* Estilos para el selector de instancias */
@@ -1132,4 +1192,316 @@
 
 .alarm-details p .fa-envelope {
   font-size: 0.9em;
+}
+
+.logs-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: 100%;
+  min-height: 550px;
+  position: relative;
+}
+
+.logs-controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.log-group-select {
+  width: 250px;
+  padding: 0.5rem;
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-color);
+}
+
+.refresh-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.refresh-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.refresh-btn .spinning {
+  animation: spin 1s linear infinite;
+}
+
+.auto-refresh {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-color);
+  cursor: pointer;
+  user-select: none;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.auto-refresh:hover {
+  background: var(--bg-hover);
+}
+
+.auto-refresh input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 40px;
+  height: 20px;
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 20px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.auto-refresh input[type="checkbox"]::before {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  top: 0;
+  left: 0;
+  background: var(--text-secondary);
+  transform: translateX(1px);
+  transition: all 0.3s ease;
+}
+
+.auto-refresh input[type="checkbox"]:checked {
+  background: var(--accent-color);
+  border-color: var(--accent-color);
+}
+
+.auto-refresh input[type="checkbox"]:checked::before {
+  background: white;
+  transform: translateX(20px);
+}
+
+.auto-refresh span {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.logs-viewer {
+  flex: 1;
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  padding: 1rem;
+  overflow-y: auto;
+  min-height: 400px;
+  margin-bottom: 1.5rem;
+}
+
+.logs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.log-entry {
+  display: grid;
+  grid-template-columns: 150px 200px 1fr;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  font-family: monospace;
+}
+
+.log-entry .group-name {
+  color: var(--accent-color);
+  font-size: 0.9em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.log-group-select {
+  max-width: 300px;
+  margin-left: auto;
+}
+
+.logs-viewer {
+  margin-top: 1rem;
+  max-height: 600px;
+  overflow-y: auto;
+}
+
+.log-entry.error {
+  background: rgba(255, 59, 48, 0.1);
+  border-left: 3px solid #ff3b30;
+}
+
+.log-entry.warning {
+  background: rgba(255, 204, 0, 0.1);
+  border-left: 3px solid #ffcc00;
+}
+
+.log-entry.info {
+  background: rgba(0, 122, 255, 0.1);
+  border-left: 3px solid #007aff;
+}
+
+.log-entry .timestamp {
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.log-entry .message {
+  flex: 1;
+  word-break: break-all;
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #ff3b30;
+  padding: 1rem;
+  background: rgba(255, 59, 48, 0.1);
+  border-radius: 8px;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.logs-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.create-group-btn {
+  padding: 0.5rem 1rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.create-group-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  background: var(--bg-secondary);
+  border-radius: 4px;
+}
+
+.create-group-form input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+.create-group-form button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.create-group-form button:first-of-type {
+  background: var(--primary-color);
+  color: white;
+}
+
+.create-group-form button:last-of-type {
+  background: var(--bg-hover);
+  color: var(--text-color);
+}
+
+.test-log-btn {
+  align-self: flex-end;
+  position: static;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.test-log-btn:hover {
+  background: var(--accent-color-dark);
+}
+
+.test-log-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.test-log-btn.loading {
+  background: var(--accent-color-dark);
+}
+
+.refresh-btn-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background: var(--bg-secondary);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.refresh-btn-circle:hover {
+  background: var(--bg-hover);
+  color: var(--accent-color);
+  transform: rotate(180deg);
+}
+
+.refresh-btn-circle .spinning {
+  animation: spin 1s linear infinite;
+}
+
+.refresh-btn-circle:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Ajustar el layout del header */
+.logs-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.log-group-select {
+  flex: 1;
 } 

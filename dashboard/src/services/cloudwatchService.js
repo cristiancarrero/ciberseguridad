@@ -1,4 +1,5 @@
-import { CloudWatchClient, GetMetricDataCommand } from "@aws-sdk/client-cloudwatch";
+import { CloudWatchClient, GetMetricDataCommand, DeleteAlarmsCommand } from "@aws-sdk/client-cloudwatch";
+import { logSystemEvent } from './cloudwatchLogs.js';
 
 export const getInstanceMetrics = async (instanceId, metricName, period = 300) => {
   try {
@@ -51,6 +52,31 @@ export const getInstanceMetrics = async (instanceId, metricName, period = 300) =
     return response.MetricDataResults[0];
   } catch (error) {
     console.error('Error detallado al obtener métricas:', error);
+    throw error;
+  }
+};
+
+export const deleteAlarm = async (alarmName) => {
+  try {
+    await cloudwatchClient.send(new DeleteAlarmsCommand({
+      AlarmNames: [alarmName]
+    }));
+
+    // Registrar la eliminación de la alarma
+    await logSystemEvent('Alarma eliminada', {
+      Nombre: alarmName,
+      Usuario: 'Sistema',
+      Fecha: new Date().toISOString()
+    });
+
+    return true;
+  } catch (error) {
+    // Registrar el error
+    await logSystemEvent('Error al eliminar alarma', {
+      Nombre: alarmName,
+      Error: error.message,
+      Fecha: new Date().toISOString()
+    });
     throw error;
   }
 }; 

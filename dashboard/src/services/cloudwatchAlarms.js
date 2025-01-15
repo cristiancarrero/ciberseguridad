@@ -1,5 +1,6 @@
 import { CloudWatchClient, PutMetricAlarmCommand, DeleteAlarmsCommand, DescribeAlarmsCommand } from "@aws-sdk/client-cloudwatch";
 import { SNSClient, CreateTopicCommand, SubscribeCommand } from "@aws-sdk/client-sns";
+import { putLogEvents } from './cloudwatchLogs';
 
 let cloudWatchClient = null;
 let snsClient = null;
@@ -88,9 +89,18 @@ export const createCloudWatchAlarm = async (alarmData) => {
 
     await cloudWatchClient.send(command);
     console.log('Alarma creada exitosamente');
+
+    // Registrar el evento en los logs
+    await putLogEvents('/aws/ec2/aws-cloudwatch-alarms', 
+      `INFO: Nueva alarma creada - ${alarmData.name} para la instancia ${alarmData.instanceName} 
+       Métrica: ${alarmData.metric}, Umbral: ${alarmData.threshold}%`
+    );
+
     return true;
   } catch (error) {
-    console.error('Error creando alarma:', error);
+    await putLogEvents('/aws/ec2/aws-cloudwatch-alarms', 
+      `ERROR: Fallo al crear alarma - ${error.message}`
+    );
     throw error;
   }
 };
@@ -106,8 +116,18 @@ export const deleteCloudWatchAlarm = async (alarmName) => {
     });
 
     await cloudWatchClient.send(command);
+    // Registrar el evento de eliminación
+    await putLogEvents('/aws/ec2/aws-cloudwatch-alarms',
+      `INFO: Alarma eliminada - ${alarmName}
+       Fecha: ${new Date().toISOString()}`
+    );
+
     return true;
   } catch (error) {
+    // Registrar el error
+    await putLogEvents('/aws/ec2/aws-cloudwatch-alarms',
+      `ERROR: Fallo al eliminar alarma ${alarmName} - ${error.message}`
+    );
     console.error('Error eliminando alarma:', error);
     throw error;
   }

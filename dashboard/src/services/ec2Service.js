@@ -1,4 +1,5 @@
 import { EC2Client, DescribeInstancesCommand, RunInstancesCommand, StartInstancesCommand, StopInstancesCommand, TerminateInstancesCommand, DescribeSecurityGroupsCommand, CreateSecurityGroupCommand, AuthorizeSecurityGroupIngressCommand, DescribeVpcsCommand, DescribeSubnetsCommand } from "@aws-sdk/client-ec2";
+import { putLogEvents, logSystemEvent } from './cloudwatchLogs';
 
 let ec2Client = null;
 
@@ -22,6 +23,7 @@ export const initializeEC2Client = (credentials) => {
 
 export const listInstances = async () => {
   if (!ec2Client) {
+    console.error('EC2 Client no inicializado');
     throw new Error('EC2 Client no está inicializado. Asegúrate de estar conectado a AWS.');
   }
 
@@ -53,7 +55,7 @@ export const listInstances = async () => {
     
     return instances;
   } catch (error) {
-    console.error('Error listando instancias EC2:', error);
+    console.error('Error listando instancias:', error);
     throw error;
   }
 };
@@ -146,9 +148,17 @@ export const launchInstance = async (instanceData) => {
     });
 
     const response = await ec2Client.send(command);
+    await putLogEvents('/aws/ec2/aws-cloudwatch-alarms',
+      `INFO: Nueva instancia EC2 creada
+       ID: ${response.Instances[0].InstanceId}
+       Tipo: ${instanceData.type}
+       AMI: ${instanceData.imageId}`
+    );
     return response.Instances[0];
   } catch (error) {
-    console.error('Error al lanzar instancia:', error);
+    await putLogEvents('/aws/ec2/aws-cloudwatch-alarms',
+      `ERROR: Fallo al lanzar instancia - ${error.message}`
+    );
     throw error;
   }
 };
@@ -187,39 +197,73 @@ const createSecurityGroup = async (name) => {
 
 export const startInstance = async (instanceId) => {
   try {
-    const command = new StartInstancesCommand({
+    await ec2Client.send(new StartInstancesCommand({
       InstanceIds: [instanceId]
+    }));
+
+    // Registrar el evento de inicio
+    await logSystemEvent('Instancia iniciada', {
+      ID: instanceId,
+      Usuario: 'Sistema',
+      Fecha: new Date().toISOString()
     });
-    
-    await ec2Client.send(command);
+
+    return true;
   } catch (error) {
-    console.error('Error starting EC2 instance:', error);
+    await logSystemEvent('Error al iniciar instancia', {
+      ID: instanceId,
+      Error: error.message,
+      Fecha: new Date().toISOString()
+    });
     throw error;
   }
 };
 
 export const stopInstance = async (instanceId) => {
   try {
-    const command = new StopInstancesCommand({
+    await ec2Client.send(new StopInstancesCommand({
       InstanceIds: [instanceId]
+    }));
+
+    // Registrar el evento de detención
+    await logSystemEvent('Instancia detenida', {
+      ID: instanceId,
+      Usuario: 'Sistema',
+      Fecha: new Date().toISOString()
     });
-    
-    await ec2Client.send(command);
+
+    return true;
   } catch (error) {
-    console.error('Error stopping EC2 instance:', error);
+    await logSystemEvent('Error al detener instancia', {
+      ID: instanceId,
+      Error: error.message,
+      Fecha: new Date().toISOString()
+    });
     throw error;
   }
 };
 
 export const terminateInstance = async (instanceId) => {
   try {
-    const command = new TerminateInstancesCommand({
+    await ec2Client.send(new TerminateInstancesCommand({
       InstanceIds: [instanceId]
+    }));
+
+    // Registrar la terminación de la instancia
+    await logSystemEvent('Instancia terminada', {
+      ID: instanceId,
+      Usuario: 'Sistema',
+      Fecha: new Date().toISOString()
     });
-    
-    await ec2Client.send(command);
+
+    return true;
   } catch (error) {
-    console.error('Error terminating EC2 instance:', error);
+    // Registrar el error
+    await logSystemEvent('Error al terminar instancia', {
+      ID: instanceId,
+      Error: error.message,
+      Fecha: new Date().toISOString()
+    });
     throw error;
   }
 };
@@ -240,11 +284,41 @@ export const getInstanceDNS = (instance) => {
   return `ec2-${instance.publicIp.replace(/\./g, '-')}.${region}.compute.amazonaws.com`;
 };
 
-export const getSSHConfig = (instance) => {
-  return {
-    username: 'ec2-user',
-    host: getInstanceDNS(instance),
-    port: 22,
-    privateKey: sessionStorage.getItem('ssh_key')
-  };
+export const getSSHConfig = async (instance) => {
+  try {
+    const config = {
+      username: 'ec2-user',
+      host: getInstanceDNS(instance),
+      port: 22,
+      privateKey: sessionStorage.getItem('ssh_key')
+    };
+
+    // Registrar el evento en el grupo específico de la instancia
+    await logSystemEvent('Conexión SSH iniciada', {
+      Instancia: instance.id,
+      Nombre: instance.name || instance.id,
+      Host: config.host,
+      Usuario: config.username,
+      Puerto: config.port,
+      Fecha: new Date().toISOString()
+    }, `/aws/ec2/${instance.id}`);
+
+    return config;
+  } catch (error) {
+    console.error('Error en configuración SSH:', error);
+    throw error;
+  }
+};
+
+// También podríamos añadir un log cuando se cierra la conexión
+export const closeSSHConnection = async (instance) => {
+  try {
+    await logSystemEvent('Conexión SSH cerrada', {
+      Instancia: instance.id,
+      Nombre: instance.name || instance.id,
+      Fecha: new Date().toISOString()
+    }, `/aws/ec2/${instance.id}`);
+  } catch (error) {
+    console.error('Error registrando cierre de SSH:', error);
+  }
 }; 

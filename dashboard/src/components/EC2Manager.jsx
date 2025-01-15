@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaServer, FaPlay, FaStop, FaTrash, FaPlus, FaTimes, FaInfoCircle, FaTerminal, FaCopy, FaCheck } from 'react-icons/fa';
+import { FaServer, FaPlay, FaStop, FaTrash, FaPlus, FaTimes, FaInfoCircle, FaTerminal, FaCopy, FaCheck, FaSpinner } from 'react-icons/fa';
 import { listInstances, startInstance, stopInstance, terminateInstance, launchInstance } from '../services/ec2Service';
 import '../styles/components/ec2manager.css';
 import '../styles/components/connection-modal.css';
@@ -45,6 +45,7 @@ const EC2Manager = ({ isOpen, onClose }) => {
   const [selectedInstanceForConnection, setSelectedInstanceForConnection] = useState(null);
   const [showTerminal, setShowTerminal] = useState(false);
   const [hasSSHKey, setHasSSHKey] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -56,9 +57,12 @@ const EC2Manager = ({ isOpen, onClose }) => {
     try {
       setIsLoading(true);
       setInstancesError(null);
+      console.log('Cargando instancias...');
       const instancesList = await listInstances();
+      console.log('Instancias cargadas:', instancesList);
       setInstances(instancesList);
     } catch (error) {
+      console.error('Error cargando instancias:', error);
       setInstancesError('Error al cargar las instancias: ' + error.message);
     } finally {
       setIsLoading(false);
@@ -203,8 +207,16 @@ const EC2Manager = ({ isOpen, onClose }) => {
 
         <div className="modal-body">
           <div className="instances-list">
+            {error && (
+              <div className="error-message">
+                Error: {error}
+              </div>
+            )}
+
             {isLoading ? (
-              <div className="loading">Cargando instancias...</div>
+              <div className="loading">
+                <FaSpinner className="spinning" /> Cargando instancias...
+              </div>
             ) : instances.length === 0 ? (
               <div className="no-instances">
                 <FaServer />

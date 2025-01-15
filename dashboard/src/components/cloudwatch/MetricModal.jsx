@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { getInstanceMetrics } from '../../services/cloudwatchService';
 import { FaTimes, FaSync } from 'react-icons/fa';
+import { putLogEvents } from '../../services/cloudwatchLogs';
 
 const MetricModal = ({ metric, instance, onClose }) => {
   const [metricData, setMetricData] = useState(null);
@@ -76,6 +77,24 @@ const MetricModal = ({ metric, instance, onClose }) => {
     const interval = setInterval(loadMetricData, 300000); // Actualizar cada 5 minutos
     return () => clearInterval(interval);
   }, [metric.id, instance.id]);
+
+  useEffect(() => {
+    const interval = setInterval(async () => {
+      try {
+        const data = await getInstanceMetrics(instance.id, metric.id);
+        await putLogEvents('/aws/ec2/aws-cloudwatch-alarms',
+          `INFO: Actualización periódica de métricas
+           Instancia: ${instance.id}
+           Métrica: ${metric.title}
+           Valor: ${data?.Values?.[0] || 'N/A'}${metric.unit}`
+        );
+      } catch (error) {
+        console.error('Error actualizando métricas:', error);
+      }
+    }, 60000); // cada minuto
+
+    return () => clearInterval(interval);
+  }, [instance.id, metric.id, metric.title, metric.unit]);
 
   const getYAxisDomain = () => {
     if (metric.id === 'cpu') {

@@ -21,6 +21,9 @@ import { loadAwsConfig } from '../services/awsService';
 import CloudWatchManager from './cloudwatch/CloudWatchManager';
 import Seguridad from './Seguridad';
 import { useMetricsPersistence } from '../hooks/useMetricsPersistence';
+import { initializeCloudTrail } from '../services/cloudtrailService';
+import { initializeCloudWatchLogs } from '../services/cloudwatchLogs';
+import { initializeEC2Client } from '../services/ec2Service';
 
 const Dashboard = () => {
   const [currentSection, setCurrentSection] = useState(() => {
@@ -114,21 +117,20 @@ const Dashboard = () => {
       });
       setIsAwsConnected(false);
     } else {
-      setIsAwsConnected(true);
-      localStorage.setItem('awsConnected', 'true');
-      
-      // Al conectar, activamos EC2 y CloudWatch
-      const defaultServices = {
-        ec2: true,
-        iam: false,
-        guardduty: false,
-        cloudwatch: true,  // Activamos CloudWatch
-        config: false,
-        eventbridge: false,
-        ecs: false
-      };
-      setAwsServices(defaultServices);
-      localStorage.setItem('awsServices', JSON.stringify(defaultServices));
+      try {
+        const awsConfig = JSON.parse(localStorage.getItem('awsConfig'));
+        console.log('Inicializando servicios AWS con config:', awsConfig);
+        
+        // Inicializar los servicios AWS
+        initializeEC2Client(awsConfig);
+        initializeCloudWatchLogs(awsConfig);
+        initializeCloudTrail(awsConfig);
+        
+        setIsAwsConnected(true);
+        localStorage.setItem('awsConnected', 'true');
+      } catch (error) {
+        console.error('Error inicializando servicios AWS:', error);
+      }
     }
     
     setIsAwsModalOpen(false);

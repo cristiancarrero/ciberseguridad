@@ -8,6 +8,8 @@ import CreateAlarmModal from './CreateAlarmModal';
 import AlarmForm from './AlarmForm';
 import { initializeCloudWatchInstances } from '../../services/cloudwatchInstanceService';
 import { initializeCloudWatchAlarms, createCloudWatchAlarm, deleteCloudWatchAlarm, getAlarmState } from '../../services/cloudwatchAlarms';
+import LogsPanel from './LogsPanel';
+import { initializeCloudWatchLogs } from '../../services/cloudwatchLogs';
 
 const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
   const [activeTab, setActiveTab] = useState('métricas');
@@ -51,6 +53,7 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
       initializeEC2Client(awsConfig);
       initializeCloudWatchInstances(awsConfig);
       initializeCloudWatchAlarms(awsConfig);
+      initializeCloudWatchLogs(awsConfig);
     }
   }, []);
 
@@ -282,23 +285,7 @@ const CloudWatchManager = ({ isOpen, onClose, onAddMetric }) => {
     <div className="tab-content">
       <h2 className="content-title">Logs</h2>
       <div className="logs-container">
-        <div className="logs-header">
-          <select className="log-group-select">
-            <option value="">Seleccionar grupo de logs</option>
-            <option value="ec2">EC2 Logs</option>
-            <option value="lambda">Lambda Logs</option>
-          </select>
-          <button className="refresh-logs-btn">
-            Actualizar Logs
-          </button>
-        </div>
-        <div className="logs-viewer">
-          <div className="no-logs">
-            <FaList className="no-data-icon" />
-            <h3>No hay logs disponibles</h3>
-            <p>Selecciona un grupo de logs para ver sus registros</p>
-          </div>
-        </div>
+        <LogsPanel />
       </div>
     </div>
   );

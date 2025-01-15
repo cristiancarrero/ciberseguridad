@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaKey } from 'react-icons/fa';
+import { logSystemEvent } from '../services/cloudwatchLogs';
 import '../styles/components/ssh-key-manager.css';
 
 const SSHKeyManager = ({ onClose, onKeyUpdate }) => {
@@ -17,9 +18,18 @@ const SSHKeyManager = ({ onClose, onKeyUpdate }) => {
       setIsConnecting(true);
       setError(null);
       sessionStorage.setItem('ssh_key', privateKey);
+      await logSystemEvent('Clave SSH configurada', {
+        Tipo: 'RSA',
+        Estado: 'Configurada',
+        Fecha: new Date().toISOString()
+      }, '/aws/ec2/aws-cloudwatch-alarms');
       onKeyUpdate(true);
       onClose();
     } catch (error) {
+      await logSystemEvent('Error en configuración SSH', {
+        Error: error.message,
+        Fecha: new Date().toISOString()
+      }, '/aws/ec2/aws-cloudwatch-alarms');
       setError('Error al procesar la clave: ' + error.message);
     } finally {
       setIsConnecting(false);

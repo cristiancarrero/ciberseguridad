@@ -1,4 +1,5 @@
 import { ListMetricsCommand } from "@aws-sdk/client-cloudwatch";
+import { putLogEvents } from './cloudwatchLogs';
 
 export const fetchEC2Instances = async (cloudWatchClient) => {
   try {
@@ -23,5 +24,23 @@ export const fetchEC2Instances = async (cloudWatchClient) => {
   } catch (error) {
     console.error('Error obteniendo métricas:', error);
     return [];
+  }
+};
+
+export const updateMetrics = async (instanceId) => {
+  try {
+    const metrics = await getInstanceMetrics(instanceId);
+    await putLogEvents('/aws/ec2/aws-cloudwatch-alarms',
+      `INFO: Métricas actualizadas para instancia ${instanceId}
+       CPU: ${metrics.cpu}%
+       Memoria: ${metrics.memory}%
+       Red: ${metrics.network}MB/s`
+    );
+    return metrics;
+  } catch (error) {
+    await putLogEvents('/aws/ec2/aws-cloudwatch-alarms',
+      `ERROR: Fallo al actualizar métricas - ${error.message}`
+    );
+    throw error;
   }
 }; 
