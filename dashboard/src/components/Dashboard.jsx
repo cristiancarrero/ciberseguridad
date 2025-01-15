@@ -60,6 +60,21 @@ const Dashboard = () => {
     };
   });
 
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [performanceData, setPerformanceData] = useState({
+    cpu: 0,
+    memory: 0,
+    network: 0
+  });
+
+  // Añadimos el estado para securityData
+  const [securityData, setSecurityData] = useState({
+    threats: 0,
+    vulnerabilities: 0,
+    incidents: 0,
+    status: 'Normal'
+  });
+
   useEffect(() => {
     // Cargar la configuración de AWS al montar el componente
     if (isAwsConnected) {
