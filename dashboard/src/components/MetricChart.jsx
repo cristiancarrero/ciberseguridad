@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { getInstanceMetrics } from '../services/cloudwatchService';
+import { getInstanceMetrics } from './aws/services/cloudwatch/services/cloudwatchService';
 
 // Cache global para los datos de las métricas
 const metricsCache = new Map();

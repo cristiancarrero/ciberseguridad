@@ -1,0 +1,92 @@
+.ec2-manager-modal {
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.instances-list {
+  display: grid;
+  gap: 15px;
+}
+
+.instance-item {
+  background: var(--bg-primary);
+  border-radius: 6px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.instance-info h3 {
+  margin: 0 0 10px 0;
+  color: var(--text-primary);
+}
+
+.instance-info p {
+  margin: 5px 0;
+  color: var(--text-secondary);
+  font-size: 0.9em;
+}
+
+.instance-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.start-instance-btn,
+.stop-instance-btn,
+.terminate-instance-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  color: white;
+}
+
+.start-instance-btn {
+  background: var(--success-color);
+}
+
+.stop-instance-btn {
+  background: var(--warning-color);
+}
+
+.terminate-instance-btn {
+  background: var(--danger-color);
+}
+
+.start-instance-btn:hover { background: var(--success-color-dark); }
+.stop-instance-btn:hover { background: var(--warning-color-dark); }
+.terminate-instance-btn:hover { background: var(--danger-color-dark); }
+
+.start-instance-btn:disabled,
+.stop-instance-btn:disabled {
+  background: var(--disabled-color);
+  cursor: not-allowed;
+}
+
+.error-message {
+  background: var(--error-bg);
+  color: var(--error-text);
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-secondary);
+} 

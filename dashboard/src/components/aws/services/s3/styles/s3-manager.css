@@ -1,0 +1,104 @@
+.s3-manager-modal {
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.create-bucket-form {
+  margin-bottom: 20px;
+  padding: 15px;
+  background: var(--bg-primary);
+  border-radius: 6px;
+}
+
+.create-bucket-form form {
+  display: flex;
+  gap: 10px;
+}
+
+.create-bucket-form input {
+  flex: 1;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--input-bg);
+  color: var(--text-primary);
+}
+
+.create-bucket-form button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 15px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.buckets-list {
+  display: grid;
+  gap: 15px;
+}
+
+.bucket-item {
+  background: var(--bg-primary);
+  border-radius: 6px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bucket-info h4 {
+  margin: 0 0 5px 0;
+  color: var(--text-primary);
+}
+
+.bucket-info p {
+  margin: 3px 0;
+  color: var(--text-secondary);
+  font-size: 0.9em;
+}
+
+.bucket-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.delete-bucket-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 15px;
+  background: var(--danger-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.delete-bucket-btn:hover {
+  background: var(--danger-color-dark);
+}
+
+.error-message {
+  background: var(--error-bg);
+  color: var(--error-text);
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-secondary);
+} 

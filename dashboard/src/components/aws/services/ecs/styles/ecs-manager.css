@@ -1,0 +1,103 @@
+.ecs-manager-modal {
+  background: var(--bg-secondary);
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 80vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.cluster-selector {
+  margin-bottom: 20px;
+}
+
+.cluster-selector select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--input-bg);
+  color: var(--text-primary);
+}
+
+.services-list {
+  display: grid;
+  gap: 15px;
+}
+
+.service-item {
+  background: var(--bg-primary);
+  border-radius: 6px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.service-info h4 {
+  margin: 0 0 10px 0;
+  color: var(--text-primary);
+}
+
+.service-info p {
+  margin: 5px 0;
+  color: var(--text-secondary);
+  font-size: 0.9em;
+}
+
+.service-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.start-service-btn,
+.stop-service-btn,
+.delete-service-btn {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+}
+
+.start-service-btn {
+  background: var(--success-color);
+}
+
+.stop-service-btn {
+  background: var(--warning-color);
+}
+
+.delete-service-btn {
+  background: var(--danger-color);
+}
+
+.start-service-btn:hover { background: var(--success-color-dark); }
+.stop-service-btn:hover { background: var(--warning-color-dark); }
+.delete-service-btn:hover { background: var(--danger-color-dark); }
+
+.start-service-btn:disabled,
+.stop-service-btn:disabled {
+  background: var(--disabled-color);
+  cursor: not-allowed;
+}
+
+.error-message {
+  background: var(--error-bg);
+  color: var(--error-text);
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-secondary);
+} 

@@ -2,9 +2,9 @@ const { WebSocketServer } = require('ws');
 const { Client } = require('ssh2');
 const fs = require('fs');
 
-const wss = new WebSocketServer({ port: 8080 });
+const wss = new WebSocketServer({ port: 8082 });
 
-console.log('Servidor WebSocket iniciado en el puerto 8080');
+console.log('Servidor WebSocket iniciado en el puerto 8082');
 
 wss.on('connection', (ws) => {
   console.log('Nueva conexión WebSocket');
