@@ -1,17 +1,61 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
 
-// https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react()],
+  optimizeDeps: {
+    exclude: ['@aws-sdk/client-ec2', '@aws-sdk/client-cloudwatch'],
+    include: ['fast-xml-parser'],
+    force: false,
+    esbuildOptions: {
+      target: 'esnext'
+    }
+  },
   server: {
     port: 3000,
-    host: true
+    host: true,
+    watch: {
+      usePolling: true
+    },
+    hmr: {
+      protocol: 'ws',
+      host: 'localhost',
+      port: 3000,
+      clientPort: 3000,
+      timeout: 120000,
+      overlay: true
+    },
+    proxy: {
+      '/ws': {
+        target: 'ws://localhost:8080',
+        ws: true,
+        changeOrigin: true
+      },
+      '/api': {
+        target: 'http://localhost:8080',
+        changeOrigin: true
+      }
+    }
   },
-  base: '/',
+  resolve: {
+    alias: {
+      'fast-xml-parser': 'fast-xml-parser/src/fxp.js'
+    }
+  },
   build: {
-    outDir: 'dist',
-    assetsDir: 'assets',
-    sourcemap: true
-  }
+    commonjsOptions: {
+      include: [/fast-xml-parser/, /node_modules/]
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          aws: ['@aws-sdk/client-ec2', '@aws-sdk/client-cloudwatch']
+        }
+      }
+    },
+    target: 'esnext',
+    minify: false,
+    sourcemap: true,
+    cache: true
+  },
+  cacheDir: 'node_modules/.vite/cache'
 })

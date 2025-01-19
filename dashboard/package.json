@@ -6,7 +6,7 @@
   "scripts": {
     "frontend": "vite",
     "backend": "node server/index.js",
-    "dev": "concurrently \"npm run frontend\" \"npm run backend\"",
+    "dev": "vite optimize && concurrently \"npm run frontend\" \"npm run backend\"",
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
@@ -15,7 +15,11 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+<<<<<<< HEAD
     "@aws-sdk/client-cloudtrail": "^3.726.1",
+=======
+    "@aws-sdk/client-cloudtrail": "^3.731.1",
+>>>>>>> backup-changes
     "@aws-sdk/client-cloudwatch": "^3.726.1",
     "@aws-sdk/client-cloudwatch-logs": "^3.726.1",
     "@aws-sdk/client-ec2": "^3.726.1",

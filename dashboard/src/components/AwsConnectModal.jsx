@@ -23,44 +23,66 @@ const AwsConnectModal = ({ isOpen, onClose, onConnect, isConnected }) => {
   const handlePasteCredentials = (e) => {
     const text = e.clipboardData.getData('text');
     try {
-      // Intentar extraer las credenciales del formato de AWS CLI
+      // Parsear las credenciales del formato AWS CLI
       const accessKeyMatch = text.match(/aws_access_key_id=([A-Z0-9]+)/);
       const secretKeyMatch = text.match(/aws_secret_access_key=([A-Za-z0-9+/=]+)/);
       const sessionTokenMatch = text.match(/aws_session_token=([A-Za-z0-9+/=]+)/);
 
-      if (accessKeyMatch && secretKeyMatch && sessionTokenMatch) {
-        setCredentials(prev => ({
-          ...prev,
-          accessKeyId: accessKeyMatch[1],
-          secretAccessKey: secretKeyMatch[1],
-          sessionToken: sessionTokenMatch[1]
-        }));
-        e.preventDefault();
+      if (accessKeyMatch || secretKeyMatch || sessionTokenMatch) {
+        e.preventDefault(); // Prevenir el pegado normal
+        
+        const newCredentials = {
+          ...credentials,
+          ...(accessKeyMatch && { accessKeyId: accessKeyMatch[1] }),
+          ...(secretKeyMatch && { secretAccessKey: secretKeyMatch[1] }),
+          ...(sessionTokenMatch && { sessionToken: sessionTokenMatch[1] })
+        };
+
+        setCredentials(newCredentials);
+        
+        // Log para debugging
+        console.log('Credenciales parseadas:', {
+          accessKeyId: newCredentials.accessKeyId,
+          secretAccessKey: newCredentials.secretAccessKey ? '***' : undefined,
+          sessionToken: newCredentials.sessionToken ? '***' : undefined
+        });
       }
     } catch (err) {
-      console.error('Error parsing credentials:', err);
+      console.error('Error al parsear las credenciales:', err);
+      setError('Error al parsear las credenciales. Asegúrate de que el formato es correcto.');
     }
   };
 
-  const handleConnect = async () => {
+  const handleConnect = async (e) => {
+    e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      const result = await initializeAWS(credentials);
-      if (result.success) {
-        onConnect(true);
-        setCredentials({
-          accessKeyId: '',
-          secretAccessKey: '',
-          sessionToken: '',
-          region: ''
-        });
-      } else {
-        setError(result.error);
-      }
-    } catch (err) {
-      setError(err.message);
+      // Guardar las credenciales en localStorage
+      const awsCredentials = {
+        accessKeyId: credentials.accessKeyId,
+        secretAccessKey: credentials.secretAccessKey,
+        sessionToken: credentials.sessionToken
+      };
+      
+      localStorage.setItem('awsCredentials', JSON.stringify(awsCredentials));
+      localStorage.setItem('awsRegion', credentials.region);
+      localStorage.setItem('awsConnected', 'true');
+
+      // Limpiar el formulario
+      setCredentials({
+        accessKeyId: '',
+        secretAccessKey: '',
+        sessionToken: '',
+        region: 'us-west-2'
+      });
+
+      // Notificar al componente padre
+      onConnect(true);
+    } catch (error) {
+      console.error('Error al conectar con AWS:', error);
+      setError('Error al conectar con AWS');
     } finally {
       setLoading(false);
     }
