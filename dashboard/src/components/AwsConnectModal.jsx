@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { initializeAWS } from '../services/awsService';
+import { connectToAWS } from '../services/awsService';
 import { FaAws, FaTimes, FaKey, FaLock, FaGlobe } from 'react-icons/fa';
 
 const AwsConnectModal = ({ isOpen, onClose, onConnect, isConnected }) => {
@@ -59,16 +59,12 @@ const AwsConnectModal = ({ isOpen, onClose, onConnect, isConnected }) => {
     setError(null);
 
     try {
-      // Guardar las credenciales en localStorage
-      const awsCredentials = {
+      await connectToAWS({
         accessKeyId: credentials.accessKeyId,
         secretAccessKey: credentials.secretAccessKey,
-        sessionToken: credentials.sessionToken
-      };
-      
-      localStorage.setItem('awsCredentials', JSON.stringify(awsCredentials));
-      localStorage.setItem('awsRegion', credentials.region);
-      localStorage.setItem('awsConnected', 'true');
+        sessionToken: credentials.sessionToken,
+        region: credentials.region
+      });
 
       // Limpiar el formulario
       setCredentials({
@@ -82,7 +78,7 @@ const AwsConnectModal = ({ isOpen, onClose, onConnect, isConnected }) => {
       onConnect(true);
     } catch (error) {
       console.error('Error al conectar con AWS:', error);
-      setError('Error al conectar con AWS');
+      setError('Error al conectar con AWS: ' + error.message);
     } finally {
       setLoading(false);
     }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaKey } from 'react-icons/fa';
-import { logSystemEvent } from '../services/cloudwatchLogs';
+import { logSystemEvent } from '../services/loggingService';
 import '../styles/components/ssh-key-manager.css';
 
 const SSHKeyManager = ({ onClose, onKeyUpdate }) => {

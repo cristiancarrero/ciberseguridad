@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { FaShieldAlt, FaServer, FaUsers, FaNetworkWired, FaDownload, FaHome, FaChartBar, FaLock, FaAws, FaBell, FaCloud, FaMicrosoft, FaGoogle, FaCloudversify, FaDocker, FaCog, FaBolt, FaChartLine } from 'react-icons/fa';
+import React, { useState, useEffect, useCallback } from 'react';
+import { FaShieldAlt, FaServer, FaUsers, FaNetworkWired, FaDownload, FaHome, FaChartBar, FaLock, FaAws, FaBell, FaCloud, FaMicrosoft, FaGoogle, FaCloudversify, FaDocker, FaCog, FaBolt, FaChartLine, FaHistory } from 'react-icons/fa';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 // Importar estilos
@@ -14,22 +14,24 @@ import '../styles/responsive.css';
 import '../styles/dashboard.css';
 
 // Importar el modal y sus estilos
-import AwsConnectModal from './AwsConnectModal';
+import AwsConnectModal from './aws/components/AwsConnectModal';
+import AwsDisconnectModal from './aws/components/AwsDisconnectModal';
 import '../styles/components/modal.css';
 import EC2Manager from './EC2Manager';
-import { loadAwsConfig } from '../services/awsService';
-import CloudWatchManager from './cloudwatch/CloudWatchManager';
+import { connectToAWS, disconnectFromAWS, isConnectedToAWS, loadAwsConfig } from '../services/awsService';
+import CloudWatchPanel from './aws/services/cloudwatch/CloudWatchPanel';
 import Seguridad from './Seguridad';
 import { useMetricsPersistence } from '../hooks/useMetricsPersistence';
-import { initializeCloudTrail } from '../services/cloudtrailService';
-import { initializeCloudWatchLogs } from '../services/cloudwatchLogs';
-import { initializeEC2Client } from '../services/ec2Service';
+import VPCManager from './aws/services/vpc/VPCManager';
+import CloudTrailManager from './aws/services/cloudtrail/CloudTrailManager';
+import { initializeCloudWatch } from './aws/services/cloudwatch/services/cloudwatchService';
 
 const Dashboard = () => {
   const [currentSection, setCurrentSection] = useState(() => {
     return localStorage.getItem('currentSection') || 'dashboard';
   });
   const [isAwsModalOpen, setIsAwsModalOpen] = useState(false);
+  const [isDisconnectModalOpen, setIsDisconnectModalOpen] = useState(false);
   const [expandedMenus, setExpandedMenus] = useState(() => {
     const savedState = localStorage.getItem('expandedMenus');
     return savedState ? JSON.parse(savedState) : { integrations: false };
@@ -56,6 +58,7 @@ const Dashboard = () => {
       vpc: false,
       s3: false,
       cloudwatch: false,
+      cloudtrail: false,
       guardduty: false,
       ecs: false,
       config: false,
@@ -78,10 +81,55 @@ const Dashboard = () => {
     status: 'Normal'
   });
 
+  const [isVPCManagerOpen, setIsVPCManagerOpen] = useState(false);
+  const [showCloudTrailManager, setShowCloudTrailManager] = useState(false);
+  const [isCloudWatchOpen, setIsCloudWatchOpen] = useState(() => {
+    const saved = localStorage.getItem('isCloudWatchOpen');
+    return saved ? JSON.parse(saved) : false;
+  });
+
+  // Guardar el estado en localStorage cuando cambie
+  useEffect(() => {
+    localStorage.setItem('isCloudWatchOpen', JSON.stringify(isCloudWatchOpen));
+  }, [isCloudWatchOpen]);
+
+  // Manejar la tecla ESC para cerrar el panel
+  useEffect(() => {
+    const handleEsc = (event) => {
+      if (event.key === 'Escape') {
+        setIsCloudWatchOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleEsc);
+
+    return () => {
+      window.removeEventListener('keydown', handleEsc);
+    };
+  }, []);
+
+  const handleCloseCloudWatch = () => {
+    setIsCloudWatchOpen(false);
+    localStorage.setItem('isCloudWatchOpen', 'false');
+  };
+
+  const handleOpenCloudWatch = () => {
+    setIsCloudWatchOpen(true);
+    localStorage.setItem('isCloudWatchOpen', 'true');
+  };
+
   useEffect(() => {
     // Cargar la configuración de AWS al montar el componente
     if (isAwsConnected) {
-      loadAwsConfig();
+      try {
+        const awsConfig = JSON.parse(localStorage.getItem('awsConfig'));
+        if (awsConfig) {
+          console.log('Inicializando servicios AWS...');
+          window.awsCredentials = awsConfig;
+          initializeCloudWatch(awsConfig);
+        }
+      } catch (error) {
+        console.error('Error al cargar configuración AWS:', error);
+      }
     }
   }, [isAwsConnected]);
 
@@ -101,39 +149,64 @@ const Dashboard = () => {
     localStorage.setItem('expandedMenus', JSON.stringify(newExpandedMenus));
   };
 
-  const handleAwsConnection = async (success) => {
-    console.log('AWS Connection Status:', success);
-    
-    if (!success) {
-      localStorage.removeItem('awsConfig');
-      localStorage.removeItem('awsConnected');
-      localStorage.removeItem('awsServices');
-      setAwsServices({
-        ec2: false,
-        iam: false,
-        guardduty: false,
-        cloudwatch: false,
-        // ... otros servicios
-      });
-      setIsAwsConnected(false);
-    } else {
+  const handleAwsConnection = useCallback(async (credentials) => {
+    if (!isAwsConnected) {
       try {
-        const awsConfig = JSON.parse(localStorage.getItem('awsConfig'));
-        console.log('Inicializando servicios AWS con config:', awsConfig);
+        console.log('Iniciando conexión con AWS...');
+        const connected = await connectToAWS(credentials);
         
-        // Inicializar los servicios AWS
-        initializeEC2Client(awsConfig);
-        initializeCloudWatchLogs(awsConfig);
-        initializeCloudTrail(awsConfig);
-        
+        if (!connected) {
+          throw new Error('No se pudo establecer la conexión con AWS');
+        }
+
+        // Formatear las credenciales en el formato correcto
+        const formattedConfig = {
+          credentials: {
+            accessKeyId: credentials.accessKeyId,
+            secretAccessKey: credentials.secretAccessKey,
+            sessionToken: credentials.sessionToken
+          },
+          region: credentials.region || 'us-west-2'
+        };
+
+        // Guardar las credenciales formateadas
+        localStorage.setItem('awsConfig', JSON.stringify(formattedConfig));
+        window.awsCredentials = formattedConfig;
+
+        // Inicializar servicios
+        initializeCloudWatch(formattedConfig);
+
         setIsAwsConnected(true);
         localStorage.setItem('awsConnected', 'true');
+        setIsAwsModalOpen(false);
+        return true;
       } catch (error) {
-        console.error('Error inicializando servicios AWS:', error);
+        console.error('Error connecting to AWS:', error);
+        return false;
       }
     }
-    
-    setIsAwsModalOpen(false);
+    return false;
+  }, [isAwsConnected]);
+
+  const handleAwsDisconnection = async () => {
+    try {
+      await disconnectFromAWS();
+      setIsAwsConnected(false);
+      localStorage.removeItem('awsConnected');
+      setIsDisconnectModalOpen(false);
+    } catch (error) {
+      console.error('Error disconnecting from AWS:', error);
+    }
+  };
+
+  const toggleAwsModal = () => {
+    if (isAwsConnected) {
+      // Si estamos conectados, mostrar modal de desconexión
+      setIsDisconnectModalOpen(true);
+    } else {
+      // Si no estamos conectados, mostrar modal de conexión
+      setIsAwsModalOpen(true);
+    }
   };
 
   const testConnection = async () => {
@@ -145,17 +218,64 @@ const Dashboard = () => {
     }
   };
 
-  const handleAddMetric = (newMetric) => {
-    addMetric(newMetric);
+  const handleAddMetric = (metric) => {
+    console.log('Dashboard: Añadiendo métrica:', metric);
+    addMetric(metric);
   };
 
   const handleRemoveMetric = (index) => {
+    console.log('Dashboard: Eliminando métrica:', index);
     removeMetric(index);
   };
 
   const handleMetricUpdate = (index, value) => {
+    console.log('Dashboard: Actualizando valor de métrica:', { index, value });
     updateMetricValue(index, value);
   };
+
+  useEffect(() => {
+    return () => {
+      // Limpiar cualquier operación pendiente al desmontar
+      setIsAwsModalOpen(false);
+      setIsDisconnectModalOpen(false);
+    };
+  }, []);
+
+  // Añadir efecto para reinicializar servicios cuando se recarga la página
+  useEffect(() => {
+    if (isAwsConnected) {
+      const awsConfig = JSON.parse(localStorage.getItem('awsConfig'));
+      if (awsConfig) {
+        window.awsCredentials = awsConfig;
+        console.log('Credenciales cargadas:', awsConfig);
+        // Verificar si las credenciales han expirado
+        if (awsConfig.credentials.expiration) {
+          const expirationDate = new Date(awsConfig.credentials.expiration);
+          if (expirationDate < new Date()) {
+            console.log('Credenciales expiradas, desconectando...');
+            setIsAwsConnected(false);
+            localStorage.removeItem('awsConfig');
+            localStorage.setItem('awsConnected', 'false');
+            window.awsCredentials = null;
+            return;
+          }
+        }
+        try {
+          initializeCloudWatch(awsConfig);
+        } catch (error) {
+          console.error('Error al inicializar CloudWatch:', error);
+        }
+      }
+    }
+  }, [isAwsConnected]);
+
+  // Añadir manejador para errores de autenticación
+  const handleAuthError = useCallback(() => {
+    setIsAwsConnected(false);
+    localStorage.removeItem('awsConfig');
+    localStorage.setItem('awsConnected', 'false');
+    setIsAwsModalOpen(true);
+  }, []);
 
   const renderContent = () => {
     switch(currentSection) {
@@ -323,20 +443,19 @@ const Dashboard = () => {
             
             <div className="metrics-container">
               <Seguridad 
-                onAddMetric={() => setShowCloudWatchManager(true)}
+                metrics={dashboardMetrics}
+                onAddMetric={handleAddMetric}
                 onRemoveMetric={handleRemoveMetric}
                 onMetricUpdate={handleMetricUpdate}
-                metrics={dashboardMetrics}
                 isAwsConnected={isAwsConnected}
-                currentValues={metricsValues}
               />
             </div>
 
             {showCloudWatchManager && (
-              <CloudWatchManager
+              <CloudWatchPanel
                 isOpen={showCloudWatchManager}
                 onClose={() => setShowCloudWatchManager(false)}
-                onAddMetric={addMetric}
+                onAddMetric={handleAddMetric}
               />
             )}
           </div>
@@ -359,8 +478,8 @@ const Dashboard = () => {
             <div className="content-header">
               <h1 className="content-title">Servicios AWS</h1>
               <button 
-                className={`connect-aws-btn ${isAwsConnected ? 'connected' : ''}`} 
-                onClick={() => setIsAwsModalOpen(true)}
+                className={`connect-aws-btn ${isAwsConnected ? 'connected' : ''}`}
+                onClick={toggleAwsModal}
               >
                 <FaAws />
                 {isAwsConnected ? 'Desconectar de AWS' : 'Conectar con AWS'}
@@ -394,13 +513,8 @@ const Dashboard = () => {
                         </div>
                       </div>
                       <button 
-                        className="service-action-btn" 
-                        disabled={!isAwsConnected}
-                        onClick={() => {
-                          console.log('EC2 Button Clicked');
-                          console.log('AWS Connection Status:', isAwsConnected);
-                          setIsEC2ManagerOpen(true);
-                        }}
+                        className="service-action-btn"
+                        onClick={() => setIsEC2ManagerOpen(true)}
                       >
                         Gestionar
                       </button>
@@ -427,7 +541,7 @@ const Dashboard = () => {
                           <span className="stat-value">{awsServices.iam ? '3' : '-'}</span>
                         </div>
                       </div>
-                      <button className="service-action-btn" disabled={!awsServices.iam}>
+                      <button className="service-action-btn">
                         Gestionar
                       </button>
                     </div>
@@ -453,7 +567,7 @@ const Dashboard = () => {
                           <span className="stat-value">{awsServices.guardduty ? '6' : '-'}</span>
                         </div>
                       </div>
-                      <button className="service-action-btn" disabled={!awsServices.guardduty}>
+                      <button className="service-action-btn">
                         Gestionar
                       </button>
                     </div>
@@ -469,22 +583,26 @@ const Dashboard = () => {
                         <div className="service-icon">
                           <FaNetworkWired />
                         </div>
-                        <div className={`service-status ${awsServices.vpc ? 'active' : 'inactive'}`}>
-                          {awsServices.vpc ? 'Conectado' : 'Desconectado'}
+                        <div className={`service-status ${isAwsConnected ? 'active' : 'inactive'}`}>
+                          {isAwsConnected ? 'Conectado' : 'Desconectado'}
                         </div>
                       </div>
                       <h3 className="service-title">VPC</h3>
                       <div className="service-stats">
                         <div className="stat-item">
                           <span className="stat-label">ACLs</span>
-                          <span className="stat-value">{awsServices.vpc ? '6' : '-'}</span>
+                          <span className="stat-value">{isAwsConnected ? '6' : '-'}</span>
                         </div>
                         <div className="stat-item">
                           <span className="stat-label">Subnets Seguras</span>
-                          <span className="stat-value">{awsServices.vpc ? '4' : '-'}</span>
+                          <span className="stat-value">{isAwsConnected ? '4' : '-'}</span>
                         </div>
                       </div>
-                      <button className="service-action-btn" disabled={!awsServices.vpc}>
+                      <button 
+                        className="service-action-btn"
+                        onClick={() => setIsVPCManagerOpen(true)}
+                        disabled={!isAwsConnected}
+                      >
                         Gestionar
                       </button>
                     </div>
@@ -510,7 +628,7 @@ const Dashboard = () => {
                           <span className="stat-value">{awsServices.s3 ? '10' : '-'}</span>
                         </div>
                       </div>
-                      <button className="service-action-btn" disabled={!awsServices.s3}>
+                      <button className="service-action-btn">
                         Gestionar
                       </button>
                     </div>
@@ -536,7 +654,7 @@ const Dashboard = () => {
                           <span className="stat-value">{awsServices.ecs ? '12' : '-'}</span>
                         </div>
                       </div>
-                      <button className="service-action-btn" disabled={!awsServices.ecs}>
+                      <button className="service-action-btn">
                         Gestionar
                       </button>
                     </div>
@@ -568,8 +686,8 @@ const Dashboard = () => {
                         </div>
                       </div>
                       <button 
-                        className="service-action-btn" 
-                        onClick={() => setShowCloudWatchManager(true)}
+                        className="service-action-btn"
+                        onClick={handleOpenCloudWatch}
                       >
                         Gestionar
                       </button>
@@ -596,7 +714,7 @@ const Dashboard = () => {
                           <span className="stat-value">{awsServices.config ? '24' : '-'}</span>
                         </div>
                       </div>
-                      <button className="service-action-btn" disabled={!awsServices.config}>
+                      <button className="service-action-btn">
                         Gestionar
                       </button>
                     </div>
@@ -622,11 +740,40 @@ const Dashboard = () => {
                           <span className="stat-value">{awsServices.eventbridge ? '16' : '-'}</span>
                         </div>
                       </div>
-                      <button className="service-action-btn" disabled={!awsServices.eventbridge}>
+                      <button className="service-action-btn">
                         Gestionar
                       </button>
                     </div>
                   </div>
+                </div>
+
+                {/* CloudTrail Widget */}
+                <div className="aws-service-widget">
+                  <div className="widget-header">
+                    <div className="service-icon">
+                      <FaHistory />
+                    </div>
+                    <div className={`service-status ${awsServices.cloudtrail ? 'active' : 'inactive'}`}>
+                      {awsServices.cloudtrail ? 'Conectado' : 'Desconectado'}
+                    </div>
+                  </div>
+                  <h3 className="service-title">CloudTrail</h3>
+                  <div className="service-stats">
+                    <div className="stat-item">
+                      <span className="stat-label">Eventos Registrados</span>
+                      <span className="stat-value">{awsServices.cloudtrail ? '150' : '-'}</span>
+                    </div>
+                    <div className="stat-item">
+                      <span className="stat-label">Últimas 24h</span>
+                      <span className="stat-value">{awsServices.cloudtrail ? '25' : '-'}</span>
+                    </div>
+                  </div>
+                  <button 
+                    className="service-action-btn"
+                    onClick={() => setShowCloudTrailManager(true)}
+                  >
+                    Gestionar
+                  </button>
                 </div>
               </div>
             ) : (
@@ -636,7 +783,7 @@ const Dashboard = () => {
                 <p>Conecta tu cuenta de AWS para ver y gestionar tus servicios.</p>
                 <button 
                   className="connect-aws-btn" 
-                  onClick={() => setIsAwsModalOpen(true)}
+                  onClick={toggleAwsModal}
                 >
                   Conectar con AWS
                 </button>
@@ -738,12 +885,13 @@ const Dashboard = () => {
       </div>
 
       {/* AWS Connect Modal */}
-      <AwsConnectModal 
-        isOpen={isAwsModalOpen}
-        onClose={() => setIsAwsModalOpen(false)}
-        onConnect={handleAwsConnection}
-        isConnected={isAwsConnected}
-      />
+      {isAwsModalOpen && !isAwsConnected && (
+        <AwsConnectModal
+          isOpen={isAwsModalOpen}
+          onClose={() => setIsAwsModalOpen(false)}
+          onConnect={handleAwsConnection}
+        />
+      )}
 
       {/* EC2 Manager Modal */}
       <EC2Manager 
@@ -752,11 +900,36 @@ const Dashboard = () => {
       />
 
       {/* CloudWatch Manager Modal */}
-      {showCloudWatchManager && (
-        <CloudWatchManager
-          isOpen={showCloudWatchManager}
-          onClose={() => setShowCloudWatchManager(false)}
-          onAddMetric={addMetric}
+      {isCloudWatchOpen && (
+        <CloudWatchPanel
+          isOpen={isCloudWatchOpen}
+          onClose={handleCloseCloudWatch}
+          onAddMetric={handleAddMetric}
+        />
+      )}
+
+      {/* VPC Manager Modal */}
+      {isVPCManagerOpen && (
+        <VPCManager 
+          isOpen={isVPCManagerOpen}
+          onClose={() => setIsVPCManagerOpen(false)}
+        />
+      )}
+
+      {/* Modal de desconexión */}
+      {isDisconnectModalOpen && isAwsConnected && (
+        <AwsDisconnectModal
+          isOpen={isDisconnectModalOpen}
+          onClose={() => setIsDisconnectModalOpen(false)}
+          onDisconnect={handleAwsDisconnection}
+        />
+      )}
+
+      {/* CloudTrail Manager Modal */}
+      {showCloudTrailManager && (
+        <CloudTrailManager
+          isOpen={showCloudTrailManager}
+          onClose={() => setShowCloudTrailManager(false)}
         />
       )}
     </div>
