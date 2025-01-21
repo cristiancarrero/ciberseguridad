@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaSignOutAlt, FaShieldAlt, FaSearch, FaUser, FaCog, FaChevronDown } from 'react-icons/fa';
+import { clearAWSConfig } from '../../../Pentest/src/services/aws';
 import '../styles/components/navbar.css';
 
 const Navbar = () => {
@@ -7,10 +8,11 @@ const Navbar = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const handlePentestClick = () => {
-    window.location.href = 'http://localhost:8000/Pentest/pentesting.html';
+    window.location.href = 'http://localhost:5174/pentest';
   };
 
   const handleLogout = () => {
+    clearAWSConfig();
     window.location.href = 'http://localhost:8000/auth/index.html';
   };
 
