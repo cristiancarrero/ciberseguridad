@@ -2,10 +2,11 @@
   "name": "aws-services",
   "version": "1.0.0",
   "description": "AWS Services Security Dashboard",
+  "type": "module",
   "scripts": {
-    "start": "vite",
-    "server": "node server/index.js",
-    "dev": "concurrently \"npm run start\" \"npm run server\""
+    "dev": "cd dashboard && npm run dev",
+    "install-deps": "npm install && cd dashboard && npm install",
+    "start": "cd dashboard && npm start"
   },
   "dependencies": {
     "@aws-sdk/client-cloudwatch": "^3.726.1",

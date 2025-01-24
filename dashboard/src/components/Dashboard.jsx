@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { FaShieldAlt, FaServer, FaUsers, FaNetworkWired, FaDownload, FaHome, FaChartBar, FaLock, FaAws, FaBell, FaCloud, FaMicrosoft, FaGoogle, FaCloudversify, FaDocker, FaCog, FaBolt, FaChartLine, FaHistory } from 'react-icons/fa';
+import { FaShieldAlt, FaServer, FaUsers, FaNetworkWired, FaDownload, FaHome, FaChartBar, FaLock, FaAws, FaBell, FaCloud, FaMicrosoft, FaGoogle, FaCloudversify, FaDocker, FaCog, FaBolt, FaChartLine, FaHistory, FaTimes } from 'react-icons/fa';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 // Importar estilos
@@ -25,6 +25,7 @@ import { useMetricsPersistence } from '../hooks/useMetricsPersistence';
 import VPCManager from './aws/services/vpc/VPCManager';
 import CloudTrailManager from './aws/services/cloudtrail/CloudTrailManager';
 import { initializeCloudWatch } from './aws/services/cloudwatch/services/cloudwatchService';
+import S3Manager from './aws/services/s3/S3Manager';
 
 const Dashboard = () => {
   const [currentSection, setCurrentSection] = useState(() => {
@@ -87,6 +88,8 @@ const Dashboard = () => {
     const saved = localStorage.getItem('isCloudWatchOpen');
     return saved ? JSON.parse(saved) : false;
   });
+
+  const [showS3Manager, setShowS3Manager] = useState(false);
 
   // Guardar el estado en localStorage cuando cambie
   useEffect(() => {
@@ -276,6 +279,12 @@ const Dashboard = () => {
     localStorage.setItem('awsConnected', 'false');
     setIsAwsModalOpen(true);
   }, []);
+
+  // Función para cerrar el S3Manager
+  const handleCloseS3Manager = () => {
+    console.log('Dashboard: Cerrando S3Manager');
+    setShowS3Manager(false);
+  };
 
   const renderContent = () => {
     switch(currentSection) {
@@ -628,7 +637,11 @@ const Dashboard = () => {
                           <span className="stat-value">{awsServices.s3 ? '10' : '-'}</span>
                         </div>
                       </div>
-                      <button className="service-action-btn">
+                      <button 
+                        className="service-action-btn"
+                        onClick={() => setShowS3Manager(true)}
+                        disabled={!isAwsConnected}
+                      >
                         Gestionar
                       </button>
                     </div>
@@ -931,6 +944,18 @@ const Dashboard = () => {
           isOpen={showCloudTrailManager}
           onClose={() => setShowCloudTrailManager(false)}
         />
+      )}
+
+      {/* S3 Manager Modal */}
+      {showS3Manager && (
+        <div className="modal-overlay">
+          <div className="modal-container">
+            <S3Manager 
+              onClose={handleCloseS3Manager}
+              isOpen={showS3Manager}
+            />
+          </div>
+        </div>
       )}
     </div>
   );

@@ -1,13 +1,27 @@
 import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import path from 'path'
 
 export default defineConfig({
+  plugins: [react()],
   optimizeDeps: {
     exclude: ['@aws-sdk/client-ec2', '@aws-sdk/client-cloudwatch'],
-    include: ['fast-xml-parser'],
+    include: [
+      '@aws-sdk/client-s3',
+      '@aws-sdk/client-ec2',
+      '@aws-sdk/client-cloudwatch',
+      '@aws-sdk/client-sts'
+    ],
     force: false,
     esbuildOptions: {
-      target: 'esnext'
+      target: 'esnext',
+      define: {
+        global: 'globalThis',
+      }
     }
+  },
+  define: {
+    'process.env': {}
   },
   server: {
     port: 3000,
@@ -33,16 +47,22 @@ export default defineConfig({
         target: 'http://localhost:8080',
         changeOrigin: true
       }
-    }
+    },
+    fs: {
+      allow: ['..'],
+    },
   },
   resolve: {
     alias: {
-      'fast-xml-parser': 'fast-xml-parser/src/fxp.js'
+      '@': path.resolve(__dirname, './src'),
+      'fast-xml-parser': 'fast-xml-parser/src/fxp.js',
+      './runtimeConfig': './runtimeConfig.browser',
     }
   },
   build: {
     commonjsOptions: {
-      include: [/fast-xml-parser/, /node_modules/]
+      include: [/node_modules/],
+      transformMixedEsModules: true
     },
     rollupOptions: {
       output: {
