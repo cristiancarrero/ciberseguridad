@@ -6,3 +6,11 @@ services:
       - "80:80"
     volumes:
       - ./src:/app/src 
+  chatbot:
+    build:
+      context: ./chatbot
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    environment:
+      - ENV_VAR=example 
