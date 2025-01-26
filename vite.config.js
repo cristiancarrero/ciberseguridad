@@ -11,7 +11,7 @@ export default defineConfig({
     }
   },
   define: {
-    global: 'window',
+    global: {},
   },
   optimizeDeps: {
     esbuildOptions: {
@@ -22,6 +22,7 @@ export default defineConfig({
     include: [
       '@aws-sdk/client-s3',
       '@aws-sdk/client-cloudwatch',
+      '@aws-sdk/client-guardduty',
       '@aws-sdk/util-endpoints'
     ]
   },

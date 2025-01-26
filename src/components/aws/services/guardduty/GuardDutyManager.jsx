@@ -2,7 +2,7 @@ import React from 'react';
 import { FaShieldAlt, FaExclamationTriangle } from 'react-icons/fa';
 import './styles/guardduty-manager.css';
 
-function GuardDutyManager({ isOpen, onClose }) {
+const GuardDutyManager = ({ isOpen, onClose }) => {
   return (
     <div className="modal-overlay">
       <div className="modal-container guardduty-manager">
@@ -25,6 +25,6 @@ function GuardDutyManager({ isOpen, onClose }) {
       </div>
     </div>
   );
-}
+};
 
 export default GuardDutyManager; 

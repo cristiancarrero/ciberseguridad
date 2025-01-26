@@ -312,23 +312,22 @@ export const moveObject = async (sourceBucket, sourceKey, destinationBucket, des
 // Función para obtener la previsualización de un objeto
 export const getObjectPreview = async (bucketName, key) => {
   try {
-    const credentials = getCredentialsConfig();
     const response = await axios.post(`${API_URL}/preview-object`, {
-      ...credentials,
+      ...getCredentialsConfig(),
       bucketName,
       key
     }, {
       responseType: 'blob'
     });
-    
+
     return {
       data: response.data,
       contentType: response.headers['content-type'],
-      contentLength: response.headers['content-length']
+      name: key.split('/').pop()
     };
   } catch (error) {
     console.error('Error getting object preview:', error);
-    throw error.response?.data?.error || error.message;
+    throw error;
   }
 };
 
@@ -448,19 +447,17 @@ export const formatBytes = (bytes, decimals = 2) => {
 // Función para generar URL presignada
 export const getPresignedUrl = async (bucketName, key) => {
   try {
-    const { credentials } = getCredentialsConfig();
-    const region = credentials.region || 'us-west-2'; // Cambiado a us-west-2 por defecto
+    const credentials = getCredentialsConfig();
+    const region = credentials.region || 'us-west-2';
     
-    // Crear el cliente S3 con la configuración correcta
     const s3Client = new S3Client({
       region: region,
       credentials: {
-        accessKeyId: credentials.accessKeyId,
-        secretAccessKey: credentials.secretAccessKey,
-        sessionToken: credentials.sessionToken
+        accessKeyId: credentials.credentials.accessKeyId,
+        secretAccessKey: credentials.credentials.secretAccessKey,
+        sessionToken: credentials.credentials.sessionToken
       },
-      endpoint: undefined, // Dejar que AWS SDK maneje el endpoint automáticamente
-      forcePathStyle: false // Usar virtual hosted-style URLs
+      forcePathStyle: true
     });
 
     const command = new GetObjectCommand({
@@ -468,13 +465,8 @@ export const getPresignedUrl = async (bucketName, key) => {
       Key: key
     });
 
-    // Generar URL con configuración específica para virtual hosted-style
     const url = await getSignedUrl(s3Client, command, { 
-      expiresIn: 3600,
-      // Usar la región del bucket
-      useArnRegion: true,
-      // Asegurar que se use el endpoint correcto
-      urlPrefix: `https://${bucketName}.s3.${region}.amazonaws.com`
+      expiresIn: 3600
     });
 
     return url;

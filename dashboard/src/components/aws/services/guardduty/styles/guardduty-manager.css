@@ -77,4 +77,98 @@
   text-align: center;
   padding: 20px;
   color: var(--text-secondary);
+}
+
+.guardduty-manager {
+  max-width: 1200px;
+  height: 90vh;
+}
+
+.threat-summary {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.threat-card {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 1.5rem;
+  text-align: center;
+  border: 1px solid var(--border-color);
+}
+
+.threat-card.high {
+  border-left: 4px solid #ff4757;
+}
+
+.threat-card.medium {
+  border-left: 4px solid #ffa502;
+}
+
+.threat-card.low {
+  border-left: 4px solid #2ed573;
+}
+
+.threat-card .count {
+  font-size: 2rem;
+  font-weight: 600;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.threat-card .label {
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.findings-list {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 1.5rem;
+}
+
+.finding-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+}
+
+.finding-item.high {
+  border-left: 4px solid #ff4757;
+}
+
+.finding-item.medium {
+  border-left: 4px solid #ffa502;
+}
+
+.finding-item.low {
+  border-left: 4px solid #2ed573;
+}
+
+.finding-icon {
+  font-size: 1.5rem;
+  color: var(--text-secondary);
+}
+
+.finding-content h4 {
+  margin: 0 0 0.5rem 0;
+  color: var(--text-primary);
+}
+
+.finding-content p {
+  margin: 0 0 0.5rem 0;
+  color: var(--text-secondary);
+}
+
+.finding-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
 } 

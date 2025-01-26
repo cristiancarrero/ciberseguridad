@@ -97,4 +97,168 @@
   .aws-services {
     padding: 1rem;
   }
+}
+
+.aws-services-header {
+  text-align: center;
+  padding: 2rem;
+  margin-bottom: 1rem;
+  position: relative;
+}
+
+.aws-services-title {
+  font-size: 2.5rem;
+  font-weight: 600;
+  background: linear-gradient(
+    270deg,
+    #4ecdc4,
+    #45b7af,
+    #ff6b6b,
+    #4ecdc4
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin: 0 auto;
+  position: relative;
+  display: inline-block;
+  animation: 
+    titleAppear 0.8s ease-out forwards,
+    gradientMove 12s ease-in-out infinite;
+}
+
+.aws-services-title::after {
+  content: '';
+  display: block;
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(
+    270deg,
+    #4ecdc4,
+    #45b7af,
+    #ff6b6b,
+    #4ecdc4
+  );
+  background-size: 200% 100%;
+  margin: 0.5rem auto;
+  border-radius: 2px;
+  animation: 
+    lineAppear 1s ease-out 0.3s forwards,
+    gradientMove 12s ease-in-out infinite;
+}
+
+@keyframes titleAppear {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes lineAppear {
+  0% {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Removemos el hover ya que ahora tenemos la animación constante */
+.aws-services-title:hover,
+.aws-services-title:hover::after {
+  transition: none;
+}
+
+.aws-services-subheader {
+  padding: 0 2rem;
+  margin-bottom: 2rem;
+  overflow: hidden; /* Para contener el float */
+}
+
+.disconnect-aws-btn {
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #4ecdc4, #ff6b6b);
+  color: white;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+  float: right;
+}
+
+.disconnect-aws-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(78, 205, 196, 0.2);
+}
+
+.cloud-section {
+  min-height: 100vh;
+}
+
+/* Reutilizamos los estilos del título de AWS para mantener la consistencia */
+.cloud-section .aws-services-title {
+  margin-bottom: 2rem;
+}
+
+/* Ajustes específicos para GCP y Azure */
+.gcp-view,
+.azure-view {
+  margin-top: 2rem;
+}
+
+/* Aseguramos que los widgets tengan el mismo estilo en todas las nubes */
+.gcp-service-widget,
+.azure-service-widget {
+  background: var(--widget-bg);
+  border: 1px solid var(--border-color);
+  transition: all 0.3s ease;
+}
+
+.gcp-service-widget:hover,
+.azure-service-widget:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Aseguramos que todas las secciones tengan el mismo estilo base */
+.dashboard-section,
+.metrics-section,
+.security-section,
+.alerts-section,
+.cloud-section {
+  min-height: 100vh;
+}
+
+/* Ajustamos el espaciado para todas las secciones */
+.metrics-container,
+.security-container,
+.alerts-container {
+  margin-top: 2rem;
+  padding: 0 2rem;
+}
+
+/* Removemos los estilos antiguos de los títulos */
+.content-header,
+.metrics-header,
+.content-title {
+  display: none;
 } 
