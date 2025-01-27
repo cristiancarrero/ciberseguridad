@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaDownload, FaCheck, FaExclamationTriangle } from 'react-icons/fa';
+import { FaDownload, FaCheck, FaExclamationTriangle, FaSpinner } from 'react-icons/fa';
 import './styles/patch-manager.css';
 import { getPatchSummary } from '../../../../services/ssmService.js';
 
@@ -81,10 +81,10 @@ const PatchManager = () => {
       <div className="patch-header">
         <h3>Administración de Parches</h3>
         <div className="patch-actions">
-          <button className="scan-button">
+          <button className="patch-button scan">
             <FaDownload /> Buscar Actualizaciones
           </button>
-          <button className="install-button">
+          <button className="patch-button install">
             <FaCheck /> Instalar Seleccionados
           </button>
         </div>
@@ -93,7 +93,7 @@ const PatchManager = () => {
       {renderSummary()}
 
       <div className="patch-list">
-        <table>
+        <table className="data-table">
           <thead>
             <tr>
               <th><input type="checkbox" /></th>
@@ -112,19 +112,26 @@ const PatchManager = () => {
                 <td>{patch.id}</td>
                 <td>{patch.name}</td>
                 <td>
-                  <span className={`severity ${patch.severity.toLowerCase()}`}>
+                  <span className={`severity-badge ${patch.severity.toLowerCase()}`}>
                     {patch.severity}
                   </span>
                 </td>
                 <td>
-                  <span className={`status ${patch.status.toLowerCase()}`}>
+                  <span className={`status-badge ${patch.status.toLowerCase()}`}>
                     {patch.status}
                   </span>
                 </td>
                 <td>{patch.releaseDate}</td>
                 <td>
-                  <button className="action-button">
-                    <FaDownload /> Instalar
+                  <button 
+                    className="install-action-button"
+                    disabled={patch.status === 'Installed'}
+                  >
+                    {patch.status === 'Installing' ? (
+                      <><FaSpinner className="fa-spin" /> Instalando</>
+                    ) : (
+                      <><FaDownload /> Instalar</>
+                    )}
                   </button>
                 </td>
               </tr>

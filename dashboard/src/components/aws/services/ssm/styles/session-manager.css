@@ -65,6 +65,15 @@
   font-size: 0.875rem;
 }
 
+.session-list {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 1rem;
+  background-color: #1a2634;
+  border-radius: 8px;
+  padding: 0.5rem;
+}
+
 .session-list table {
   width: 100%;
   border-collapse: collapse;

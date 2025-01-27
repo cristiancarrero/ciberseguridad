@@ -147,4 +147,36 @@
 .action-button:hover {
   background: var(--primary-color);
   color: white;
+}
+
+/* Ajustar el ancho de la columna de acciones */
+.data-table th:last-child,
+.data-table td:last-child {
+  width: 140px;
+  min-width: 140px;
+  padding-right: 1.5rem;
+}
+
+/* Mejorar el estilo del botón de instalar */
+.install-action-button {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1.2rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: #1b4332;
+  color: #2ecc71;
+  white-space: nowrap;
+  min-width: 110px;
+  justify-content: center;
+}
+
+/* Ajustar el contenedor de la tabla */
+.patch-list {
+  padding-right: 1rem;
 } 

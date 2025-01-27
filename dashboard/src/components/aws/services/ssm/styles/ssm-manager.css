@@ -440,3 +440,89 @@
 .retry-button:hover {
   background: var(--primary-color-dark);
 }
+
+/* Estilos para los botones principales de acción */
+.patch-actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.patch-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.patch-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.patch-button:active {
+  transform: translateY(0);
+}
+
+.patch-button.scan {
+  background-color: #2a3644;
+  color: white;
+}
+
+.patch-button.scan:hover {
+  background-color: #3a4654;
+}
+
+.patch-button.install {
+  background-color: #00a1f1;
+  color: white;
+}
+
+.patch-button.install:hover {
+  background-color: #0089d1;
+}
+
+/* Estilos para el botón de instalar en la tabla */
+.install-action-button {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: #1b4332;
+  color: #2ecc71;
+}
+
+.install-action-button:hover {
+  background-color: #2ecc71;
+  color: white;
+  transform: translateY(-1px);
+}
+
+.install-action-button:active {
+  transform: translateY(0);
+}
+
+.install-action-button svg {
+  font-size: 0.9rem;
+}
+
+/* Estilos para el estado de deshabilitado */
+.patch-button:disabled,
+.install-action-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
