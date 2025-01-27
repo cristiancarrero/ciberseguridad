@@ -3,8 +3,17 @@ from pydantic import BaseModel
 from typing import Optional
 import uvicorn
 from chatbot_back import SecurityChatBot
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Chatbot RAG con Web Scraping")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Cambia esto a la URL específica de tu frontend en producción
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 class Query(BaseModel):
     question: str

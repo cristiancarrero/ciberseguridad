@@ -1,0 +1,14 @@
+chatbot/.env
+# Ignore all files in the .env directory
+.env/*
+
+# Enviroment
+.venv/  
+
+# python
+*.pyc
+*.pyo
+*.pyd
+
+#pycache
+__pycache__/    
