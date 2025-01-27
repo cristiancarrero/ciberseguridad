@@ -4,39 +4,35 @@ import { connectToAWS, disconnectFromAWS, isConnectedToAWS } from '../services/a
 const AWSContext = createContext();
 
 export const AWSProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [instances, setInstances] = useState([]);
+  const [securityGroups, setSecurityGroups] = useState([]);
 
-  const login = async (credentials) => {
-    try {
-      await connectToAWS(credentials);
-      setIsAuthenticated(true);
-      return true;
-    } catch (error) {
-      console.error('Error al conectar con AWS:', error);
-      return false;
-    }
+  const updateInstances = (newInstances) => {
+    setInstances(newInstances);
   };
 
-  const logout = async () => {
-    try {
-      await disconnectFromAWS();
-      setIsAuthenticated(false);
-    } catch (error) {
-      console.error('Error al desconectar de AWS:', error);
-    }
+  const updateSecurityGroups = (newGroups) => {
+    setSecurityGroups(newGroups);
   };
 
   return (
     <AWSContext.Provider value={{
-      isAuthenticated,
-      login,
-      logout
+      instances,
+      securityGroups,
+      updateInstances,
+      updateSecurityGroups
     }}>
       {children}
     </AWSContext.Provider>
   );
 };
 
-export const useAWS = () => useContext(AWSContext);
+export const useAWS = () => {
+  const context = useContext(AWSContext);
+  if (context === undefined) {
+    throw new Error('useAWS must be used within an AWSProvider');
+  }
+  return context;
+};
 
 export default AWSProvider; 

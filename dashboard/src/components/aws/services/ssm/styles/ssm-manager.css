@@ -1,0 +1,442 @@
+.ssm-manager {
+  max-width: 800px;
+  width: 90%;
+}
+
+.ssm-summary {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  padding: 1rem;
+}
+
+.summary-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.compliance-stats {
+  margin-top: 1rem;
+}
+
+.compliance-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+  background: #f8f9fa;
+}
+
+.compliance-item.compliant {
+  border-left: 4px solid #28a745;
+}
+
+.compliance-item.non-compliant {
+  border-left: 4px solid #dc3545;
+}
+
+.status-icon {
+  margin-right: 0.5rem;
+  color: #6c757d;
+}
+
+.inventory-list {
+  margin-top: 1rem;
+}
+
+.inventory-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.resource-type {
+  font-weight: 500;
+}
+
+.resource-count {
+  background: #e9ecef;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-container {
+  background-color: #0f1924;
+  width: 90%;
+  height: 90vh;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: #1a2634;
+  border-radius: 8px 8px 0 0;
+  border-bottom: 1px solid #2a3644;
+}
+
+.header-icon {
+  background-color: #00a1f1;
+  padding: 0.5rem;
+  border-radius: 8px;
+  margin-right: 1rem;
+}
+
+.header-icon svg {
+  color: white;
+  font-size: 1.5rem;
+}
+
+.modal-header h2 {
+  color: white;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  color: #8b949e;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.close-button:hover {
+  color: white;
+}
+
+.tabs {
+  display: flex;
+  padding: 0.5rem 1rem;
+  background-color: #1a2634;
+  border-bottom: 1px solid #2a3644;
+  gap: 0.5rem;
+}
+
+.tabs button {
+  background: none;
+  border: none;
+  color: #8b949e;
+  padding: 0.75rem 1.5rem;
+  cursor: pointer;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.tabs button:hover {
+  background-color: #2a3644;
+  color: white;
+}
+
+.tabs button.active {
+  background-color: #00a1f1;
+  color: white;
+}
+
+.tab-content {
+  flex-grow: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+  background-color: #0f1924;
+}
+
+/* Estilos para las tarjetas de resumen */
+.summary-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.summary-card {
+  background-color: #1a2634;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid #2a3644;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.summary-card.critical {
+  border-left: 4px solid #dc3545;
+}
+
+.summary-card.important {
+  border-left: 4px solid #ffc107;
+}
+
+.summary-card.moderate {
+  border-left: 4px solid #17a2b8;
+}
+
+.summary-card .count {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+  margin-bottom: 0.5rem;
+}
+
+.summary-card .label {
+  color: #8b949e;
+  font-size: 0.9rem;
+}
+
+/* Estilos para las tablas */
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1rem;
+}
+
+.data-table th,
+.data-table td {
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 1px solid #2a3644;
+}
+
+.data-table th {
+  background-color: #1a2634;
+  color: #8b949e;
+  font-weight: 500;
+}
+
+.data-table tbody tr {
+  background-color: #1a2634;
+}
+
+.data-table tbody tr:hover {
+  background-color: #2a3644;
+}
+
+/* Estilos para los estados y severidades */
+.status-badge,
+.severity-badge {
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.status-badge.pending {
+  background-color: #2a3644;
+  color: #ffc107;
+}
+
+.status-badge.installed {
+  background-color: #1b4332;
+  color: #2ecc71;
+}
+
+.severity-badge.critical {
+  background-color: #3d1f1f;
+  color: #dc3545;
+}
+
+.severity-badge.important {
+  background-color: #3d351f;
+  color: #ffc107;
+}
+
+.severity-badge.moderate {
+  background-color: #1f3d3d;
+  color: #17a2b8;
+}
+
+/* Estilos para los botones de acción */
+.action-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  border: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.action-button.primary {
+  background-color: #00a1f1;
+  color: white;
+}
+
+.action-button.secondary {
+  background-color: #2a3644;
+  color: white;
+}
+
+.action-button:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.service-unavailable {
+  text-align: center;
+  padding: 2rem;
+}
+
+.warning-icon {
+  font-size: 3rem;
+  color: var(--warning-color);
+  margin-bottom: 1.5rem;
+}
+
+.warning-message h3 {
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.warning-message p {
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.ssm-dashboard {
+  padding: 1rem;
+}
+
+.ssm-section {
+  margin-bottom: 2rem;
+}
+
+.ssm-section h3 {
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.compliance-grid,
+.inventory-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.compliance-card,
+.inventory-card {
+  background: var(--bg-dark);
+  border-radius: 8px;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+}
+
+.compliance-card {
+  display: flex;
+  align-items: center;
+}
+
+.compliance-icon {
+  font-size: 1.5rem;
+  margin-right: 1rem;
+  color: var(--primary-color);
+}
+
+.compliance-info h4 {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.status {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.status.compliant {
+  background: var(--success-color);
+  color: white;
+}
+
+.status.non-compliant {
+  background: var(--danger-color);
+  color: white;
+}
+
+.inventory-card {
+  text-align: center;
+}
+
+.inventory-type {
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.inventory-count {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  font-weight: bold;
+}
+
+.loading-state,
+.error-state {
+  text-align: center;
+  padding: 2rem;
+}
+
+.spinner {
+  border: 4px solid var(--border-color);
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  margin: 0 auto 1rem;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error-icon {
+  font-size: 3rem;
+  color: var(--danger-color);
+  margin-bottom: 1rem;
+}
+
+.retry-button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: var(--primary-color);
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+}
+
+.retry-button:hover {
+  background: var(--primary-color-dark);
+}

@@ -1,0 +1,65 @@
+.ssm-manager {
+    max-width: 800px;
+    width: 90%;
+  }
+  
+  .ssm-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  
+  .summary-card {
+    background: #fff;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .compliance-stats {
+    margin-top: 1rem;
+  }
+  
+  .compliance-item {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border-radius: 4px;
+    background: #f8f9fa;
+  }
+  
+  .compliance-item.compliant {
+    border-left: 4px solid #28a745;
+  }
+  
+  .compliance-item.non-compliant {
+    border-left: 4px solid #dc3545;
+  }
+  
+  .status-icon {
+    margin-right: 0.5rem;
+    color: #6c757d;
+  }
+  
+  .inventory-list {
+    margin-top: 1rem;
+  }
+  
+  .inventory-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .resource-type {
+    font-weight: 500;
+  }
+  
+  .resource-count {
+    background: #e9ecef;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+  }

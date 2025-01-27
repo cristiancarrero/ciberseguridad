@@ -1,5 +1,17 @@
 import { resetClients } from './awsClientsService';
 import { STSClient, GetCallerIdentityCommand } from '@aws-sdk/client-sts';
+import { initializeSSMService } from './ssmService.js';
+
+export const resetServices = () => {
+  const config = loadAwsConfig();
+  
+  // Inicializar todos los servicios con las nuevas credenciales
+  initializeSSMService({
+    credentials: config.credentials,
+    region: config.region
+  });
+  // ... inicializar otros servicios si es necesario ...
+};
 
 const configureAWS = async (credentials) => {
   try {
@@ -13,6 +25,7 @@ const configureAWS = async (credentials) => {
     
     // Resetear los clientes de AWS para que usen las nuevas credenciales
     resetClients();
+    resetServices();
     
     return true;
   } catch (error) {

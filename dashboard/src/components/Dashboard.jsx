@@ -10,13 +10,13 @@ import '../styles/components/navbar.css';
 import '../styles/components/widgets.css';
 import '../styles/components/charts.css';
 import '../styles/components/metrics.css';
+import '../styles/components/modal.css';
 import '../styles/responsive.css';
 import '../styles/dashboard.css';
 
 // Importar el modal y sus estilos
 import AwsConnectModal from './aws/components/AwsConnectModal';
 import AwsDisconnectModal from './aws/components/AwsDisconnectModal';
-import '../styles/components/modal.css';
 import EC2Manager from './EC2Manager';
 import { connectToAWS, disconnectFromAWS, isConnectedToAWS, loadAwsConfig } from '../services/awsService';
 import CloudWatchPanel from './aws/services/cloudwatch/CloudWatchPanel';
@@ -29,6 +29,8 @@ import S3Manager from './aws/services/s3/S3Manager';
 import GCPView from './gcp/GCPView';
 import AzureView from './azure/AzureView';
 import GuardDutyManager from './aws/services/guardduty/GuardDutyManager';
+import AWSServiceWidget from './AWSServiceWidget';
+import SSMManager from './aws/services/ssm/SSMManager';
 
 const Dashboard = () => {
   const [currentSection, setCurrentSection] = useState(() => {
@@ -66,7 +68,8 @@ const Dashboard = () => {
       guardduty: false,
       ecs: false,
       config: false,
-      eventbridge: false
+      eventbridge: false,
+      ssm: false
     };
   });
 
@@ -94,6 +97,8 @@ const Dashboard = () => {
 
   const [showS3Manager, setShowS3Manager] = useState(false);
   const [showGuardDutyManager, setShowGuardDutyManager] = useState(false);
+
+  const [selectedService, setSelectedService] = useState(null);
 
   // Guardar el estado en localStorage cuando cambie
   useEffect(() => {
@@ -190,7 +195,8 @@ const Dashboard = () => {
         // Actualizar el estado de los servicios
         setAwsServices(prev => ({
           ...prev,
-          guardduty: true
+          guardduty: true,
+          ssm: true
         }));
 
         return true;
@@ -586,6 +592,35 @@ const Dashboard = () => {
                       <button 
                         className="service-action-btn"
                         onClick={() => setShowGuardDutyManager(true)}
+                      >
+                        Gestionar
+                      </button>
+                    </div>
+
+                    {/* SSM Widget */}
+                    <div className="aws-service-widget">
+                      <div className="widget-header">
+                        <div className="service-icon">
+                          <FaCog />
+                        </div>
+                        <div className={`service-status ${awsServices.ssm ? 'active' : 'inactive'}`}>
+                          {awsServices.ssm ? 'Conectado' : 'Desconectado'}
+                        </div>
+                      </div>
+                      <h3 className="service-title">Systems Manager</h3>
+                      <div className="service-stats">
+                        <div className="stat-item">
+                          <span className="stat-label">Parches Pendientes</span>
+                          <span className="stat-value">{awsServices.ssm ? '3' : '-'}</span>
+                        </div>
+                        <div className="stat-item">
+                          <span className="stat-label">Recursos Gestionados</span>
+                          <span className="stat-value">{awsServices.ssm ? '5' : '-'}</span>
+                        </div>
+                      </div>
+                      <button 
+                        className="service-action-btn"
+                        onClick={() => setSelectedService('ssm')}
                       >
                         Gestionar
                       </button>
@@ -994,6 +1029,14 @@ const Dashboard = () => {
             />
           </div>
         </div>
+      )}
+
+      {/* Añadir el modal de SSM */}
+      {selectedService === 'ssm' && (
+        <SSMManager
+          isOpen={true}
+          onClose={() => setSelectedService(null)}
+        />
       )}
     </div>
   );

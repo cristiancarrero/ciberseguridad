@@ -1,16 +1,19 @@
 import React from 'react'
+import { AWSProvider } from './context/AWSContext'
 import Dashboard from './components/Dashboard'
 import Navbar from './components/Navbar'
 import './styles/App.css'
 
 function App() {
   return (
-    <div className="app-root">
-      <Navbar />
-      <div className="app-content">
-        <Dashboard />
+    <AWSProvider>
+      <div className="app-root">
+        <Navbar />
+        <div className="app-content">
+          <Dashboard />
+        </div>
       </div>
-    </div>
+    </AWSProvider>
   )
 }
 

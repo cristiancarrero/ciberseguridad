@@ -121,4 +121,16 @@ export const getSSHConfig = (instance) => {
   };
 };
 
+export const listSecurityGroups = async () => {
+  try {
+    const client = getEC2Client();
+    const command = new DescribeSecurityGroupsCommand({});
+    const response = await client.send(command);
+    return response.SecurityGroups || [];
+  } catch (error) {
+    console.error('Error listing security groups:', error);
+    return [];
+  }
+};
+
 // ... otros métodos usando el mismo patrón 

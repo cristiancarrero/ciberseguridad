@@ -1,0 +1,150 @@
+.patch-manager {
+  padding: 1rem;
+}
+
+.patch-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.patch-header h3 {
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.patch-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.patch-actions button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.scan-button {
+  background: var(--primary-color);
+  color: white;
+}
+
+.install-button {
+  background: var(--success-color);
+  color: white;
+}
+
+.patch-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.summary-card {
+  background: var(--bg-dark);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  border: 1px solid var(--border-color);
+}
+
+.summary-card .count {
+  font-size: 2rem;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.summary-card .label {
+  color: var(--text-muted);
+}
+
+.summary-card.critical .count {
+  color: var(--danger-color);
+}
+
+.summary-card.important .count {
+  color: var(--warning-color);
+}
+
+.summary-card.moderate .count {
+  color: var(--info-color);
+}
+
+.patch-list table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--bg-dark);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.patch-list th,
+.patch-list td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.patch-list th {
+  background: var(--bg-darker);
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.severity,
+.status {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.severity.critical {
+  background: rgba(220, 53, 69, 0.1);
+  color: var(--danger-color);
+}
+
+.severity.important {
+  background: rgba(255, 193, 7, 0.1);
+  color: var(--warning-color);
+}
+
+.severity.moderate {
+  background: rgba(23, 162, 184, 0.1);
+  color: var(--info-color);
+}
+
+.status.pending {
+  background: rgba(255, 193, 7, 0.1);
+  color: var(--warning-color);
+}
+
+.status.installed {
+  background: rgba(40, 167, 69, 0.1);
+  color: var(--success-color);
+}
+
+.action-button {
+  background: none;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.action-button:hover {
+  background: var(--primary-color);
+  color: white;
+} 
