@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FaCog } from 'react-icons/fa';
+import { FaCog, FaServer, FaTools, FaClipboardCheck, FaBoxes, FaDesktop } from 'react-icons/fa';
 import './styles/ssm-manager.css';
 import { checkPermissions } from '../../../../services/ssmService';
 import PatchManager from './PatchManager';
@@ -7,9 +7,10 @@ import InventoryManager from './InventoryManager';
 import AutomationManager from './AutomationManager';
 import ComplianceManager from './ComplianceManager';
 import SessionManager from './SessionManager';
+import EC2Manager from './EC2Manager';
 
 const SSMManager = ({ isOpen, onClose }) => {
-  const [activeTab, setActiveTab] = useState('patches');
+  const [activeTab, setActiveTab] = useState('ec2');
   const [status, setStatus] = useState('active');
 
   useEffect(() => {
@@ -46,8 +47,9 @@ const SSMManager = ({ isOpen, onClose }) => {
 
     return (
       <div className="tab-content">
-        {activeTab === 'patches' && <PatchManager />}
+        {activeTab === 'ec2' && <EC2Manager />}
         {activeTab === 'inventory' && <InventoryManager />}
+        {activeTab === 'patch' && <PatchManager />}
         {activeTab === 'automation' && <AutomationManager />}
         {activeTab === 'compliance' && <ComplianceManager />}
         {activeTab === 'sessions' && <SessionManager />}
@@ -70,34 +72,39 @@ const SSMManager = ({ isOpen, onClose }) => {
 
         <div className="tabs">
           <button 
-            className={activeTab === 'patches' ? 'active' : ''} 
-            onClick={() => setActiveTab('patches')}
+            className={`tab ${activeTab === 'ec2' ? 'active' : ''}`}
+            onClick={() => setActiveTab('ec2')}
           >
-            Parches
+            <FaDesktop />
+            <span>Instancias EC2</span>
           </button>
           <button 
-            className={activeTab === 'inventory' ? 'active' : ''} 
+            className={`tab ${activeTab === 'inventory' ? 'active' : ''}`}
             onClick={() => setActiveTab('inventory')}
           >
-            Inventario
+            <FaServer />
+            <span>Inventario</span>
           </button>
           <button 
-            className={activeTab === 'automation' ? 'active' : ''} 
+            className={`tab ${activeTab === 'patch' ? 'active' : ''}`}
+            onClick={() => setActiveTab('patch')}
+          >
+            <FaTools />
+            <span>Parches</span>
+          </button>
+          <button 
+            className={`tab ${activeTab === 'automation' ? 'active' : ''}`}
             onClick={() => setActiveTab('automation')}
           >
-            Automatización
+            <FaBoxes />
+            <span>Automatización</span>
           </button>
           <button 
-            className={activeTab === 'compliance' ? 'active' : ''} 
+            className={`tab ${activeTab === 'compliance' ? 'active' : ''}`}
             onClick={() => setActiveTab('compliance')}
           >
-            Cumplimiento
-          </button>
-          <button 
-            className={activeTab === 'sessions' ? 'active' : ''} 
-            onClick={() => setActiveTab('sessions')}
-          >
-            Sesiones
+            <FaClipboardCheck />
+            <span>Cumplimiento</span>
           </button>
         </div>
 

@@ -1,26 +1,52 @@
-import React, { useState } from 'react';
-import { FaServer, FaDesktop, FaDatabase, FaFilter } from 'react-icons/fa';
+import React, { useState, useEffect } from 'react';
+import { FaServer, FaDesktop, FaDatabase, FaFilter, FaSpinner } from 'react-icons/fa';
 import './styles/inventory-manager.css';
+import { getManagedInstances, getDetailedInventory, getInstancesConnectionStatus } from '../../../../services/ssmService';
 
 const InventoryManager = () => {
-  const [resources, setResources] = useState([
-    {
-      id: 'i-1234567890',
-      name: 'prod-web-server-01',
-      type: 'EC2 Instance',
-      platform: 'Amazon Linux 2',
-      status: 'Online',
-      lastSeen: '2024-03-15 10:30:00'
-    },
-    {
-      id: 'i-0987654321',
-      name: 'prod-db-server-01',
-      type: 'EC2 Instance',
-      platform: 'Ubuntu 20.04',
-      status: 'Online',
-      lastSeen: '2024-03-15 10:29:00'
-    }
-  ]);
+  const [instances, setInstances] = useState([]);
+  const [connectionStatus, setConnectionStatus] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const loadInventoryData = async () => {
+      try {
+        setLoading(true);
+        const [instancesData, statusData] = await Promise.all([
+          getManagedInstances(),
+          getInstancesConnectionStatus()
+        ]);
+        
+        setInstances(instancesData);
+        setConnectionStatus(statusData);
+      } catch (err) {
+        console.error('Error loading inventory:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadInventoryData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="loading-state">
+        <FaSpinner className="fa-spin" />
+        <p>Cargando inventario...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="error-state">
+        <p>Error al cargar el inventario: {error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="inventory-manager">
@@ -44,58 +70,51 @@ const InventoryManager = () => {
         <div className="summary-card">
           <FaServer className="summary-icon" />
           <div className="summary-info">
-            <span className="count">15</span>
-            <span className="label">Instancias EC2</span>
+            <span className="count">{connectionStatus?.online || 0}</span>
+            <span className="label">Conectadas</span>
           </div>
         </div>
         <div className="summary-card">
           <FaDatabase className="summary-icon" />
           <div className="summary-info">
-            <span className="count">5</span>
-            <span className="label">Bases de Datos</span>
+            <span className="count">{connectionStatus?.offline || 0}</span>
+            <span className="label">Desconectadas</span>
           </div>
         </div>
         <div className="summary-card">
           <FaDesktop className="summary-icon" />
           <div className="summary-info">
-            <span className="count">8</span>
-            <span className="label">Otros Recursos</span>
+            <span className="count">{connectionStatus?.total || 0}</span>
+            <span className="label">Total</span>
           </div>
         </div>
       </div>
 
       <div className="inventory-list">
-        <table>
+        <table className="data-table">
           <thead>
             <tr>
               <th>ID</th>
               <th>Nombre</th>
-              <th>Tipo</th>
               <th>Plataforma</th>
+              <th>IP</th>
               <th>Estado</th>
-              <th>Última Conexión</th>
-              <th>Acciones</th>
+              <th>Versión Agente</th>
             </tr>
           </thead>
           <tbody>
-            {resources.map(resource => (
-              <tr key={resource.id}>
-                <td>{resource.id}</td>
-                <td>{resource.name}</td>
-                <td>{resource.type}</td>
-                <td>{resource.platform}</td>
+            {instances.map(instance => (
+              <tr key={instance.instanceId}>
+                <td>{instance.instanceId}</td>
+                <td>{instance.computerName}</td>
+                <td>{`${instance.platform} ${instance.platformVersion}`}</td>
+                <td>{instance.ipAddress}</td>
                 <td>
-                  <span className={`status ${resource.status.toLowerCase()}`}>
-                    {resource.status}
+                  <span className={`status-badge ${instance.pingStatus.toLowerCase()}`}>
+                    {instance.pingStatus}
                   </span>
                 </td>
-                <td>{resource.lastSeen}</td>
-                <td>
-                  <div className="action-buttons">
-                    <button title="Ver detalles">Ver</button>
-                    <button title="Configurar">Config</button>
-                  </div>
-                </td>
+                <td>{instance.agentVersion}</td>
               </tr>
             ))}
           </tbody>
