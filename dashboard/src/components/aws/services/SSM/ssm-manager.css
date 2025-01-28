@@ -1,65 +1,124 @@
+/*
+* SSM Manager - Estilos globales para el Sistema de Systems Manager
+* Este archivo contiene los estilos que se aplican a todo el módulo de SSM
+*/
+
+/* Layout principal del SSM Manager */
 .ssm-manager {
     max-width: 800px;
     width: 90%;
-  }
-  
-  .ssm-summary {
+}
+
+/* Grid de tarjetas de resumen */
+.ssm-summary {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 1rem;
     padding: 1rem;
-  }
-  
-  .summary-card {
-    background: #fff;
+}
+
+/* Tarjetas individuales de resumen */
+.summary-card {
+    background: var(--background-primary);
     border-radius: 8px;
     padding: 1rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-  }
-  
-  .compliance-stats {
+}
+
+/* Sección de estadísticas de cumplimiento */
+.compliance-stats {
     margin-top: 1rem;
-  }
-  
-  .compliance-item {
+}
+
+/* Items de cumplimiento */
+.compliance-item {
     display: flex;
     align-items: center;
     padding: 0.5rem;
     margin-bottom: 0.5rem;
     border-radius: 4px;
-    background: #f8f9fa;
-  }
-  
-  .compliance-item.compliant {
-    border-left: 4px solid #28a745;
-  }
-  
-  .compliance-item.non-compliant {
-    border-left: 4px solid #dc3545;
-  }
-  
-  .status-icon {
+    background: var(--background-secondary);
+}
+
+/* Estados de cumplimiento */
+.compliance-item.compliant {
+    border-left: 4px solid var(--success-color);
+}
+
+.compliance-item.non-compliant {
+    border-left: 4px solid var(--danger-color);
+}
+
+/* Iconos de estado */
+.status-icon {
     margin-right: 0.5rem;
-    color: #6c757d;
-  }
-  
-  .inventory-list {
+    color: var(--text-secondary);
+}
+
+/* Lista de inventario */
+.inventory-list {
     margin-top: 1rem;
-  }
-  
-  .inventory-item {
+}
+
+.inventory-item {
     display: flex;
     justify-content: space-between;
     padding: 0.5rem;
-    border-bottom: 1px solid #eee;
-  }
-  
-  .resource-type {
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Elementos de recursos */
+.resource-type {
     font-weight: 500;
-  }
-  
-  .resource-count {
-    background: #e9ecef;
+}
+
+.resource-count {
+    background: var(--background-secondary);
     padding: 0.25rem 0.5rem;
     border-radius: 4px;
-  }
+}
+
+/* Estilos globales para selectores */
+select {
+    background-color: var(--background-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.5rem;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+}
+
+/* Estilos para las opciones del selector */
+select option {
+    background-color: var(--background-secondary) !important; /* Forzar el color de fondo */
+    color: var(--text-primary) !important; /* Forzar el color del texto */
+    padding: 0.5rem;
+}
+
+/* Estilos específicos para diferentes navegadores */
+@-moz-document url-prefix() {
+    select {
+        background-color: var(--background-secondary);
+        color: var(--text-primary);
+    }
+    
+    select option {
+        background-color: var(--background-secondary);
+        color: var(--text-primary);
+    }
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+/* Estilos para estados hover/focus */
+select option:hover,
+select option:focus,
+select option:active {
+    background-color: var(--primary-color);
+    color: white;
+}

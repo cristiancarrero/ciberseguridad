@@ -10,8 +10,9 @@ import SessionManager from './SessionManager';
 import EC2Manager from './EC2Manager';
 
 const SSMManager = ({ isOpen, onClose }) => {
-  const [activeTab, setActiveTab] = useState('ec2');
+  const [activeTab, setActiveTab] = useState('inventory');
   const [status, setStatus] = useState('active');
+  const [selectedInstance, setSelectedInstance] = useState(null);
 
   useEffect(() => {
     const initializeSSM = async () => {
@@ -34,6 +35,10 @@ const SSMManager = ({ isOpen, onClose }) => {
     initializeSSM();
   }, [isOpen]);
 
+  const handleInstanceSelect = (instance) => {
+    setSelectedInstance(instance);
+  };
+
   const renderTabContent = () => {
     if (status === 'error') {
       return (
@@ -47,9 +52,18 @@ const SSMManager = ({ isOpen, onClose }) => {
 
     return (
       <div className="tab-content">
-        {activeTab === 'ec2' && <EC2Manager />}
-        {activeTab === 'inventory' && <InventoryManager />}
-        {activeTab === 'patch' && <PatchManager />}
+        {activeTab === 'ec2' && <EC2Manager 
+          onInstanceSelect={handleInstanceSelect}
+          selectedInstance={selectedInstance}
+        />}
+        {activeTab === 'inventory' && <InventoryManager 
+          onInstanceSelect={handleInstanceSelect}
+          selectedInstance={selectedInstance}
+        />}
+        {activeTab === 'patch' && <PatchManager 
+          selectedInstance={selectedInstance}
+          onInstanceSelect={handleInstanceSelect}
+        />}
         {activeTab === 'automation' && <AutomationManager />}
         {activeTab === 'compliance' && <ComplianceManager />}
         {activeTab === 'sessions' && <SessionManager />}

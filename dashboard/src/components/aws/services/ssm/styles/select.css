@@ -1,0 +1,137 @@
+/* 
+* Estilos específicos para selectores en SSM
+* Este archivo maneja todos los estilos de los elementos select y sus opciones
+*/
+
+/* Reset de estilos nativos */
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+/* Estilo base para todos los selectores */
+.ssm-select,
+.filter-select,
+select {
+    background-color: var(--background-secondary) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.5rem 2rem 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    width: auto;
+    min-width: 150px;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.5rem center;
+    background-size: 1rem;
+}
+
+/* Estilos para las opciones */
+.ssm-select option,
+.filter-select option,
+select option {
+    background-color: var(--background-secondary) !important;
+    color: var(--text-primary) !important;
+    padding: 0.5rem !important;
+}
+
+/* Estilos para el hover de las opciones */
+.ssm-select option:hover,
+.filter-select option:hover,
+select option:hover {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Estilos específicos para Firefox */
+@-moz-document url-prefix() {
+    .ssm-select,
+    .filter-select,
+    select {
+        background-color: var(--background-secondary) !important;
+        color: var(--text-primary) !important;
+    }
+    
+    .ssm-select option,
+    .filter-select option,
+    select option {
+        background-color: var(--background-secondary) !important;
+        color: var(--text-primary) !important;
+    }
+}
+
+/* Estilos específicos para Chrome/Safari */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    .ssm-select,
+    .filter-select,
+    select {
+        background-color: var(--background-secondary) !important;
+        color: var(--text-primary) !important;
+    }
+}
+
+/* Ocultar flecha nativa en IE */
+.ssm-select::-ms-expand,
+.filter-select::-ms-expand,
+select::-ms-expand {
+    display: none;
+}
+
+/* Estilos para el focus */
+.ssm-select:focus,
+.filter-select:focus,
+select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-rgb), 0.1);
+}
+
+/* Estilos específicos para el selector de AWS Systems Manager */
+.inventory-controls select {
+    background: var(--background-secondary);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.5rem 2rem 0.5rem 1rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+}
+
+/* Estilos para el menú desplegable */
+.inventory-controls select option {
+    background: var(--background-secondary);
+    color: var(--text-primary);
+    padding: 8px;
+}
+
+/* Estilos específicos para Chrome */
+.inventory-controls select::-webkit-listbox {
+    background: var(--background-secondary);
+    color: var(--text-primary);
+}
+
+.inventory-controls select::-webkit-list {
+    background: var(--background-secondary);
+}
+
+/* Estilos específicos para Firefox */
+.inventory-controls select optgroup,
+.inventory-controls select option {
+    background-color: var(--background-secondary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Estilos para el hover */
+.inventory-controls select option:hover,
+.inventory-controls select option:focus {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Asegurarse que el menú desplegable tenga el fondo correcto */
+.inventory-controls select:focus > option {
+    background: var(--background-secondary);
+} 

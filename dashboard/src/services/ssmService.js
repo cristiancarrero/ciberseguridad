@@ -88,12 +88,23 @@ export const getPatchSummary = async () => {
   try {
     const client = getClient();
     
-    // 1. Primero obtenemos las instancias gestionadas
+    // 1. Obtener instancias gestionadas
     const instancesCommand = new DescribeInstanceInformationCommand({});
     const instancesResponse = await client.send(instancesCommand);
     const instances = instancesResponse.InstanceInformationList || [];
 
-    // 2. Para cada instancia, obtenemos su estado de cumplimiento de parches
+    if (instances.length === 0) {
+      return {
+        critical: 0,
+        important: 0,
+        moderate: 0,
+        total: 0,
+        compliant: 0,
+        nonCompliant: 0
+      };
+    }
+
+    // 2. Obtener estado de parches para cada instancia
     const patchStates = await Promise.all(
       instances.map(async (instance) => {
         const command = new DescribeInstancePatchStatesCommand({
@@ -103,39 +114,72 @@ export const getPatchSummary = async () => {
       })
     );
 
-    // 3. Analizamos los resultados
+    // 3. Analizar resultados
     const summary = patchStates.reduce((acc, state) => {
       if (state.InstancePatchStates) {
         state.InstancePatchStates.forEach(patch => {
-          switch(patch.CriticalNonCompliantCount > 0) {
-            case true:
-              acc.critical++;
-              break;
-            case patch.SecurityNonCompliantCount > 0:
-              acc.important++;
-              break;
-            case patch.OtherNonCompliantCount > 0:
-              acc.moderate++;
-              break;
+          // Contadores generales
+          acc.total += patch.InstalledCount + patch.MissingCount;
+          acc.compliant += patch.InstalledCount;
+          acc.nonCompliant += patch.MissingCount;
+
+          // Contadores por severidad
+          if (patch.CriticalNonCompliantCount > 0) {
+            acc.critical += patch.CriticalNonCompliantCount;
+          }
+          if (patch.SecurityNonCompliantCount > 0) {
+            acc.important += patch.SecurityNonCompliantCount;
+          }
+          if (patch.OtherNonCompliantCount > 0) {
+            acc.moderate += patch.OtherNonCompliantCount;
           }
         });
       }
       return acc;
-    }, { critical: 0, important: 0, moderate: 0 });
-
-    // Si no hay datos reales, usamos simulados
-    if (summary.critical === 0 && summary.important === 0 && summary.moderate === 0) {
-      return { critical: 2, important: 3, moderate: 5 };
-    }
+    }, { 
+      critical: 0, 
+      important: 0, 
+      moderate: 0,
+      total: 0,
+      compliant: 0,
+      nonCompliant: 0
+    });
 
     return summary;
   } catch (error) {
     console.error("Error fetching patch summary:", error);
-    return { critical: 2, important: 3, moderate: 5 };
+    throw error; // Propagar el error en lugar de devolver datos simulados
   }
 };
 
-// Ejecutar un escaneo de parches
+// Obtener detalles de parches para una instancia específica
+export const getPatchDetails = async (instanceId) => {
+  try {
+    const client = getClient();
+    const command = new DescribeInstancePatchesCommand({
+      InstanceId: instanceId,
+      MaxResults: 50 // Limitar resultados para mejor rendimiento
+    });
+
+    const response = await client.send(command);
+    
+    return response.Patches.map(patch => ({
+      id: patch.KBId || patch.PatchId,
+      title: patch.Title,
+      severity: patch.Severity,
+      state: patch.State,
+      cvss: patch.CVEIds || [],
+      classification: patch.Classification,
+      installedTime: patch.InstalledTime,
+      cves: patch.CVEIds?.split(',').map(cve => cve.trim()) || []
+    }));
+  } catch (error) {
+    console.error("Error fetching patch details:", error);
+    throw error;
+  }
+};
+
+// Iniciar un escaneo de parches
 export const scanForPatches = async (instanceIds) => {
   try {
     const client = getClient();
@@ -144,12 +188,17 @@ export const scanForPatches = async (instanceIds) => {
       DocumentVersion: '$LATEST',
       Targets: [{ Key: 'InstanceIds', Values: instanceIds }],
       Parameters: {
-        Operation: ['Scan']
-      }
+        Operation: ['Scan'],
+        RebootOption: ['NoReboot']
+      },
+      TimeoutSeconds: 600 // 10 minutos
     });
 
     const response = await client.send(command);
-    return response.Command.CommandId;
+    return {
+      commandId: response.Command.CommandId,
+      status: response.Command.Status
+    };
   } catch (error) {
     console.error("Error scanning for patches:", error);
     throw error;
@@ -157,7 +206,7 @@ export const scanForPatches = async (instanceIds) => {
 };
 
 // Instalar parches
-export const installPatches = async (instanceIds) => {
+export const installPatches = async (instanceIds, rebootOption = 'NoReboot') => {
   try {
     const client = getClient();
     const command = new SendCommandCommand({
@@ -165,37 +214,20 @@ export const installPatches = async (instanceIds) => {
       DocumentVersion: '$LATEST',
       Targets: [{ Key: 'InstanceIds', Values: instanceIds }],
       Parameters: {
-        Operation: ['Install']
-      }
+        Operation: ['Install'],
+        RebootOption: [rebootOption] // 'NoReboot', 'RebootIfNeeded', 'RebootNow'
+      },
+      TimeoutSeconds: 3600 // 1 hora
     });
 
     const response = await client.send(command);
-    return response.Command.CommandId;
+    return {
+      commandId: response.Command.CommandId,
+      status: response.Command.Status
+    };
   } catch (error) {
     console.error("Error installing patches:", error);
     throw error;
-  }
-};
-
-// Obtener el estado detallado de los parches
-export const getPatchDetails = async (instanceId) => {
-  try {
-    const client = getClient();
-    const command = new DescribeInstancePatchesCommand({
-      InstanceId: instanceId
-    });
-
-    const response = await client.send(command);
-    return response.Patches.map(patch => ({
-      id: patch.KBId,
-      title: patch.Title,
-      severity: patch.Severity,
-      state: patch.State,
-      installedTime: patch.InstalledTime
-    }));
-  } catch (error) {
-    console.error("Error fetching patch details:", error);
-    return [];
   }
 };
 
@@ -317,68 +349,175 @@ export const checkPermissions = async () => {
 export const getManagedInstances = async () => {
   try {
     const client = getClient();
-    const command = new DescribeInstanceInformationCommand({
-      MaxResults: 50 // Limitamos a 50 instancias por consulta
-    });
     
-    const response = await client.send(command);
-    return response.InstanceInformationList.map(instance => ({
-      instanceId: instance.InstanceId,
-      computerName: instance.ComputerName,
-      platform: instance.PlatformType,
-      platformVersion: instance.PlatformVersion,
-      ipAddress: instance.IPAddress,
-      pingStatus: instance.PingStatus,
-      lastPingTime: instance.LastPingDateTime,
-      agentVersion: instance.AgentVersion
-    }));
+    // Obtener información de SSM
+    const ssmCommand = new DescribeInstanceInformationCommand({});
+    const ssmResponse = await client.send(ssmCommand);
+    
+    // Obtener información detallada de EC2
+    const ec2Client = getEC2Client();
+    const instanceIds = ssmResponse.InstanceInformationList.map(instance => instance.InstanceId);
+    
+    if (instanceIds.length === 0) return [];
+
+    const ec2Command = new DescribeInstancesCommand({
+      InstanceIds: instanceIds
+    });
+    const ec2Response = await ec2Client.send(ec2Command);
+
+    // Combinar la información de SSM y EC2
+    return ssmResponse.InstanceInformationList.map(instance => {
+      const ec2Instance = ec2Response.Reservations
+        .flatMap(r => r.Instances)
+        .find(i => i.InstanceId === instance.InstanceId);
+
+      // Buscar el tag Name
+      const nameTag = ec2Instance?.Tags?.find(tag => tag.Key === 'Name');
+
+      return {
+        instanceId: instance.InstanceId,
+        computerName: instance.ComputerName,
+        platform: instance.PlatformType,
+        platformVersion: instance.PlatformVersion,
+        ipAddress: instance.IPAddress,
+        pingStatus: instance.PingStatus,
+        lastPingTime: instance.LastPingDateTime,
+        agentVersion: instance.AgentVersion,
+        platformType: instance.PlatformType,
+        // Añadir los campos nuevos manteniendo compatibilidad
+        friendlyName: nameTag?.Value || 
+                     instance.ComputerName || 
+                     instance.IPAddress ||
+                     instance.InstanceId,
+        platformDetails: ec2Instance?.PlatformDetails || instance.PlatformType
+      };
+    });
   } catch (error) {
     console.error("Error fetching managed instances:", error);
     throw error;
   }
 };
 
+const determinePlatformType = (instance) => {
+  if (instance.PlatformType === 'Linux' || instance.PlatformType === 'Windows') {
+    return 'EC2';
+  } else if (instance.InstanceId.startsWith('rds-')) {
+    return 'RDS';
+  } else if (instance.InstanceId.startsWith('lambda-')) {
+    return 'Lambda';
+  }
+  return instance.PlatformType || 'Unknown';
+};
+
 // Obtener inventario detallado
-export const getDetailedInventory = async () => {
+export const getDetailedInventory = async (instanceId) => {
   try {
     const client = getClient();
     const command = new GetInventoryCommand({
       Filters: [
         {
-          Key: 'AWS:InstanceInformation.ResourceType',
-          Values: ['EC2Instance'],
-          Type: 'Equal'
+          Key: 'AWS:Application',
+          Type: 'Equal',
+          Values: ['*']
+        },
+        {
+          Key: 'AWS:Network',
+          Type: 'Equal',
+          Values: ['*']
+        },
+        {
+          Key: 'AWS:InstanceInformation',
+          Type: 'Equal',
+          Values: ['*']
         }
+      ],
+      ResultAttributes: [
+        { TypeName: 'AWS:Application' },
+        { TypeName: 'AWS:Network' },
+        { TypeName: 'AWS:InstanceInformation' }
       ]
     });
 
     const response = await client.send(command);
-    return response.Entities.map(entity => {
-      const instanceData = entity.Data['AWS:InstanceInformation'];
-      const applicationData = entity.Data['AWS:Application'] || [];
-      const networkData = entity.Data['AWS:Network'] || [];
-      
-      return {
-        instanceId: instanceData.InstanceId,
-        platform: instanceData.PlatformType,
-        applications: applicationData.map(app => ({
+    
+    // Procesamos la respuesta real de AWS
+    return {
+      applications: processApplications(response),
+      networkConfig: processNetworkConfig(response),
+      instanceDetails: processInstanceDetails(response)
+    };
+  } catch (error) {
+    console.error("Error fetching inventory:", error);
+    throw error;
+  }
+};
+
+const processApplications = (response) => {
+  const apps = [];
+  response.Entities?.forEach(entity => {
+    if (entity.Data['AWS:Application']) {
+      const appData = entity.Data['AWS:Application'].Content;
+      appData.forEach(app => {
+        apps.push({
           name: app.Name,
           version: app.Version,
           publisher: app.Publisher,
           installTime: app.InstallTime
-        })),
-        network: networkData.map(net => ({
+        });
+      });
+    }
+  });
+  return apps;
+};
+
+const processNetworkConfig = (response) => {
+  const networkConfig = {
+    interfaces: [],
+    ips: [],
+    dns: []
+  };
+
+  response.Entities?.forEach(entity => {
+    if (entity.Data['AWS:Network']) {
+      const netData = entity.Data['AWS:Network'].Content;
+      
+      // Procesamos interfaces
+      netData.forEach(net => {
+        networkConfig.interfaces.push({
           name: net.Name,
           macAddress: net.MacAddress,
-          ipv4Addresses: net.IPv4Addresses,
-          ipv6Addresses: net.IPv6Addresses
-        }))
-      };
-    });
-  } catch (error) {
-    console.error("Error fetching detailed inventory:", error);
-    throw error;
-  }
+          status: net.Status,
+          type: net.Type
+        });
+
+        // Procesamos IPs
+        if (net.IPv4Addresses) {
+          net.IPv4Addresses.forEach(ip => {
+            networkConfig.ips.push({
+              address: ip,
+              type: 'IPv4',
+              interface: net.Name,
+              netmask: net.SubnetMask
+            });
+          });
+        }
+      });
+
+      // DNS servers si están disponibles
+      if (netData[0].DnsServers) {
+        netData[0].DnsServers.forEach((server, index) => {
+          networkConfig.dns.push({
+            server: server,
+            type: 'Primary',
+            priority: index + 1,
+            zone: 'Default'
+          });
+        });
+      }
+    }
+  });
+
+  return networkConfig;
 };
 
 // Obtener estado de conexión de las instancias
@@ -629,4 +768,88 @@ export const disableSSMOnInstance = async (instanceId) => {
     console.error("Error disabling SSM on instance:", error);
     throw error;
   }
+};
+
+export const getSystemInfo = async (instanceId) => {
+  try {
+    const client = getClient();
+    
+    // Solo obtenemos información de SSM y EC2 ya que son las únicas fuentes disponibles
+    const [ssmResponse, ec2Response] = await Promise.all([
+      client.send(new DescribeInstanceInformationCommand({
+        Filters: [{ Key: 'InstanceIds', Values: [instanceId] }]
+      })),
+      getEC2Client().send(new DescribeInstancesCommand({
+        InstanceIds: [instanceId]
+      }))
+    ]);
+
+    return processSystemInfo(ssmResponse, ec2Response);
+  } catch (error) {
+    console.error("Error fetching system info:", error);
+    throw error;
+  }
+};
+
+const processSystemInfo = (ssmResponse, ec2Response) => {
+  const systemInfo = {
+    os: {},
+    network: {},
+    hardware: {}
+  };
+
+  if (ssmResponse.InstanceInformationList?.length > 0) {
+    const ssmInfo = ssmResponse.InstanceInformationList[0];
+    const ec2Info = ec2Response.Reservations[0]?.Instances[0];
+
+    // Información del hardware
+    systemInfo.hardware = {
+      instanceType: ec2Info?.InstanceType || ssmInfo.InstanceType || 'N/A',
+      platform: ssmInfo.PlatformType || 'N/A',
+      platformVersion: ssmInfo.PlatformVersion || 'N/A',
+      agentVersion: ssmInfo.AgentVersion || 'N/A',
+      state: ec2Info?.State?.Name || 'N/A',
+      launchTime: ec2Info?.LaunchTime || 'N/A'
+    };
+
+    // Información del SO
+    systemInfo.os = {
+      name: ssmInfo.PlatformName || ssmInfo.PlatformType || 'N/A',
+      version: ssmInfo.PlatformVersion || 'N/A',
+      architecture: ec2Info?.Architecture || ssmInfo.Architecture || 'N/A',
+      kernelVersion: ec2Info?.PlatformDetails || 'N/A',
+      lastBootTime: ssmInfo.LastPingDateTime || 'N/A'
+    };
+
+    // Información de red desde EC2
+    systemInfo.network = {
+      interfaces: ec2Info?.NetworkInterfaces?.map(nic => ({
+        name: nic.NetworkInterfaceId || 'Primary Network Interface',
+        macAddress: nic.MacAddress || 'N/A',
+        ipv4: [
+          ...(nic.PrivateIpAddresses?.map(ip => ip.PrivateIpAddress) || []),
+          nic.PublicIpAddress ? [nic.PublicIpAddress] : []
+        ].flat(),
+        ipv6: nic.Ipv6Addresses?.map(ip => ip.Ipv6Address) || [],
+        dnsServers: [
+          nic.PrivateDnsName,
+          nic.PublicDnsName
+        ].filter(Boolean),
+        subnetId: nic.SubnetId || 'N/A',
+        vpcId: nic.VpcId || 'N/A',
+        securityGroups: nic.Groups?.map(sg => ({
+          id: sg.GroupId,
+          name: sg.GroupName
+        })) || []
+      })) || [{
+        name: 'Primary Network Interface',
+        macAddress: 'N/A',
+        ipv4: [ssmInfo.IPAddress || 'N/A'],
+        ipv6: [],
+        dnsServers: []
+      }]
+    };
+  }
+
+  return systemInfo;
 }; 

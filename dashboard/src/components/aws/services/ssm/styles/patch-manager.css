@@ -35,11 +35,6 @@
   color: white;
 }
 
-.install-button {
-  background: var(--success-color);
-  color: white;
-}
-
 .patch-summary {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -179,4 +174,162 @@
 /* Ajustar el contenedor de la tabla */
 .patch-list {
   padding-right: 1rem;
+}
+
+.patch-card {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.patch-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.patch-severity {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.patch-severity.critical {
+  background: var(--danger-bg);
+  color: var(--danger-color);
+}
+
+.patch-severity.important {
+  background: var(--warning-bg);
+  color: var(--warning-color);
+}
+
+.patch-severity.moderate {
+  background: var(--info-bg);
+  color: var(--info-color);
+}
+
+.patch-content {
+  margin-bottom: 1rem;
+}
+
+.patch-title {
+  font-size: 0.9rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.patch-details {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.patch-cves {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.patch-cves ul {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0;
+}
+
+.patch-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.install-button {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+}
+
+.install-button:hover {
+  background: var(--primary-color-dark);
+}
+
+.instance-selector {
+  margin-right: 1rem;
+}
+
+.instance-selector select {
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  min-width: 300px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.instance-selector select:hover {
+  border-color: var(--primary-color);
+}
+
+.instance-selector select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2);
+}
+
+.patch-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* Estilos para los estados vacíos */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+  background: var(--background-secondary);
+  border-radius: 8px;
+  border: 2px dashed var(--border-color);
+}
+
+.empty-state .empty-icon,
+.empty-state .success-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.empty-state .success-icon {
+  color: var(--success-color);
+}
+
+.empty-state h3 {
+  color: var(--text-primary);
+  margin: 0 0 0.5rem 0;
+  font-size: 1.2rem;
+}
+
+.empty-state p {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: 0.95rem;
+}
+
+.empty-state small {
+  margin-top: 1rem;
+  color: var(--text-tertiary);
+  font-size: 0.85rem;
 } 

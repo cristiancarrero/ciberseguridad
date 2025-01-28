@@ -1,74 +1,171 @@
 .inventory-manager {
-  padding: 1rem;
+  padding: 2rem;
+  background: var(--background-secondary);
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Header */
 .inventory-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
-.inventory-header h3 {
+.inventory-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.inventory-title .icon {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+}
+
+.inventory-title h1 {
+  font-size: 1.5rem;
+  font-weight: 600;
   color: var(--text-primary);
   margin: 0;
 }
 
-.inventory-filters {
+.inventory-controls {
   display: flex;
   gap: 1rem;
-  align-items: center;
 }
 
+/* Buscador y Filtros */
 .search-box {
   position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.search-box input {
-  padding: 0.5rem 2rem 0.5rem 1rem;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  background: var(--bg-dark);
-  color: var(--text-primary);
   width: 250px;
 }
 
-.search-box svg {
-  position: absolute;
-  right: 0.75rem;
-  color: var(--text-muted);
+.search-box input {
+  width: 100%;
+  padding: 0.5rem 1rem 0.5rem 2.2rem;
+  background: var(--background-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 0.875rem;
 }
 
-.inventory-filters select {
-  padding: 0.5rem;
+.search-box input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+.search-icon {
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+/* Estilos para el selector y su menú desplegable */
+.filter-select {
+  padding: 0.5rem 2rem 0.5rem 1rem;
+  background-color: var(--background-secondary);
   border: 1px solid var(--border-color);
-  border-radius: 4px;
-  background: var(--bg-dark);
+  border-radius: 6px;
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.5rem center;
+  background-size: 1rem;
+}
+
+/* Importante: estos estilos son para el menú desplegable */
+select.filter-select {
+  background-color: var(--background-secondary);
+}
+
+.filter-select option {
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+  padding: 0.75rem;
+}
+
+/* Estilos para el menú desplegable en diferentes navegadores */
+.filter-select::-webkit-listbox {
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.filter-select::-moz-select-list {
+  background-color: var(--background-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+.filter-select:-moz-list-box {
+  background-color: var(--background-secondary);
   color: var(--text-primary);
 }
 
+/* Para el hover de las opciones */
+.filter-select option:hover,
+.filter-select option:focus,
+.filter-select option:active,
+.filter-select option:checked {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Cards de resumen */
 .inventory-summary {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
   margin-bottom: 2rem;
 }
 
 .summary-card {
-  background: var(--bg-dark);
+  background: var(--background-primary);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
-  padding: 1rem;
+  padding: 1.2rem;
   display: flex;
   align-items: center;
-  gap: 1rem;
-  border: 1px solid var(--border-color);
+  gap: 1.2rem;
+  transition: all 0.2s ease;
+}
+
+.summary-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .summary-icon {
-  font-size: 2rem;
-  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+}
+
+/* Colores específicos para cada tipo de tarjeta */
+.summary-card:nth-child(1) .summary-icon {
+  color: #00b894;
+}
+
+.summary-card:nth-child(2) .summary-icon {
+  color: #ff7675;
+}
+
+.summary-card:nth-child(3) .summary-icon {
+  color: #0984e3;
 }
 
 .summary-info {
@@ -76,70 +173,459 @@
   flex-direction: column;
 }
 
-.summary-info .count {
+.summary-count {
   font-size: 1.5rem;
-  font-weight: bold;
+  font-weight: 600;
   color: var(--text-primary);
+  line-height: 1;
 }
 
-.summary-info .label {
-  color: var(--text-muted);
-  font-size: 0.875rem;
+.summary-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.inventory-list table {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--bg-dark);
+/* Tabla */
+.inventory-list {
+  background: var(--background-primary);
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   overflow: hidden;
 }
 
-.inventory-list th,
-.inventory-list td {
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.data-table th {
   padding: 0.75rem 1rem;
+  background: var(--background-secondary);
+  font-weight: 500;
   text-align: left;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
   border-bottom: 1px solid var(--border-color);
 }
 
-.inventory-list th {
-  background: var(--bg-darker);
-  color: var(--text-muted);
+.data-table td {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.data-table tr:hover {
+  background: var(--background-hover);
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
   font-weight: 500;
 }
 
-.status {
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  font-size: 0.875rem;
-}
-
-.status.online {
-  background: rgba(40, 167, 69, 0.1);
+.status-badge.online {
+  background: var(--success-bg);
   color: var(--success-color);
 }
 
-.status.offline {
-  background: rgba(220, 53, 69, 0.1);
+.status-badge.offline {
+  background: var(--danger-bg);
   color: var(--danger-color);
 }
 
-.action-buttons {
+/* Info Panel */
+.system-info {
+  margin-top: 1.5rem;
+  background: var(--background-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.system-info h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
   display: flex;
+  align-items: center;
   gap: 0.5rem;
 }
 
-.action-buttons button {
-  padding: 0.25rem 0.5rem;
-  border: 1px solid var(--primary-color);
-  border-radius: 4px;
-  background: none;
-  color: var(--primary-color);
-  cursor: pointer;
+.system-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+}
+
+.info-card {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 1rem;
+}
+
+.info-card h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.info-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.info-card li {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.info-card li strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.select-instance-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+  background: var(--background-secondary);
+  border-radius: 8px;
+  border: 2px dashed var(--border-color);
+}
+
+.select-instance-message p {
+  margin-top: 1rem;
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.select-instance-message small {
+  margin-top: 0.5rem;
+  color: var(--text-tertiary);
   font-size: 0.875rem;
 }
 
-.action-buttons button:hover {
-  background: var(--primary-color);
-  color: white;
+.network-interface {
+  background: var(--background-secondary);
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.network-interface h5 {
+  color: var(--primary-color);
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.select-instance-message {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary);
+  background: var(--background-primary);
+  border-radius: 12px;
+  border: 2px dashed var(--border-color);
+  margin: 2rem 0;
+}
+
+.select-instance-message p {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+
+/* Sección de Aplicaciones */
+.applications-section {
+  margin-top: 2rem;
+  background: var(--background-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.applications-header {
+  padding: 1.2rem;
+  background: var(--background-secondary);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.applications-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.applications-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.applications-table th {
+  background: var(--background-secondary);
+  padding: 0.75rem 1rem;
+  text-align: left;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.applications-table td {
+  padding: 0.75rem 1rem;
+  font-size: 0.875rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.applications-table tr:hover {
+  background: var(--background-hover);
+}
+
+.app-version {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  background: var(--primary-bg);
+  color: var(--primary-color);
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.app-date {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+}
+
+.app-publisher {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.app-publisher-icon {
+  width: 20px;
+  height: 20px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--background-secondary);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+}
+
+/* Sección de Configuración de Red */
+.network-config-section {
+  margin-top: 2rem;
+  background: var(--background-primary);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.network-header {
+  padding: 1.2rem;
+  background: var(--background-secondary);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.network-header h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.network-content {
+  padding: 1.5rem;
+}
+
+.network-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.network-card {
+  background: var(--background-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.network-card h4 {
+  padding: 1rem;
+  margin: 0;
+  background: var(--background-primary);
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.network-list {
+  padding: 1rem;
+}
+
+.network-item {
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin-bottom: 0.75rem;
+  background: var(--background-primary);
+}
+
+.network-item:last-child {
+  margin-bottom: 0;
+}
+
+.item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.item-name {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.item-status {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.item-status.up {
+  background: var(--success-bg);
+  color: var(--success-color);
+}
+
+.item-status.down {
+  background: var(--danger-bg);
+  color: var(--danger-color);
+}
+
+.item-type {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  background: var(--background-secondary);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+}
+
+.item-details {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.item-details span {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Forzar estilos del select y su menú desplegable */
+.inventory-controls select,
+.inventory-controls select * {
+    background-color: var(--background-secondary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Específicamente para el menú desplegable */
+.inventory-controls select option,
+.inventory-controls select optgroup {
+    background-color: var(--background-secondary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Para Chrome */
+.inventory-controls select::-webkit-listbox,
+.inventory-controls select::-webkit-list {
+    background-color: var(--background-secondary) !important;
+}
+
+/* Estilos para cuando no hay datos */
+.no-data-row {
+  height: 200px;
+}
+
+.no-data-cell {
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.no-data-message {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+}
+
+.no-data-icon {
+  font-size: 2.5rem;
+  opacity: 0.5;
+}
+
+.no-data-message p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+}
+
+/* Estilos para las filas clickeables */
+.instance-row {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.instance-row:hover {
+  background-color: var(--background-hover) !important;
+}
+
+.instance-row.selected {
+  background-color: var(--primary-color-light) !important;
+  border-left: 3px solid var(--primary-color);
 } 
