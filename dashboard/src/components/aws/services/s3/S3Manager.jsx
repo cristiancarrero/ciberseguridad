@@ -236,6 +236,8 @@ const S3Manager = ({ onClose, isOpen }) => {
   const [showSettingsMenu, setShowSettingsMenu] = useState(null);
   const [showSettingsModal, setShowSettingsModal] = useState(false);
   const [selectedBucketForSettings, setSelectedBucketForSettings] = useState(null);
+  const [menuPosition, setMenuPosition] = useState('down');
+  const [openMenuKey, setOpenMenuKey] = useState(null);
 
   // Cargar buckets al inicio
   useEffect(() => {
@@ -520,19 +522,19 @@ const S3Manager = ({ onClose, isOpen }) => {
     loadObjects(selectedBucket, path);
   };
 
-  // Añadir función para previsualizar archivos
+  // Función para previsualizar archivo
   const handlePreview = async (key) => {
     try {
-      const response = await getObjectPreview(selectedBucket, key);
-      
-      setPreviewFile({
-        data: response.data,
-        name: key.split('/').pop(),
-        contentType: response.contentType
-      });
+      setLoading(true);
+      setError(null);
+      const preview = await getObjectPreview(selectedBucket, key);
+      setPreviewFile(preview);
+      setOpenActionMenu(null);
     } catch (error) {
       console.error('Error al previsualizar:', error);
       setError('Error al previsualizar el archivo: ' + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -605,17 +607,18 @@ const S3Manager = ({ onClose, isOpen }) => {
   // Función para generar URL presignada
   const generatePresignedUrl = async (key) => {
     try {
+      setLoading(true);
       const url = await getPresignedUrl(selectedBucket, key);
       await navigator.clipboard.writeText(url);
+      setOpenActionMenu(null);
       
-      // Mostrar un mensaje más informativo
-      alert(`URL generada y copiada al portapapeles.\nLa URL expirará en 1 hora.\nPuede acceder al archivo directamente desde un navegador.`);
-      
-      // Opcionalmente, abrir en una nueva pestaña
-      window.open(url, '_blank');
+      // Mostrar mensaje de éxito
+      alert('URL copiada al portapapeles. La URL expirará en 1 hora.');
     } catch (error) {
       console.error('Error al generar URL:', error);
-      setError('Error al generar la URL presignada: ' + error.message);
+      setError('Error al generar la URL: ' + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -957,6 +960,33 @@ const S3Manager = ({ onClose, isOpen }) => {
     }
   };
 
+  const toggleMenu = (event, objectKey) => {
+    event.stopPropagation();
+    
+    // Si ya está abierto el menú para este objeto, lo cerramos
+    if (openMenuKey === objectKey) {
+      setOpenMenuKey(null);
+      return;
+    }
+
+    // Obtenemos la posición del botón que activó el menú
+    const buttonRect = event.currentTarget.getBoundingClientRect();
+    // Obtenemos la altura de la ventana
+    const windowHeight = window.innerHeight;
+    // Calculamos el espacio disponible abajo del botón
+    const spaceBelow = windowHeight - buttonRect.bottom;
+    // Altura estimada del menú (número de items * altura por item + padding)
+    const menuHeight = 4 * 48 + 16; // 4 items de 48px + 16px de padding
+
+    // Si no hay suficiente espacio abajo, añadimos la clase menu-up
+    const shouldShowUp = spaceBelow < menuHeight;
+    
+    // Guardamos la posición preferida en el estado
+    setMenuPosition(shouldShowUp ? 'up' : 'down');
+    // Abrimos el menú para este objeto
+    setOpenMenuKey(objectKey);
+  };
+
   return (
     <div className="s3-overlay">
       <div className="s3-container">
@@ -1017,13 +1047,17 @@ const S3Manager = ({ onClose, isOpen }) => {
                   <div className="bucket-actions">
                     <button 
                       className="s3-icon-btn"
-                      onClick={() => document.getElementById('file-upload').click()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleMenu(e, bucket.Name);
+                      }}
                     >
-                      <FaUpload />
+                      <FaBars />
                     </button>
                     <button 
                       className="s3-icon-btn"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.stopPropagation();
                         setSelectedBucketForSettings(bucket.Name);
                         setShowSettingsModal(true);
                       }}
@@ -1032,7 +1066,10 @@ const S3Manager = ({ onClose, isOpen }) => {
                     </button>
                     <button 
                       className="s3-icon-btn delete"
-                      onClick={() => handleDeleteBucket(bucket.Name)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteBucket(bucket.Name);
+                      }}
                     >
                       <FaTrash />
                     </button>
@@ -1202,36 +1239,63 @@ const S3Manager = ({ onClose, isOpen }) => {
 
         {/* Modal de previsualización */}
         {previewFile && (
-          <div className="preview-modal">
-            <div className="preview-content">
-              <button className="close-preview" onClick={() => setPreviewFile(null)}>
-                <FaTimes />
-              </button>
-              {previewFile.contentType?.startsWith('image/') ? (
-                <img 
-                  src={URL.createObjectURL(previewFile.data)} 
-                  alt={previewFile.name}
-                  style={{ maxWidth: '100%', maxHeight: '80vh' }}
-                />
-              ) : previewFile.contentType === 'application/pdf' ? (
-                <iframe 
-                  src={URL.createObjectURL(previewFile.data)}
-                  title={previewFile.name}
-                  style={{ width: '100%', height: '80vh', border: 'none' }}
-                />
-              ) : previewFile.contentType?.startsWith('text/') || 
-                 previewFile.contentType === 'application/json' ? (
-                <div className="preview-text">
-                  <pre>
-                    {new TextDecoder().decode(previewFile.data)}
-                  </pre>
-                </div>
-              ) : (
-                <div className="preview-text">
-                  <p>No se puede previsualizar este tipo de archivo ({previewFile.contentType})</p>
-                  <p>Puede descargarlo para verlo en su aplicación correspondiente.</p>
-                </div>
-              )}
+          <div className="s3-modal preview-modal">
+            <div className="s3-modal-content">
+              <div className="modal-header">
+                <h2>Previsualización: {previewFile.name}</h2>
+                <button className="close-button" onClick={() => setPreviewFile(null)}>
+                  <FaTimes />
+                </button>
+              </div>
+              <div className="preview-content">
+                {previewFile.contentType?.startsWith('image/') ? (
+                  <img 
+                    src={URL.createObjectURL(previewFile.data)} 
+                    alt={previewFile.name}
+                    className="preview-image"
+                  />
+                ) : previewFile.contentType === 'application/pdf' ? (
+                  <iframe 
+                    src={URL.createObjectURL(previewFile.data)}
+                    title={previewFile.name}
+                    className="preview-pdf"
+                  />
+                ) : previewFile.contentType?.startsWith('text/') || 
+                   previewFile.contentType === 'application/json' ? (
+                  <div className="preview-text">
+                    <pre>
+                      {new TextDecoder().decode(previewFile.data)}
+                    </pre>
+                  </div>
+                ) : previewFile.contentType?.startsWith('video/') ? (
+                  <video 
+                    src={URL.createObjectURL(previewFile.data)} 
+                    controls 
+                    className="preview-video"
+                  >
+                    Tu navegador no soporta la reproducción de video.
+                  </video>
+                ) : previewFile.contentType?.startsWith('audio/') ? (
+                  <audio 
+                    src={URL.createObjectURL(previewFile.data)} 
+                    controls 
+                    className="preview-audio"
+                  >
+                    Tu navegador no soporta la reproducción de audio.
+                  </audio>
+                ) : (
+                  <div className="preview-unsupported">
+                    <p>No se puede previsualizar este tipo de archivo ({previewFile.contentType})</p>
+                    <p>Puede descargarlo para verlo en su aplicación correspondiente.</p>
+                    <button 
+                      className="s3-btn primary"
+                      onClick={() => handleDownloadObject(previewFile.name)}
+                    >
+                      Descargar archivo
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
@@ -1433,17 +1497,6 @@ const S3Manager = ({ onClose, isOpen }) => {
           </div>
         )}
 
-        {openActionMenu && (
-          <div className="action-menu" ref={actionMenuRef}>
-            <button onClick={() => handleDeleteBucket(selectedBucket)}>
-              Eliminar bucket
-            </button>
-            <button onClick={() => handleConfigureCors(selectedBucket)}>
-              Configurar CORS
-            </button>
-          </div>
-        )}
-
         {/* Modal de cifrado */}
         {showEncryptionModal && (
           <div className="s3-modal">
@@ -1503,6 +1556,24 @@ const S3Manager = ({ onClose, isOpen }) => {
 
         {/* Modal de ajustes */}
         {showSettingsModal && renderSettingsModal()}
+
+        {/* Menú de acciones */}
+        {openMenuKey && (
+          <div className={`menu ${menuPosition === 'up' ? 'menu-up' : 'menu-down'}`}>
+            <button className="menu-item" onClick={(e) => {
+              e.stopPropagation();
+              handleDeleteBucket(selectedBucket);
+            }}>
+              <i className="fas fa-trash"></i> Eliminar bucket
+            </button>
+            <button className="menu-item" onClick={(e) => {
+              e.stopPropagation();
+              handleConfigureCors(selectedBucket);
+            }}>
+              <i className="fas fa-cog"></i> Configurar CORS
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );

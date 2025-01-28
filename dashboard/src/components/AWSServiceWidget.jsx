@@ -1,13 +1,18 @@
 import React, { useEffect } from 'react';
 import { useAWS } from '../context/AWSContext';
-import { FaServer, FaUsers, FaShield, FaChartLine, FaDatabase } from 'react-icons/fa';
+import { FaServer, FaUsers, FaShieldAlt, FaChartLine, FaDatabase } from 'react-icons/fa';
 import { listInstances, listSecurityGroups } from '../services/ec2Service';
 import '../styles/components/aws-widget.css';
-import Modal from './Modal';
-import S3Manager from './S3Manager';
+import S3Manager from './aws/services/s3/S3Manager';
 
-const AWSServiceWidget = ({ service, onClick }) => {
-  const { instances, securityGroups, updateInstances, updateSecurityGroups } = useAWS();
+const AWSServiceWidget = ({ service, icon, onClick, customMetrics }) => {
+  const awsContext = useAWS();
+  const { 
+    instances = [], 
+    securityGroups = [], 
+    updateInstances, 
+    updateSecurityGroups 
+  } = awsContext || {};
   const [showS3Manager, setShowS3Manager] = React.useState(false);
 
   // Cargar datos iniciales y mantenerlos actualizados
@@ -17,8 +22,6 @@ const AWSServiceWidget = ({ service, onClick }) => {
         if (service === 'EC2') {
           const instancesData = await listInstances();
           updateInstances(instancesData);
-          const groupsData = await listSecurityGroups();
-          updateSecurityGroups(groupsData);
         }
       } catch (error) {
         console.error('Error al cargar datos:', error);
@@ -26,7 +29,7 @@ const AWSServiceWidget = ({ service, onClick }) => {
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 5000); // Actualizar cada 5 segundos
+    const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
   }, [service]);
 
@@ -39,9 +42,11 @@ const AWSServiceWidget = ({ service, onClick }) => {
       case 'IAM':
         return <FaUsers />;
       case 'Security':
-        return <FaShield />;
+        return <FaShieldAlt />;
       case 'S3':
         return <FaDatabase />;
+      case 'SSM':
+        return icon;
       default:
         return null;
     }
@@ -50,24 +55,24 @@ const AWSServiceWidget = ({ service, onClick }) => {
   const getServiceStatus = () => {
     switch (service) {
       case 'EC2':
-        // Verificar si hay instancias en estado running
         return instances && instances.some(instance => instance.state === 'running');
       case 'IAM':
-        return false;
       case 'GuardDuty':
-        return false;
+      case 'SSM':
       default:
         return false;
     }
   };
 
   const getServiceMetrics = () => {
+    if (customMetrics) {
+      return customMetrics;
+    }
+
     switch (service) {
       case 'EC2':
-        // Contar instancias running y grupos de seguridad
         const runningInstances = instances ? instances.filter(instance => instance.state === 'running').length : 0;
         const totalGroups = securityGroups ? securityGroups.length : 0;
-        
         return {
           primary: {
             label: 'Instancias Activas',
@@ -78,30 +83,28 @@ const AWSServiceWidget = ({ service, onClick }) => {
             value: totalGroups
           }
         };
-      case 'IAM':
+      case 'SSM':
         return {
           primary: {
-            label: 'Usuarios',
+            label: 'Parches Pendientes',
             value: '-'
           },
           secondary: {
-            label: 'Roles',
-            value: '-'
-          }
-        };
-      case 'GuardDuty':
-        return {
-          primary: {
-            label: 'Amenazas Detectadas',
-            value: '-'
-          },
-          secondary: {
-            label: 'Regiones Monitorizadas',
+            label: 'Recursos Gestionados',
             value: '-'
           }
         };
       default:
-        return null;
+        return {
+          primary: {
+            label: 'No disponible',
+            value: '-'
+          },
+          secondary: {
+            label: 'No disponible',
+            value: '-'
+          }
+        };
     }
   };
 
@@ -109,7 +112,9 @@ const AWSServiceWidget = ({ service, onClick }) => {
   const isConnected = getServiceStatus();
 
   const handleClick = () => {
-    if (onClick) {
+    if (service === 'S3') {
+      setShowS3Manager(true);
+    } else if (onClick) {
       onClick(service);
     }
   };
@@ -142,6 +147,7 @@ const AWSServiceWidget = ({ service, onClick }) => {
           Gestionar
         </button>
       </div>
+
       {showS3Manager && (
         <S3Manager onClose={() => setShowS3Manager(false)} />
       )}

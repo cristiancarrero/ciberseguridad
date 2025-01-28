@@ -219,19 +219,16 @@ router.post('/preview-object', verifyAWSCredentials, async (req, res) => {
     const command = new GetObjectCommand({ Bucket: bucketName, Key: key });
     const response = await s3Client.send(command);
     
-    // Leer el stream y convertirlo a buffer
-    const chunks = [];
-    for await (const chunk of response.Body) {
-      chunks.push(chunk);
-    }
-    const fileBuffer = Buffer.concat(chunks);
-    
-    // Establecer el tipo de contenido correcto
+    // Establecer los headers de la respuesta
     res.setHeader('Content-Type', response.ContentType);
     res.setHeader('Content-Length', response.ContentLength);
+    res.setHeader('Content-Disposition', `inline; filename="${key.split('/').pop()}"`);
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
     
-    // Enviar el buffer directamente
-    res.send(fileBuffer);
+    // Transmitir el stream directamente al cliente
+    response.Body.pipe(res);
   } catch (error) {
     console.error('Error previewing object:', error);
     res.status(500).json({ error: error.message });
@@ -323,6 +320,42 @@ router.post('/set-encryption', verifyAWSCredentials, async (req, res) => {
     });
   } catch (error) {
     console.error('Error al cifrar objeto:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Obtener metadatos del objeto
+router.post('/get-object-metadata', verifyAWSCredentials, async (req, res) => {
+  try {
+    const { bucketName, key } = req.body;
+    if (!bucketName || !key) {
+      return res.status(400).json({ error: 'Nombre del bucket y key son requeridos' });
+    }
+
+    const s3Client = createS3Client(req.awsCredentials);
+    const command = new GetObjectCommand({
+      Bucket: bucketName,
+      Key: key
+    });
+
+    try {
+      const response = await s3Client.send(command);
+      res.json({
+        contentType: response.ContentType,
+        contentLength: response.ContentLength,
+        lastModified: response.LastModified,
+        serverSideEncryption: response.ServerSideEncryption,
+        sseKMSKeyId: response.SSEKMSKeyId,
+        metadata: response.Metadata
+      });
+    } catch (error) {
+      if (error.name === 'NoSuchKey') {
+        return res.status(404).json({ error: 'Objeto no encontrado' });
+      }
+      throw error;
+    }
+  } catch (error) {
+    console.error('Error getting object metadata:', error);
     res.status(500).json({ error: error.message });
   }
 });

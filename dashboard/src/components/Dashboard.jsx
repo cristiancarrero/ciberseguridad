@@ -10,13 +10,13 @@ import '../styles/components/navbar.css';
 import '../styles/components/widgets.css';
 import '../styles/components/charts.css';
 import '../styles/components/metrics.css';
+import '../styles/components/modal.css';
 import '../styles/responsive.css';
 import '../styles/dashboard.css';
 
 // Importar el modal y sus estilos
 import AwsConnectModal from './aws/components/AwsConnectModal';
 import AwsDisconnectModal from './aws/components/AwsDisconnectModal';
-import '../styles/components/modal.css';
 import EC2Manager from './EC2Manager';
 import { connectToAWS, disconnectFromAWS, isConnectedToAWS, loadAwsConfig } from '../services/awsService';
 import CloudWatchPanel from './aws/services/cloudwatch/CloudWatchPanel';
@@ -26,6 +26,11 @@ import VPCManager from './aws/services/vpc/VPCManager';
 import CloudTrailManager from './aws/services/cloudtrail/CloudTrailManager';
 import { initializeCloudWatch } from './aws/services/cloudwatch/services/cloudwatchService';
 import S3Manager from './aws/services/s3/S3Manager';
+import GCPView from './gcp/GCPView';
+import AzureView from './azure/AzureView';
+import GuardDutyManager from './aws/services/guardduty/GuardDutyManager';
+import AWSServiceWidget from './AWSServiceWidget';
+import SSMManager from './aws/services/ssm/SSMManager';
 
 const Dashboard = () => {
   const [currentSection, setCurrentSection] = useState(() => {
@@ -63,7 +68,8 @@ const Dashboard = () => {
       guardduty: false,
       ecs: false,
       config: false,
-      eventbridge: false
+      eventbridge: false,
+      ssm: false
     };
   });
 
@@ -90,6 +96,9 @@ const Dashboard = () => {
   });
 
   const [showS3Manager, setShowS3Manager] = useState(false);
+  const [showGuardDutyManager, setShowGuardDutyManager] = useState(false);
+
+  const [selectedService, setSelectedService] = useState(null);
 
   // Guardar el estado en localStorage cuando cambie
   useEffect(() => {
@@ -182,6 +191,14 @@ const Dashboard = () => {
         setIsAwsConnected(true);
         localStorage.setItem('awsConnected', 'true');
         setIsAwsModalOpen(false);
+
+        // Actualizar el estado de los servicios
+        setAwsServices(prev => ({
+          ...prev,
+          guardduty: true,
+          ssm: true
+        }));
+
         return true;
       } catch (error) {
         console.error('Error connecting to AWS:', error);
@@ -290,7 +307,10 @@ const Dashboard = () => {
     switch(currentSection) {
       case 'dashboard':
         return (
-          <div className="dashboard-overview">
+          <div className="dashboard-section">
+            <div className="aws-services-header">
+              <h1 className="aws-services-title">Panel Principal</h1>
+            </div>
             {/* Header */}
             <div className="content-header">
               <h1 className="content-title">Panel de Control AWS</h1>
@@ -436,20 +456,9 @@ const Dashboard = () => {
       case 'metrics':
         return (
           <div className="metrics-section">
-            <div className="metrics-header">
-              <div className="header-content">
-                <div className="metrics-title">
-                  <div className="metrics-icon">
-                    <FaChartLine />
-                  </div>
-                  <div className="metrics-title-text">
-                    <h1>Métricas de Seguridad</h1>
-                    <p>Monitoreo de recursos AWS</p>
-                  </div>
-                </div>
-              </div>
+            <div className="aws-services-header">
+              <h1 className="aws-services-title">Métricas de Seguridad</h1>
             </div>
-            
             <div className="metrics-container">
               <Seguridad 
                 metrics={dashboardMetrics}
@@ -472,8 +481,8 @@ const Dashboard = () => {
       case 'security':
         return (
           <div className="security-section">
-            <div className="content-header">
-              <h1 className="content-title">Seguridad</h1>
+            <div className="aws-services-header">
+              <h1 className="aws-services-title">Seguridad</h1>
             </div>
             <div className="widget">
               <h3>Panel de Seguridad</h3>
@@ -484,18 +493,22 @@ const Dashboard = () => {
       case 'aws':
         return (
           <div className="aws-section">
-            <div className="content-header">
-              <h1 className="content-title">Servicios AWS</h1>
-              <button 
-                className={`connect-aws-btn ${isAwsConnected ? 'connected' : ''}`}
-                onClick={toggleAwsModal}
-              >
-                <FaAws />
-                {isAwsConnected ? 'Desconectar de AWS' : 'Conectar con AWS'}
-              </button>
+            <div className="aws-services-header">
+              <h1 className="aws-services-title">Servicios AWS</h1>
             </div>
             
-            {isAwsConnected ? (
+            <div className="aws-services-subheader">
+              {isAwsConnected && (
+                <button 
+                  className="disconnect-aws-btn"
+                  onClick={handleAwsDisconnection}
+                >
+                  Desconectar
+                </button>
+              )}
+            </div>
+            
+            {isAwsConnected && (
               <div className="aws-services">
                 <div className="service-category">
                   <h3>Seguridad y Accesos</h3>
@@ -569,14 +582,46 @@ const Dashboard = () => {
                       <div className="service-stats">
                         <div className="stat-item">
                           <span className="stat-label">Amenazas Detectadas</span>
-                          <span className="stat-value">{awsServices.guardduty ? '0' : '-'}</span>
-                        </div>
-                        <div className="stat-item">
-                          <span className="stat-label">Regiones Monitorizadas</span>
                           <span className="stat-value">{awsServices.guardduty ? '6' : '-'}</span>
                         </div>
+                        <div className="stat-item">
+                          <span className="stat-label">Alta Severidad</span>
+                          <span className="stat-value">{awsServices.guardduty ? '1' : '-'}</span>
+                        </div>
                       </div>
-                      <button className="service-action-btn">
+                      <button 
+                        className="service-action-btn"
+                        onClick={() => setShowGuardDutyManager(true)}
+                      >
+                        Gestionar
+                      </button>
+                    </div>
+
+                    {/* SSM Widget */}
+                    <div className="aws-service-widget">
+                      <div className="widget-header">
+                        <div className="service-icon">
+                          <FaCog />
+                        </div>
+                        <div className={`service-status ${awsServices.ssm ? 'active' : 'inactive'}`}>
+                          {awsServices.ssm ? 'Conectado' : 'Desconectado'}
+                        </div>
+                      </div>
+                      <h3 className="service-title">Systems Manager</h3>
+                      <div className="service-stats">
+                        <div className="stat-item">
+                          <span className="stat-label">Parches Pendientes</span>
+                          <span className="stat-value">{awsServices.ssm ? '3' : '-'}</span>
+                        </div>
+                        <div className="stat-item">
+                          <span className="stat-label">Recursos Gestionados</span>
+                          <span className="stat-value">{awsServices.ssm ? '5' : '-'}</span>
+                        </div>
+                      </div>
+                      <button 
+                        className="service-action-btn"
+                        onClick={() => setSelectedService('ssm')}
+                      >
                         Gestionar
                       </button>
                     </div>
@@ -789,7 +834,17 @@ const Dashboard = () => {
                   </button>
                 </div>
               </div>
-            ) : (
+            )}
+
+            {/* Modal de GuardDuty */}
+            {showGuardDutyManager && (
+              <GuardDutyManager
+                isOpen={showGuardDutyManager}
+                onClose={() => setShowGuardDutyManager(false)}
+              />
+            )}
+
+            {!isAwsConnected && (
               <div className="aws-not-connected">
                 <FaAws className="aws-big-icon" />
                 <h2>No conectado a AWS</h2>
@@ -804,11 +859,29 @@ const Dashboard = () => {
             )}
           </div>
         );
+      case 'gcp':
+        return (
+          <div className="cloud-section">
+            <div className="aws-services-header">
+              <h1 className="aws-services-title">Servicios Google Cloud</h1>
+            </div>
+            <GCPView />
+          </div>
+        );
+      case 'azure':
+        return (
+          <div className="cloud-section">
+            <div className="aws-services-header">
+              <h1 className="aws-services-title">Servicios Azure</h1>
+            </div>
+            <AzureView />
+          </div>
+        );
       case 'alerts':
         return (
           <div className="alerts-section">
-            <div className="content-header">
-              <h1 className="content-title">Alertas</h1>
+            <div className="aws-services-header">
+              <h1 className="aws-services-title">Centro de Alertas</h1>
             </div>
             <div className="widget">
               <h3>Centro de Alertas</h3>
@@ -956,6 +1029,14 @@ const Dashboard = () => {
             />
           </div>
         </div>
+      )}
+
+      {/* Añadir el modal de SSM */}
+      {selectedService === 'ssm' && (
+        <SSMManager
+          isOpen={true}
+          onClose={() => setSelectedService(null)}
+        />
       )}
     </div>
   );

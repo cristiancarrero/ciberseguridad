@@ -1,0 +1,66 @@
+/* 
+* Estilos globales para selectores
+* Este archivo sobrescribe los estilos por defecto de los selectores en toda la aplicación
+*/
+
+/* Reset de estilos nativos para selects */
+select {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border: 1px solid var(--border-color) !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    padding: 0.5rem 2rem 0.5rem 1rem !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    font-size: 0.875rem !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%236B7280'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 0.5rem center !important;
+    background-size: 1rem !important;
+}
+
+/* Estilos para el menú desplegable */
+select option {
+    background-color: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    padding: 8px !important;
+}
+
+/* Asegurar que el fondo del menú desplegable sea consistente */
+select:not([size]):not([multiple]) option {
+    background-color: var(--bg-secondary) !important;
+}
+
+/* Estilos específicos para Firefox */
+@-moz-document url-prefix() {
+    select,
+    select option {
+        background-color: var(--bg-secondary) !important;
+        color: var(--text-primary) !important;
+    }
+}
+
+/* Estilos específicos para Chrome/Safari */
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+    select {
+        background-color: var(--bg-secondary) !important;
+    }
+    select option {
+        background-color: var(--bg-secondary) !important;
+    }
+}
+
+/* Estilos para el hover de las opciones */
+select option:hover,
+select option:focus,
+select option:active {
+    background-color: var(--primary-color) !important;
+    color: white !important;
+}
+
+/* Forzar color de fondo en el menú desplegable */
+select:focus > option {
+    background-color: var(--bg-secondary);
+} 

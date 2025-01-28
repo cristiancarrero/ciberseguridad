@@ -11,6 +11,9 @@ from dotenv import load_dotenv
 load_dotenv()
 
 class SecurityChatBot:
+    '''
+    Clase para crear un chatbot de seguridad informática
+    '''
     def __init__(self):
         # Inicializar cliente de Azure OpenAI
         self.client = AzureOpenAI(
