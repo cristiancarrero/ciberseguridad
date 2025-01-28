@@ -1,28 +1,25 @@
-from transformers import pipeline
+from openai import AzureOpenAI
+import os
+from typing import Tuple, List, Dict
 import requests
 from bs4 import BeautifulSoup
-from typing import Tuple, List, Dict
-import os
-from sentence_transformers import SentenceTransformer
-import torch
 import re
 from urllib.parse import quote
 from dotenv import load_dotenv
 
-# Cargar variables de entorno desde .env
+# Cargar variables de entorno
 load_dotenv()
 
 class SecurityChatBot:
     def __init__(self):
-        # Inicializamos el modelo de HuggingFace especializado en texto técnico
-        self.generator = pipeline('text-generation', 
-                                model='bigscience/bloomz-560m',  # Modelo inicial
-                                device=-1)
+        # Inicializar cliente de Azure OpenAI
+        self.client = AzureOpenAI(
+            api_key=os.getenv("AZURE_OPENAI_KEY"),
+            api_version="2024-02-15-preview",
+            azure_endpoint=os.getenv("AZURE_OPENAI_ENDPOINT")
+        )
         
-        # Modelo para embeddings
-        self.embedding_model = SentenceTransformer('all-MiniLM-L6-v2')
-        
-        # Fuentes de información de seguridad
+        # Añadir fuentes de información de seguridad
         self.security_sources = {
             'pentesting': [
                 'https://www.hackerone.com',
@@ -40,34 +37,40 @@ class SecurityChatBot:
             ]
         }
         
+        # Mejorar el prompt del sistema
+        self.system_prompt = """Eres un asistente experto en seguridad informática, AWS y tecnología.
+Responde de manera clara, concisa y en el mismo idioma de la pregunta.
+Si la pregunta es sobre AWS, proporciona pasos específicos y ejemplos prácticos.
+Si no entiendes la pregunta o necesitas más información, pídela amablemente."""
+
     def process_query(self, question: str, context: str = None) -> Tuple[str, List[str]]:
-        """
-        Procesa consultas relacionadas con seguridad en la nube y pentesting
-        """
         try:
-            # 1. Clasificar el tipo de consulta
-            query_type = self._classify_query(question)
+            messages = [
+                {"role": "system", "content": self.system_prompt},
+                {"role": "user", "content": question}
+            ]
             
-            # 2. Buscar en fuentes especializadas
-            security_info = self._search_security_sources(question, query_type)
+            if context:
+                messages.insert(1, {"role": "assistant", "content": context})
             
-            # 3. Buscar soluciones específicas si es un error
-            if self._is_error_query(question):
-                error_solutions = self._search_error_solutions(question)
-                security_info['answer'] += '\n\n' + error_solutions['answer']
-                security_info['sources'].extend(error_solutions['sources'])
+            response = self.client.chat.completions.create(
+                model=os.getenv("AZURE_OPENAI_DEPLOYMENT"),
+                messages=messages,
+                temperature=0.7,
+                max_tokens=800,
+                top_p=0.95,
+                frequency_penalty=0,
+                presence_penalty=0
+            )
             
-            # 4. Generar respuesta contextualizada
-            prompt = self._create_security_prompt(question, security_info)
-            response = self.generator(prompt, 
-                                   max_length=300,
-                                   num_return_sequences=1,
-                                   temperature=0.7)
+            answer = response.choices[0].message.content
+            sources = self._get_relevant_sources(question)
             
-            return response[0]['generated_text'], security_info['sources']
+            return answer, sources
             
         except Exception as e:
-            return f"Lo siento, ocurrió un error: {str(e)}", []
+            print(f"Error en process_query: {str(e)}")
+            return "Lo siento, hubo un error al procesar tu pregunta. Por favor, intenta de nuevo.", []
     
     def _classify_query(self, question: str) -> str:
         """
@@ -174,17 +177,44 @@ class SecurityChatBot:
         """
         Crea un prompt especializado en seguridad
         """
-        prompt = f"""Como experto en seguridad informática, cibersguridad y pentesting, responde a la siguiente consulta:
+        prompt = f"""Como experto en seguridad informática, responde a la siguiente pregunta de manera clara y concisa:
 
 Pregunta: {question}
 
-Contexto técnico: {security_info['answer']}
-
-Proporciona una respuesta detallada y técnicamente precisa, incluyendo:
-1. Explicación del problema o concepto
-2. Mejores prácticas de seguridad relacionadas
-3. Posibles soluciones o recomendaciones
-4. Referencias a herramientas relevantes si aplica
+Contexto: {security_info['answer']}
 
 Respuesta:"""
         return prompt
+
+    def _format_response(self, text: str) -> str:
+        """
+        Formatea la respuesta para que sea más limpia y directa
+        """
+        try:
+            # Obtener solo la parte de la respuesta del asistente
+            if '<|assistant|>' in text:
+                response = text.split('<|assistant|>')[-1]
+            else:
+                response = text
+            
+            # Limpiar todos los tokens especiales y marcadores
+            response = re.sub(r'<\|.*?\|>', '', response)
+            response = re.sub(r'</s>', '', response)
+            response = re.sub(r'<\|user\|>.*?<\|assistant\|>', '', response, flags=re.DOTALL)
+            response = re.sub(r'<\|system\|>.*?</s>', '', response, flags=re.DOTALL)
+            
+            # Limpiar espacios extra y líneas en blanco
+            response = ' '.join(response.split())
+            
+            return response.strip()
+        except Exception as e:
+            print(f"Error en format_response: {str(e)}")
+            return "Lo siento, hubo un error al procesar la respuesta."
+
+    def _get_relevant_sources(self, question: str) -> List[str]:
+        """
+        Obtiene fuentes relevantes basadas en la pregunta
+        """
+        query_type = self._classify_query(question)
+        security_info = self._search_security_sources(question, query_type)
+        return security_info['sources']
