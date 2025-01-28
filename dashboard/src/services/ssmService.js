@@ -9,7 +9,10 @@ import {
   DescribeInstancePatchStatesCommand,
   SendCommandCommand,
   DescribeInstancePatchesCommand,
-  DeregisterManagedInstanceCommand
+  DeregisterManagedInstanceCommand,
+  ListDocumentsCommand,
+  DescribeAutomationExecutionsCommand,
+  DescribeDocumentCommand
 } from "@aws-sdk/client-ssm";
 
 import { 
@@ -157,21 +160,29 @@ export const getPatchDetails = async (instanceId) => {
   try {
     const client = getClient();
     const command = new DescribeInstancePatchesCommand({
-      InstanceId: instanceId,
-      MaxResults: 50 // Limitar resultados para mejor rendimiento
+      InstanceId: instanceId.instanceId || instanceId, // Manejar ambos casos
+      Filters: [
+        {
+          Key: 'State',
+          Values: ['Missing', 'Failed'] // Solo parches pendientes o fallidos
+        }
+      ]
     });
 
     const response = await client.send(command);
+    
+    if (!response.Patches) {
+      return [];
+    }
     
     return response.Patches.map(patch => ({
       id: patch.KBId || patch.PatchId,
       title: patch.Title,
       severity: patch.Severity,
       state: patch.State,
-      cvss: patch.CVEIds || [],
       classification: patch.Classification,
       installedTime: patch.InstalledTime,
-      cves: patch.CVEIds?.split(',').map(cve => cve.trim()) || []
+      cves: patch.CVEIds ? patch.CVEIds.split(',').map(cve => cve.trim()) : []
     }));
   } catch (error) {
     console.error("Error fetching patch details:", error);
@@ -231,10 +242,89 @@ export const installPatches = async (instanceIds, rebootOption = 'NoReboot') => 
   }
 };
 
-// Implementación real para automatización
-export const createAutomation = async (documentName, parameters) => {
+// Obtener documentos de automatización disponibles
+export const getAutomationDocuments = async () => {
   try {
     const client = getClient();
+    const command = new ListDocumentsCommand({
+      Filters: [
+        {
+          Key: 'DocumentType',
+          Values: ['Automation']
+        }
+      ]
+    });
+    
+    const response = await client.send(command);
+    
+    // Verificar si hay documentos antes de mapear
+    if (!response.DocumentIdentifiers) {
+      return [];
+    }
+    
+    return response.DocumentIdentifiers.map(doc => ({
+      name: doc.Name,
+      description: doc.Description || 'Sin descripción',
+      version: doc.LatestVersion || '1',
+      owner: doc.Owner,
+      platform: doc.PlatformTypes?.join(', ') || 'All',
+      documentType: doc.DocumentType,
+      schemaVersion: doc.SchemaVersion
+    }));
+  } catch (error) {
+    console.error("Error fetching automation documents:", error);
+    // En caso de error, devolver array vacío
+    return [];
+  }
+};
+
+// Iniciar una automatización
+export const startAutomation = async (documentName) => {
+  try {
+    const client = getClient();
+    
+    // Obtener primero los detalles del documento para ver sus parámetros requeridos
+    const describeCommand = new DescribeDocumentCommand({
+      Name: documentName
+    });
+    
+    const docDetails = await client.send(describeCommand);
+    
+    // Configurar parámetros por defecto según el tipo de documento
+    let parameters = {};
+    
+    switch(documentName) {
+      case 'AWS-StartEC2Instance':
+      case 'AWS-StopEC2Instance':
+        // Obtener la primera instancia disponible como ejemplo
+        const instances = await getManagedInstances();
+        if (instances.length > 0) {
+          parameters = {
+            InstanceId: [instances[0].instanceId]
+          };
+        } else {
+          throw new Error('No hay instancias disponibles para ejecutar la automatización');
+        }
+        break;
+        
+      case 'AWS-RunShellScript':
+        parameters = {
+          Commands: ['echo "Hello World"']
+        };
+        break;
+        
+      // Añadir más casos según sea necesario
+      default:
+        // Para otros documentos, usar parámetros mínimos requeridos
+        if (docDetails.Document?.Parameters) {
+          docDetails.Document.Parameters.forEach(param => {
+            if (param.Required) {
+              parameters[param.Name] = ['default'];
+            }
+          });
+        }
+    }
+    
     const command = new StartAutomationExecutionCommand({
       DocumentName: documentName,
       Parameters: parameters
@@ -245,6 +335,43 @@ export const createAutomation = async (documentName, parameters) => {
   } catch (error) {
     console.error("Error starting automation:", error);
     throw error;
+  }
+};
+
+// Obtener lista de ejecuciones de automatización
+export const getAutomationExecutions = async () => {
+  try {
+    const client = getClient();
+    const command = new DescribeAutomationExecutionsCommand({
+      MaxResults: 50, // Limitar a las 50 más recientes
+      Filters: [
+        {
+          Key: 'ExecutionStatus',
+          Values: ['InProgress', 'Success', 'Failed', 'TimedOut', 'Cancelled']
+        }
+      ]
+    });
+    
+    const response = await client.send(command);
+    
+    // Verificar si hay datos antes de mapear
+    if (!response.AutomationExecutionMetadata) {
+      return [];
+    }
+    
+    return response.AutomationExecutionMetadata.map(execution => ({
+      executionId: execution.AutomationExecutionId,
+      documentName: execution.DocumentName,
+      status: execution.AutomationExecutionStatus,
+      startTime: execution.StartTime,
+      endTime: execution.EndTime,
+      target: execution.Target || 'N/A',
+      outputs: execution.Outputs
+    }));
+  } catch (error) {
+    console.error("Error fetching automation executions:", error);
+    // En caso de error, devolver array vacío en lugar de propagar el error
+    return [];
   }
 };
 

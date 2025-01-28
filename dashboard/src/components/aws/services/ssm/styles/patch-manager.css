@@ -299,27 +299,26 @@
   align-items: center;
   justify-content: center;
   padding: 3rem;
+  margin: 2rem auto;
   text-align: center;
   background: var(--background-secondary);
   border-radius: 8px;
   border: 2px dashed var(--border-color);
+  max-width: 500px;
 }
 
-.empty-state .empty-icon,
 .empty-state .success-icon {
   font-size: 3rem;
   margin-bottom: 1rem;
-  opacity: 0.5;
-}
-
-.empty-state .success-icon {
   color: var(--success-color);
+  opacity: 0.8;
 }
 
 .empty-state h3 {
   color: var(--text-primary);
   margin: 0 0 0.5rem 0;
   font-size: 1.2rem;
+  font-weight: 500;
 }
 
 .empty-state p {
@@ -332,4 +331,5 @@
   margin-top: 1rem;
   color: var(--text-tertiary);
   font-size: 0.85rem;
+  opacity: 0.8;
 } 

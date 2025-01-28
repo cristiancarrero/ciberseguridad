@@ -51,7 +51,7 @@ const PatchManager = ({ selectedInstance, onInstanceSelect }) => {
     try {
       setLoading(true);
       setError(null);
-      const patchDetails = await getPatchDetails(selectedInstance);
+      const patchDetails = await getPatchDetails(selectedInstance.instanceId);
       setPatches(patchDetails || []);
     } catch (err) {
       console.error('Error loading patch details:', err);
@@ -139,7 +139,9 @@ const PatchManager = ({ selectedInstance, onInstanceSelect }) => {
 
     if (patches.length === 0) {
       return (
-        <div className="no-patches">
+        <div className="empty-state">
+          <FaCheck className="success-icon" />
+          <h3>Sistema Actualizado</h3>
           <p>No hay parches pendientes para esta instancia</p>
           <small>La lista se actualiza automáticamente cada 5 minutos</small>
         </div>
@@ -177,7 +179,7 @@ const PatchManager = ({ selectedInstance, onInstanceSelect }) => {
         <div className="patch-actions">
           <button 
             className="install-button"
-            onClick={() => handleInstallPatch(selectedInstance)}
+            onClick={() => handleInstallPatch(selectedInstance.instanceId)}
             disabled={!selectedInstance || loading || patches.length === 0}
           >
             Instalar
@@ -218,7 +220,7 @@ const PatchManager = ({ selectedInstance, onInstanceSelect }) => {
           </button>
           <button 
             className="patch-button install"
-            onClick={() => selectedInstance && handleInstallPatch(selectedInstance)}
+            onClick={() => selectedInstance && handleInstallPatch(selectedInstance.instanceId)}
             disabled={!selectedInstance || loading || patches.length === 0}
           >
             <FaCheck /> Instalar Seleccionados
