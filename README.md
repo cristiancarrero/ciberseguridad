@@ -1,61 +1,156 @@
-# Ciberseguridad Chatbot
+# 🛡️ Proyecto de Ciberseguridad
 
-Este proyecto es un chatbot diseñado para ayudar en temas de ciberseguridad. Utiliza tecnologías modernas para proporcionar respuestas rápidas y precisas a preguntas relacionadas con la seguridad informática.
+Plataforma web dedicada a la gestión y monitorización de seguridad informática, ofreciendo herramientas de análisis, pruebas de penetración y formación en ciberseguridad.
 
-## Características
+## 🚀 Características
 
-- Respuestas automatizadas a preguntas frecuentes sobre ciberseguridad.
-- Integración con bases de datos de amenazas conocidas.
-- Capacidad de aprendizaje para mejorar las respuestas con el tiempo.
+- Dashboard interactivo para monitorización en tiempo real
+- Sistema de autenticación seguro
+- Herramientas de pentesting integradas
+- Integración con servicios AWS
+- Informes detallados de seguridad
+- Interface responsive y moderna
 
-## Requisitos
+## 📋 Prerrequisitos
 
-- Docker
-- Git
+Antes de comenzar, asegúrate de tener instalado:
 
-## Instalación
+- Node.js (v14 o superior)
+- npm (v6 o superior)
+- Python (v3.8 o superior)
+- Cuenta de AWS (para funcionalidades en la nube)
+- Docker (para el chatbot)
 
-1. **Clonar el repositorio**
+## 🔧 Instalación
 
-   Clona este repositorio en tu máquina local usando el siguiente comando:
+1. Clona el repositorio
 
    ```bash
    git clone https://github.com/cristiancarrero/ciberseguridad.git
    cd ciberseguridad
    ```
 
-2. **Construir la imagen de Docker**
-
-   Asegúrate de tener Docker instalado y ejecutándose en tu sistema. Luego, construye la imagen de Docker con el siguiente comando:
+2. Instala las dependencias
 
    ```bash
-   docker build -t ciberseguridad-chatbot ./chatbot
+   npm install
    ```
 
-3. **Ejecutar el contenedor de Docker**
-
-   Una vez que la imagen esté construida, puedes ejecutar el contenedor con:
+3. Configura las variables de entorno
 
    ```bash
+   cp .env.example .env
+   # Edita el archivo .env con tus configuraciones
+   ```
+
+4. Construye y ejecuta el chatbot con Docker
+
+   ```bash
+   # Construir la imagen
+   docker build -t ciberseguridad-chatbot ./chatbot
+   
+   # Ejecutar el contenedor
    docker run -p 8080:8080 ciberseguridad-chatbot
    ```
 
-   Esto expondrá el servicio en el puerto 8080 de tu máquina local.
+5. Inicia el servidor de desarrollo
 
-## Uso
+   ```bash
+   npm run dev
+   ```
 
-Accede al chatbot a través de tu navegador web en `http://localhost:8080`. Desde allí, puedes interactuar con el chatbot y explorar sus capacidades.
+## 🔍 Uso
 
-## Contribuir
+1. Accede a la plataforma a través de `http://localhost:3000`
+2. Inicia sesión con tus credenciales
+3. Navega por el dashboard para acceder a las diferentes herramientas
+4. Utiliza el panel de control para gestionar la seguridad
 
-Si deseas contribuir al proyecto, por favor sigue estos pasos:
+## 📊 Módulos Principales
 
-1. Haz un fork del repositorio.
-2. Crea una nueva rama (`git checkout -b feature/nueva-funcionalidad`).
-3. Realiza tus cambios y haz commit (`git commit -am 'Añadir nueva funcionalidad'`).
-4. Sube tus cambios a la rama (`git push origin feature/nueva-funcionalidad`).
-5. Abre un Pull Request.
+### Dashboard
+- Monitorización en tiempo real
+- Visualización de métricas
+- Gestión de alertas
 
-## Licencia
+### Pentesting
+- Análisis de vulnerabilidades
+- Pruebas de penetración
+- Informes de seguridad
 
-Este proyecto está bajo la Licencia MIT. Para más detalles, consulta el archivo `LICENSE`. 
+### Gestión de Usuarios
+- Control de accesos
+- Gestión de roles
+- Auditoría de actividades
+
+### Chatbot de Seguridad (En desarrollo)
+- Asistente virtual para consultas
+- Recomendaciones de seguridad
+- Soporte 24/7
+
+## 🔐 Seguridad
+
+Este proyecto implementa las siguientes medidas de seguridad:
+
+- Autenticación de dos factores
+- Encriptación de datos sensibles
+- Logs de auditoría
+- Protección contra ataques comunes (XSS, CSRF, etc.)
+- Monitorización continua
+- Análisis de vulnerabilidades automatizado
+
+## 📦 Estructura del Proyecto
+
+```
+ciberseguridad/
+├── auth/               # Autenticación y autorización
+├── backend/           # Lógica del servidor
+├── dashboard/         # Interface de administración
+├── Pentest/          # Herramientas de penetración
+├── chatbot/          # Servicio de chatbot
+├── shared/           # Servicios compartidos
+│   └── services/
+└── docs/             # Documentación
+```
+
+## 🛠️ Construido con
+
+- JavaScript - Lenguaje principal
+- CSS - Estilos
+- HTML - Estructura
+- Python - Scripts de backend
+- AWS - Servicios en la nube
+- Vite - Build tool
+- Docker - Contenedores
+- Socket.IO - Comunicación en tiempo real
+
+## 🤝 Contribuir
+
+Las contribuciones son bienvenidas. Para contribuir:
+
+1. Fork el proyecto
+2. Crea una rama para tu característica (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
+
+## 📝 Licencia
+
+Este proyecto está bajo la Licencia MIT - ver el archivo [LICENSE.md](LICENSE.md) para más detalles
+
+## ✒️ Autores
+
+* **Cristian Carrero** - *Desarrollador principal* - [cristiancarrero](https://github.com/cristiancarrero)
+* **Vittoria de Novellis** - *Desarrolladora chatbot* - [Dolcevitta95](https://github.com/Dolcevitta95)
+
+## 📞 Soporte
+
+Para soporte y consultas:
+- Email: soporte@ciberseguridad.com
+- Issues: [GitHub Issues](https://github.com/cristiancarrero/ciberseguridad/issues)
+- Chat: Disponible en la plataforma 24/7
+
+## 🎉 Agradecimientos
+
+* A todos los contribuidores que participan en este proyecto
+* A la comunidad de ciberseguridad por su continuo apoyo
