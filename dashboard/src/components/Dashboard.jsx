@@ -30,7 +30,7 @@ import GCPView from './gcp/GCPView';
 import AzureView from './azure/AzureView';
 import GuardDutyManager from './aws/services/guardduty/GuardDutyManager';
 import AWSServiceWidget from './AWSServiceWidget';
-import SSMManager from './aws/services/ssm/SSMManager';
+import SSMManager from './aws/services/SSM/SSMManager';
 
 const Dashboard = () => {
   const [currentSection, setCurrentSection] = useState(() => {
