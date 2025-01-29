@@ -4,6 +4,7 @@ import Dashboard from './components/Dashboard'
 import Navbar from './components/Navbar'
 import './styles/App.css'
 import './styles/global-select.css'
+import Chatbox from './Chatbox'
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Navbar />
         <div className="app-content">
           <Dashboard />
+          <Chatbox />
         </div>
       </div>
     </AWSProvider>
